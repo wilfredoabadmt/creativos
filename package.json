@@ -1,0 +1,29 @@
+{
+  "name": "comunica-digital-gamea",
+  "version": "1.0.0",
+  "description": "Sistema Integral de Solicitudes, Gestión, Seguimiento y Producción de Servicios Comunicacionales Institucionales - Dirección de Comunicación DICOM GAM El Alto",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'Build complete'"
+  },
+  "keywords": [
+    "gamea",
+    "el-alto",
+    "dicom",
+    "comunica-digital",
+    "gobierno-digital",
+    "gestion-creativa"
+  ],
+  "author": "Wilfredo Abad Mancilla Teran - GAM El Alto",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

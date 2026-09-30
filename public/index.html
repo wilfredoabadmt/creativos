@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMUNICA DIGITAL | GAM El Alto - Dirección de Comunicación</title>
+  <meta name="description" content="Sistema Integral de Solicitudes, Gestión, Seguimiento y Producción de Servicios Comunicacionales Institucionales del Gobierno Autónomo Municipal de El Alto">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- ENCABEZADO INSTITUCIONAL -->
+  <header class="gamea-header">
+    <div class="header-top-bar">
+      <div class="container d-flex justify-between align-center">
+        <div class="badge-republica">
+          <span class="flag-dot"></span> ESTADO PLURINACIONAL DE BOLIVIA • GOBIERNO AUTÓNOMO MUNICIPAL DE EL ALTO
+        </div>
+        <div class="top-date" id="currentDateDisplay">
+          La Paz - El Alto
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-main-nav">
+      <div class="container d-flex justify-between align-center">
+        <div class="brand-group d-flex align-center">
+          <div class="logo-shield">
+            <div class="shield-icon">🏛️</div>
+          </div>
+          <div class="brand-text">
+            <span class="brand-sub">GOBIERNO AUTÓNOMO MUNICIPAL DE EL ALTO</span>
+            <h1 class="brand-title">COMUNICA DIGITAL <span>DICOM</span></h1>
+          </div>
+        </div>
+
+        <!-- ROLE SWITCHER & NAVIGATION -->
+        <div class="nav-controls d-flex align-center gap-3">
+          <nav class="main-menu d-flex gap-2">
+            <button class="nav-btn active" data-tab="landing" id="btnTabLanding">Inicio</button>
+            <button class="nav-btn" data-tab="solicitud" id="btnTabSolicitud">Nueva Solicitud</button>
+            <button class="nav-btn" data-tab="bandeja" id="btnTabBandeja">Bandeja de Trámites <span class="badge-count" id="tramitesCount">6</span></button>
+            <button class="nav-btn" data-tab="dashboard" id="btnTabDashboard">Dashboard DICOM</button>
+          </nav>
+
+          <div class="role-selector-wrapper">
+            <label for="roleSelect" class="role-label">Modo / Rol:</label>
+            <select id="roleSelect" class="role-select">
+              <option value="SOLICITANTE">👤 Solicitante Municipal</option>
+              <option value="DISENADOR">🎨 Diseñador Gráfico</option>
+              <option value="SUPERVISOR" selected>⭐ Supervisor / Director</option>
+              <option value="ADMIN">🛡️ Administrador General</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+
+    <!-- ========================================== -->
+    <!-- VISTA 1: LANDING PAGE INSTITUCIONAL       -->
+    <!-- ========================================== -->
+    <section id="viewLanding" class="view-section active">
+      <!-- HERO INSTITUCIONAL -->
+      <div class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content text-center">
+          <div class="hero-pill">DIRECCIÓN DE COMUNICACIÓN • GESTIÓN DIGITAL</div>
+          <h2 class="hero-headline">
+            Transformando la comunicación institucional mediante procesos <span class="text-gold">digitales, eficientes y transparentes.</span>
+          </h2>
+          <p class="hero-subtext">
+            Plataforma oficial del Gobierno Autónomo Municipal de El Alto para la gestión, validación, asignación creativa y seguimiento en tiempo real de todas las piezas comunicacionales del municipio.
+          </p>
+          <div class="hero-actions d-flex justify-center gap-3">
+            <button class="btn btn-gold btn-lg" onclick="app.showTab('solicitud')">
+              <span>✍️</span> Iniciar Solicitud de Diseño
+            </button>
+            <button class="btn btn-outline-white btn-lg" onclick="app.showTab('bandeja')">
+              <span>🔍</span> Consultar Trámites en Curso
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 1: SERVICIOS DEL ÁREA CREATIVA -->
+      <section class="section-container container">
+        <div class="section-header text-center">
+          <span class="section-tag">CATÁLOGO DICOM</span>
+          <h3 class="section-title">Servicios del Área Creativa Institucional</h3>
+          <p class="section-desc">Especialidades comunicacionales al servicio de todas las Secretarías y Direcciones del GAM El Alto.</p>
+        </div>
+
+        <div class="grid-cards-3">
+          <div class="service-card">
+            <div class="service-icon bg-red">🎨</div>
+            <h4>Diseño Gráfico Institucional</h4>
+            <p>Afiches, volantes, trípticos, invitaciones protocolares y gigantografías alineadas a la identidad municipal.</p>
+            <span class="service-badge">Fase 1 Activa</span>
+          </div>
+
+          <div class="service-card">
+            <div class="service-icon bg-blue">📢</div>
+            <h4>Campañas Municipales</h4>
+            <p>Estrategias integrales de comunicación cívica, seguridad ciudadana, salud y reactivación económica alteña.</p>
+            <span class="service-badge">Multiplataforma</span>
+          </div>
+
+          <div class="service-card">
+            <div class="service-icon bg-gold">📱</div>
+            <h4>Redes Sociales</h4>
+            <p>Parrillas de contenido, reels, infografías y artes adaptados a Facebook, TikTok, Instagram y WhatsApp institucional.</p>
+            <span class="service-badge">Alta Demanda</span>
+          </div>
+
+          <div class="service-card">
+            <div class="service-icon bg-purple">🎬</div>
+            <h4>Producción Audiovisual</h4>
+            <p>Spots televisivos, cobertura de obras municipales con dron, cápsulas informativas y transmisiones en directo.</p>
+            <span class="service-badge phase-future">Fase 4 (Próxima)</span>
+          </div>
+
+          <div class="service-card">
+            <div class="service-icon bg-teal">📚</div>
+            <h4>Publicaciones Institucionales</h4>
+            <p>Memorias anuales de gestión, revistas oficiales, informes de rendición pública de cuentas y ordenanzas ilustradas.</p>
+            <span class="service-badge phase-future">Fase 3 (Próxima)</span>
+          </div>
+
+          <div class="service-card">
+            <div class="service-icon bg-indigo">🖼️</div>
+            <h4>Branding y Comunicación Visual</h4>
+            <p>Creación de logotipos para programas, manuales de marca y señalética urbana de espacios públicos de El Alto.</p>
+            <span class="service-badge phase-future">Fase 2 (Próxima)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 2: CÓMO FUNCIONA EL SISTEMA -->
+      <section class="section-container bg-light-section">
+        <div class="container">
+          <div class="section-header text-center">
+            <span class="section-tag">FLUJO OPERATIVO</span>
+            <h3 class="section-title">¿Cómo funciona el ciclo de trabajo?</h3>
+            <p class="section-desc">Un proceso transparente y normado de 6 pasos para garantizar calidad y cumplimiento de plazos.</p>
+          </div>
+
+          <div class="workflow-grid">
+            <div class="workflow-step">
+              <div class="step-number">1</div>
+              <h5>Solicitud Digital</h5>
+              <p>Llenado de ficha técnica en 4 pasos con textos aprobados y logos.</p>
+            </div>
+            <div class="workflow-step">
+              <div class="step-number">2</div>
+              <h5>Validación Automática</h5>
+              <p>El sistema verifica requisitos y genera fecha límite de entrega (SLA 7 días).</p>
+            </div>
+            <div class="workflow-step">
+              <div class="step-number">3</div>
+              <h5>Asignación Creativa</h5>
+              <p>DICOM revisa y delega la tarea a un diseñador según especialidad.</p>
+            </div>
+            <div class="workflow-step">
+              <div class="step-number">4</div>
+              <h5>Diseño y Propuesta</h5>
+              <p>Elaboración de la pieza y publicación del boceto preliminar.</p>
+            </div>
+            <div class="workflow-step">
+              <div class="step-number">5</div>
+              <h5>Revisión y Ajustes</h5>
+              <p>Solicitante valida o pide cambios (máximo 2 rondas normadas).</p>
+            </div>
+            <div class="workflow-step">
+              <div class="step-number">6</div>
+              <h5>Entrega Final</h5>
+              <p>Descarga de artes en alta resolución y archivo histórico municipal.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 3: BENEFICIOS INSTITUCIONALES -->
+      <section class="section-container container">
+        <div class="section-header text-center">
+          <span class="section-tag">VALOR PÚBLICO</span>
+          <h3 class="section-title">Beneficios de la Modernización</h3>
+        </div>
+
+        <div class="grid-benefits">
+          <div class="benefit-box">
+            <div class="benefit-icon">⚡</div>
+            <h4>Mayor Rapidez</h4>
+            <p>Eliminación de notas en papel y llamadas perdidas con tiempos de respuesta garantizados.</p>
+          </div>
+          <div class="benefit-box">
+            <div class="benefit-icon">🔍</div>
+            <h4>Transparencia Total</h4>
+            <p>Monitoreo en tiempo real del estado de cada requerimiento con bitácora de auditoría.</p>
+          </div>
+          <div class="benefit-box">
+            <div class="benefit-icon">⏱️</div>
+            <h4>Control de Tiempos</h4>
+            <p>SLA automático de 7 días hábiles y alertas tempranas de vencimiento.</p>
+          </div>
+          <div class="benefit-box">
+            <div class="benefit-icon">🏛️</div>
+            <h4>Memoria Gráfica</h4>
+            <p>Repositorio digital unificado para evitar duplicidad y resguardar la identidad alteña.</p>
+          </div>
+          <div class="benefit-box">
+            <div class="benefit-icon">🎯</div>
+            <h4>Optimización Creativa</h4>
+            <p>Carga balanceada y delimitación estricta de cambios para mayor calidad estética.</p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VISTA 2: FORMULARIO DIGITAL DE 4 PASOS    -->
+    <!-- ========================================== -->
+    <section id="viewSolicitud" class="view-section">
+      <div class="container form-wrapper">
+        <div class="card-box shadow-lg">
+          <div class="card-header bg-gamea-gradient text-white d-flex justify-between align-center">
+            <div>
+              <span class="badge-form-header">FICHA TÉCNICA OFICIAL DICOM</span>
+              <h2 class="card-title-lg">Registro de Solicitud de Diseño Gráfico</h2>
+              <p class="card-subtitle">Gobierno Autónomo Municipal de El Alto</p>
+            </div>
+            <button class="btn btn-sm btn-outline-white" id="btnFillDemo" title="Rellenar con datos de prueba real">
+              ⚡ Autocompletar Caso Demo
+            </button>
+          </div>
+
+          <!-- STEPPER INDICATOR -->
+          <div class="stepper-bar">
+            <div class="step-item active" id="stepIndicator1">
+              <span class="step-dot">1</span>
+              <span class="step-label">Datos del Evento</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item" id="stepIndicator2">
+              <span class="step-dot">2</span>
+              <span class="step-label">Características</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item" id="stepIndicator3">
+              <span class="step-dot">3</span>
+              <span class="step-label">Formato y Difusión</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item" id="stepIndicator4">
+              <span class="step-dot">4</span>
+              <span class="step-label">Insumos y Envío</span>
+            </div>
+          </div>
+
+          <!-- FORMULARIO MULTI-PASO -->
+          <form id="formSolicitud" class="form-body">
+            
+            <!-- PASO 1: DATOS DEL EVENTO O ACTIVIDAD -->
+            <div class="form-step-content active" id="stepContent1">
+              <h4 class="step-title"><span>Sección 1</span> Datos del Evento o Actividad Institucional</h4>
+              <p class="step-instructions">Indique la dependencia solicitante y los detalles del evento para el cual se requiere la pieza gráfica.</p>
+              
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="campoSecretaria">Secretaría Solicitante <span class="req">*</span></label>
+                  <select id="campoSecretaria" class="form-control" required>
+                    <option value="">-- Seleccione Secretaría Municipal --</option>
+                    <option value="1">Secretaría Municipal de Salud (SMS)</option>
+                    <option value="2">Secretaría Municipal de Infraestructura Pública (SMIP)</option>
+                    <option value="3">Secretaría Municipal de Educación y Cultura (SMEC)</option>
+                    <option value="4">Secretaría Municipal de Seguridad Ciudadana (SMSC)</option>
+                    <option value="5">Secretaría Municipal de Desarrollo Económico (SMDE)</option>
+                    <option value="6">Secretaría Municipal de Gestión Institucional (SMGI)</option>
+                    <option value="7">Secretaría Municipal de Agua y Gestión Ambiental (SMAMA)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="campoDireccion">Dirección / Unidad Solicitante <span class="req">*</span></label>
+                  <input type="text" id="campoDireccion" class="form-control" placeholder="Ej: Dirección de Redes de Salud / Unidad de Epidemiología" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="campoNombreEvento">Nombre Oficial del Evento o Actividad <span class="req">*</span></label>
+                <input type="text" id="campoNombreEvento" class="form-control" placeholder="Ej: Gran Campaña de Vacunación Canina y Felina Distrito 8" required>
+              </div>
+
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label for="campoFechaEvento">Fecha del Evento <span class="req">*</span></label>
+                  <input type="date" id="campoFechaEvento" class="form-control" required>
+                  <small class="helper-text" id="fechaAlertHelper">Antelación mínima requerida: 7 días hábiles.</small>
+                </div>
+                <div class="form-group">
+                  <label for="campoHoraEvento">Hora del Evento</label>
+                  <input type="time" id="campoHoraEvento" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="campoLugarEvento">Lugar / Distrito <span class="req">*</span></label>
+                  <input type="text" id="campoLugarEvento" class="form-control" placeholder="Ej: Plaza Central Senkata, Distrito 8" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="campoPublicoObjetivo">Público Objetivo <span class="req">*</span></label>
+                <input type="text" id="campoPublicoObjetivo" class="form-control" placeholder="Ej: Vecinas, vecinos y familias con mascotas del Distrito 8 de El Alto" required>
+              </div>
+
+              <div class="form-group">
+                <label for="campoObjetivoMensaje">Objetivo del Mensaje <span class="req">*</span></label>
+                <textarea id="campoObjetivoMensaje" rows="3" class="form-control" placeholder="¿Qué se busca lograr con la pieza gráfica? Ej: Concientizar e invitar a la población a vacunar gratuitamente a sus mascotas para prevenir la rabia." required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="campoInfoAdicional">Información Adicional Relevante</label>
+                <input type="text" id="campoInfoAdicional" class="form-control" placeholder="Ej: Contaremos con la presencia de la Alcaldesa; incluir requisitos de edad de cachorros">
+              </div>
+
+              <div class="form-actions d-flex justify-end gap-2">
+                <button type="button" class="btn btn-primary" onclick="app.nextStep(1)">Siguiente: Características ➔</button>
+              </div>
+            </div>
+
+            <!-- PASO 2: CARACTERÍSTICAS DEL DISEÑO -->
+            <div class="form-step-content" id="stepContent2">
+              <h4 class="step-title"><span>Sección 2</span> Características del Diseño Gráfico</h4>
+              <p class="step-instructions">Defina el tipo de pieza gráfica y el estilo visual deseado.</p>
+
+              <div class="form-group">
+                <label class="d-block mb-2">Tipo de Pieza Requerida <span class="req">*</span></label>
+                <div class="grid-checkboxes">
+                  <label class="check-box-card">
+                    <input type="radio" name="tipoPieza" value="Afiche" checked>
+                    <span class="card-inner"><span>🎨</span> Afiche Institucional</span>
+                  </label>
+                  <label class="check-box-card">
+                    <input type="radio" name="tipoPieza" value="Poster">
+                    <span class="card-inner"><span>🖼️</span> Poster Gran Impacto</span>
+                  </label>
+                  <label class="check-box-card">
+                    <input type="radio" name="tipoPieza" value="Flyer">
+                    <span class="card-inner"><span>📄</span> Flyer / Volante</span>
+                  </label>
+                  <label class="check-box-card">
+                    <input type="radio" name="tipoPieza" value="Tríptico">
+                    <span class="card-inner"><span>📑</span> Tríptico / Folleto</span>
+                  </label>
+                  <label class="check-box-card">
+                    <input type="radio" name="tipoPieza" value="Invitación">
+                    <span class="card-inner"><span>✉️</span> Invitación Protocolar</span>
+                  </label>
+                  <label class="check-box-card">
+                    <input type="radio" name="tipoPieza" value="Banner">
+                    <span class="card-inner"><span>🚩</span> Banner / Roll-up</span>
+                  </label>
+                  <label class="check-box-card">
+                    <input type="radio" name="tipoPieza" value="Infografía">
+                    <span class="card-inner"><span>📊</span> Infografía Explicativa</span>
+                  </label>
+                  <label class="check-box-card">
+                    <input type="radio" name="tipoPieza" value="Redes Sociales">
+                    <span class="card-inner"><span>📱</span> Arte Redes Sociales</span>
+                  </label>
+                  <label class="check-box-card">
+                    <input type="radio" name="tipoPieza" value="Otro">
+                    <span class="card-inner"><span>➕</span> Otro Formato</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group mt-3">
+                <label class="d-block mb-2">Estilo Visual Requerido <span class="req">*</span></label>
+                <div class="grid-radios">
+                  <label class="radio-pill">
+                    <input type="radio" name="estiloVisual" value="Institucional" checked>
+                    <span>🏛️ Institucional</span>
+                  </label>
+                  <label class="radio-pill">
+                    <input type="radio" name="estiloVisual" value="Moderno">
+                    <span>✨ Moderno</span>
+                  </label>
+                  <label class="radio-pill">
+                    <input type="radio" name="estiloVisual" value="Juvenil">
+                    <span>⚡ Juvenil / Dinámico</span>
+                  </label>
+                  <label class="radio-pill">
+                    <input type="radio" name="estiloVisual" value="Colorido">
+                    <span>🌈 Colorido / Festivo</span>
+                  </label>
+                  <label class="radio-pill">
+                    <input type="radio" name="estiloVisual" value="Minimalista">
+                    <span>📐 Minimalista</span>
+                  </label>
+                  <label class="radio-pill">
+                    <input type="radio" name="estiloVisual" value="Educativo">
+                    <span>💡 Educativo / Cívico</span>
+                  </label>
+                  <label class="radio-pill">
+                    <input type="radio" name="estiloVisual" value="Cultural">
+                    <span>🎭 Cultural / Identidad</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-actions d-flex justify-between gap-2 mt-4">
+                <button type="button" class="btn btn-outline" onclick="app.prevStep(2)">⬅ Anterior</button>
+                <button type="button" class="btn btn-primary" onclick="app.nextStep(2)">Siguiente: Formato y Difusión ➔</button>
+              </div>
+            </div>
+
+            <!-- PASO 3: FORMATO Y DIFUSIÓN -->
+            <div class="form-step-content" id="stepContent3">
+              <h4 class="step-title"><span>Sección 3</span> Formato Técnico y Plataformas de Difusión</h4>
+              <p class="step-instructions">Indique las especificaciones de entrega y los canales municipales donde se difundirá.</p>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="d-block mb-2">Tipo de Material <span class="req">*</span></label>
+                  <div class="d-flex gap-2">
+                    <label class="radio-tag">
+                      <input type="radio" name="material" value="Digital" checked>
+                      <span>🌐 Solo Digital</span>
+                    </label>
+                    <label class="radio-tag">
+                      <input type="radio" name="material" value="Impreso">
+                      <span>🖨️ Solo Impreso</span>
+                    </label>
+                    <label class="radio-tag">
+                      <input type="radio" name="material" value="Ambos">
+                      <span>🔄 Ambos Formatos</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="d-block mb-2">Orientación Requerida <span class="req">*</span></label>
+                  <div class="d-flex gap-2">
+                    <label class="radio-tag">
+                      <input type="radio" name="orientacion" value="Vertical" checked>
+                      <span>↕️ Vertical</span>
+                    </label>
+                    <label class="radio-tag">
+                      <input type="radio" name="orientacion" value="Horizontal">
+                      <span>↔️ Horizontal</span>
+                    </label>
+                    <label class="radio-tag">
+                      <input type="radio" name="orientacion" value="Cuadrado">
+                      <span>⏹️ Cuadrado (1:1)</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group mt-3">
+                <label class="d-block mb-2">Plataformas de Difusión (Seleccione todas las aplicables) <span class="req">*</span></label>
+                <div class="d-flex flex-wrap gap-2">
+                  <label class="checkbox-tag">
+                    <input type="checkbox" name="plataformas" value="Facebook" checked>
+                    <span>📘 Facebook Institucional</span>
+                  </label>
+                  <label class="checkbox-tag">
+                    <input type="checkbox" name="plataformas" value="Instagram" checked>
+                    <span>📸 Instagram</span>
+                  </label>
+                  <label class="checkbox-tag">
+                    <input type="checkbox" name="plataformas" value="TikTok" checked>
+                    <span>🎵 TikTok Municipal</span>
+                  </label>
+                  <label class="checkbox-tag">
+                    <input type="checkbox" name="plataformas" value="WhatsApp" checked>
+                    <span>💬 WhatsApp / Canales</span>
+                  </label>
+                  <label class="checkbox-tag">
+                    <input type="checkbox" name="plataformas" value="Web">
+                    <span>🌐 Portal Web Municipal</span>
+                  </label>
+                  <label class="checkbox-tag">
+                    <input type="checkbox" name="plataformas" value="Pantallas">
+                    <span>📺 Pantallas LED Gigantes</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-actions d-flex justify-between gap-2 mt-4">
+                <button type="button" class="btn btn-outline" onclick="app.prevStep(3)">⬅ Anterior</button>
+                <button type="button" class="btn btn-primary" onclick="app.nextStep(3)">Siguiente: Insumos y Envío ➔</button>
+              </div>
+            </div>
+
+            <!-- PASO 4: INSUMOS OBLIGATORIOS Y ENVÍO -->
+            <div class="form-step-content" id="stepContent4">
+              <h4 class="step-title"><span>Sección 4</span> Texto Aprobado y Recursos Adjuntos</h4>
+              <p class="step-instructions">Suba el brief redactado y los archivos insumo (logos, fotos, QR). No se admiten textos simulados.</p>
+
+              <div class="form-group">
+                <label for="campoTextoAprobado">Texto Oficial Aprobado para la Pieza <span class="req">*</span></label>
+                <textarea id="campoTextoAprobado" rows="4" class="form-control" placeholder="Pegue aquí el texto oficial revisado por su unidad (títulos, fechas, requisitos, teléfonos, eslogan, etc.). Se prohíbe el uso de Lorem Ipsum." required></textarea>
+              </div>
+
+              <!-- ZONA DRAG AND DROP -->
+              <div class="form-group">
+                <label class="d-block mb-1">Archivos Adjuntos (Logotipos, Fotografías, Códigos QR) <span class="req">*</span></label>
+                <div class="drop-zone" id="dropZoneInsumos">
+                  <div class="drop-icon">📁</div>
+                  <div class="drop-text">
+                    <strong>Arrastre los archivos aquí o haga clic para examinar</strong>
+                    <span>Formatos admitidos: PNG (sin fondo), SVG, JPG, PDF, ZIP (Máx. 50 MB)</span>
+                  </div>
+                  <input type="file" id="fileInputInsumos" class="file-hidden" multiple accept="image/*,.pdf,.zip">
+                </div>
+                <!-- LISTA DE ARCHIVOS CARGADOS -->
+                <div class="attached-files-list mt-2" id="attachedFilesContainer">
+                  <div class="file-chip">
+                    <span>📌 logo_gamea_oficial.png (1.2 MB)</span>
+                    <button type="button" class="btn-remove-file" title="Quitar">×</button>
+                  </div>
+                  <div class="file-chip">
+                    <span>📌 brief_aprobado_sms.pdf (480 KB)</span>
+                    <button type="button" class="btn-remove-file" title="Quitar">×</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- MOTOR DE AUTOMATIZACIÓN SLA PREVIEW -->
+              <div class="sla-alert-card mt-3">
+                <div class="sla-icon">⏱️</div>
+                <div class="sla-info">
+                  <h5>Cálculo de Tiempos Automático (Regla Institucional GAMEA)</h5>
+                  <p>Al enviar hoy, su solicitud quedará en estado <span class="status-badge status-amarillo">🟡 Pendiente</span>.</p>
+                  <p class="sla-dates">
+                    <strong>Fecha de Recepción:</strong> <span id="previewFechaRecepcion">Cargando...</span> | 
+                    <strong>Fecha Límite (7 días hábiles):</strong> <span class="text-bold-green" id="previewFechaLimite">Cargando...</span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="form-actions d-flex justify-between gap-2 mt-4">
+                <button type="button" class="btn btn-outline" onclick="app.prevStep(4)">⬅ Anterior</button>
+                <button type="submit" class="btn btn-gold btn-lg">
+                  <span>🚀</span> Enviar Solicitud a DICOM
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VISTA 3: BANDEJA DE TRÁMITES Y SEGUIMIENTO -->
+    <!-- ========================================== -->
+    <section id="viewBandeja" class="view-section">
+      <div class="container">
+        <div class="d-flex justify-between align-center mb-3 flex-wrap gap-2">
+          <div>
+            <h2 class="page-title">Bandeja Integral de Solicitudes Creativas</h2>
+            <p class="page-subtitle">Seguimiento, asignación y control de modificaciones en tiempo real</p>
+          </div>
+          <button class="btn btn-primary" onclick="app.showTab('solicitud')">
+            <span>+</span> Nueva Solicitud
+          </button>
+        </div>
+
+        <!-- FILTROS POR ESTADO -->
+        <div class="filter-bar d-flex gap-2 flex-wrap align-center mb-3">
+          <span class="filter-label">Filtrar por Estado:</span>
+          <button class="filter-pill active" data-filter="TODOS">Todos (<span id="countTodos">6</span>)</button>
+          <button class="filter-pill" data-filter="PENDIENTE">🟡 Pendiente (<span id="countPendiente">1</span>)</button>
+          <button class="filter-pill" data-filter="EN_REVISION">🔵 En revisión (<span id="countRevision">1</span>)</button>
+          <button class="filter-pill" data-filter="DISENO_PROCESO">🟣 En proceso (<span id="countProceso">2</span>)</button>
+          <button class="filter-pill" data-filter="AJUSTES">🟠 Ajustes (<span id="countAjustes">1</span>)</button>
+          <button class="filter-pill" data-filter="APROBADO">🟢 Aprobado (<span id="countAprobado">0</span>)</button>
+          <button class="filter-pill" data-filter="FINALIZADO">⚫ Finalizado (<span id="countFinalizado">1</span>)</button>
+        </div>
+
+        <!-- LISTA / TABLERO DE TRÁMITES -->
+        <div class="requests-grid" id="solicitudesContainer">
+          <!-- Tarjetas renderizadas dinámicamente por app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VISTA 4: DASHBOARD DICOM Y MÉTRICAS        -->
+    <!-- ========================================== -->
+    <section id="viewDashboard" class="view-section">
+      <div class="container">
+        <div class="d-flex justify-between align-center mb-3 flex-wrap gap-2">
+          <div>
+            <span class="section-tag">INTELIGENCIA INSTITUCIONAL</span>
+            <h2 class="page-title">Dashboard de Producción Creativa</h2>
+            <p class="page-subtitle">Métricas de carga, tiempos promedio y demandas de Secretarías</p>
+          </div>
+          <div class="date-filter-box">
+            <span class="text-sm text-muted">Gestión 2026 | El Alto</span>
+          </div>
+        </div>
+
+        <!-- 4 KPI CARDS -->
+        <div class="grid-cards-4 mb-4">
+          <div class="kpi-card">
+            <div class="kpi-icon bg-blue-subtle">📥</div>
+            <div class="kpi-data">
+              <span class="kpi-number" id="kpiRecibidas">142</span>
+              <span class="kpi-label">Solicitudes Recibidas</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon bg-green-subtle">✅</div>
+            <div class="kpi-data">
+              <span class="kpi-number" id="kpiFinalizadas">98</span>
+              <span class="kpi-label">Solicitudes Terminadas</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon bg-orange-subtle">⏳</div>
+            <div class="kpi-data">
+              <span class="kpi-number" id="kpiPendientes">44</span>
+              <span class="kpi-label">En Producción / Ajustes</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon bg-purple-subtle">⏱️</div>
+            <div class="kpi-data">
+              <span class="kpi-number" id="kpiTiempoProm">4.8</span>
+              <span class="kpi-label">Días Promedio (SLA &lt; 7)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRÁFICOS Y ESTADÍSTICAS -->
+        <div class="grid-2-dashboard mb-4">
+          <!-- DEPENDENCIA CON MAYOR DEMANDA -->
+          <div class="card-box p-3">
+            <h4 class="card-section-title">🏢 Dependencias con Mayor Demanda</h4>
+            <p class="text-sm text-muted mb-3">Distribución porcentual por Secretaría Municipal</p>
+            <div class="progress-list">
+              <div class="progress-row">
+                <div class="d-flex justify-between text-sm mb-1">
+                  <span>Sec. Municipal de Salud (SMS)</span>
+                  <strong>38 solicitudes (26.8%)</strong>
+                </div>
+                <div class="progress-track"><div class="progress-fill bg-red" style="width: 26.8%;"></div></div>
+              </div>
+
+              <div class="progress-row">
+                <div class="d-flex justify-between text-sm mb-1">
+                  <span>Sec. Infraestructura Pública (SMIP)</span>
+                  <strong>32 solicitudes (22.5%)</strong>
+                </div>
+                <div class="progress-track"><div class="progress-fill bg-blue" style="width: 22.5%;"></div></div>
+              </div>
+
+              <div class="progress-row">
+                <div class="d-flex justify-between text-sm mb-1">
+                  <span>Sec. Educación y Cultura (SMEC)</span>
+                  <strong>24 solicitudes (16.9%)</strong>
+                </div>
+                <div class="progress-track"><div class="progress-fill bg-gold" style="width: 16.9%;"></div></div>
+              </div>
+
+              <div class="progress-row">
+                <div class="d-flex justify-between text-sm mb-1">
+                  <span>Sec. Desarrollo Económico (SMDE)</span>
+                  <strong>18 solicitudes (12.7%)</strong>
+                </div>
+                <div class="progress-track"><div class="progress-fill bg-purple" style="width: 12.7%;"></div></div>
+              </div>
+
+              <div class="progress-row">
+                <div class="d-flex justify-between text-sm mb-1">
+                  <span>Sec. Seguridad Ciudadana (SMSC)</span>
+                  <strong>16 solicitudes (11.3%)</strong>
+                </div>
+                <div class="progress-track"><div class="progress-fill bg-teal" style="width: 11.3%;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIPOS DE PIEZAS MÁS SOLICITADAS -->
+          <div class="card-box p-3">
+            <h4 class="card-section-title">🎨 Tipos de Piezas Más Solicitadas</h4>
+            <p class="text-sm text-muted mb-3">Frecuencia por categoría comunicacional</p>
+            <div class="stats-pills-grid">
+              <div class="stat-bubble">
+                <div class="bubble-icon">📱</div>
+                <span class="bubble-percent">42.3%</span>
+                <span class="bubble-title">Redes Sociales</span>
+                <small>60 solicitudes</small>
+              </div>
+              <div class="stat-bubble">
+                <div class="bubble-icon">🎨</div>
+                <span class="bubble-percent">27.5%</span>
+                <span class="bubble-title">Afiches & Posters</span>
+                <small>39 solicitudes</small>
+              </div>
+              <div class="stat-bubble">
+                <div class="bubble-icon">🚩</div>
+                <span class="bubble-percent">17.6%</span>
+                <span class="bubble-title">Banners & Vallas</span>
+                <small>25 solicitudes</small>
+              </div>
+              <div class="stat-bubble">
+                <div class="bubble-icon">📑</div>
+                <span class="bubble-percent">12.6%</span>
+                <span class="bubble-title">Trípticos & Otros</span>
+                <small>18 solicitudes</small>
+              </div>
+            </div>
+
+            <div class="mt-4 p-2 bg-light rounded text-center">
+              <span class="text-sm font-semibold">Tasa de Efectividad: 88.5% aprobados en 1ra o 2da ronda sin desbordes.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- HISTÓRICO MENSUAL DE PRODUCCIÓN -->
+        <div class="card-box p-3 mb-4">
+          <h4 class="card-section-title">📈 Diseños Realizados por Mes (Gestión 2026)</h4>
+          <div class="chart-bars-horizontal">
+            <div class="chart-bar-col">
+              <div class="bar-visual" style="height: 60px;"><span>18</span></div>
+              <span class="bar-month">Enero</span>
+            </div>
+            <div class="chart-bar-col">
+              <div class="bar-visual" style="height: 95px;"><span>24</span></div>
+              <span class="bar-month">Febrero</span>
+            </div>
+            <div class="chart-bar-col highlight">
+              <div class="bar-visual" style="height: 160px;"><span>42</span></div>
+              <span class="bar-month">Marzo (Aniv. El Alto)</span>
+            </div>
+            <div class="chart-bar-col">
+              <div class="bar-visual" style="height: 110px;"><span>28</span></div>
+              <span class="bar-month">Abril</span>
+            </div>
+            <div class="chart-bar-col">
+              <div class="bar-visual" style="height: 120px;"><span>30</span></div>
+              <span class="bar-month">Mayo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================= -->
+  <!-- MODAL: DETALLE DE TRÁMITE Y CONTROL DE MODIFICACIONES   -->
+  <!-- ======================================================= -->
+  <div class="modal-backdrop" id="modalDetalleBackdrop">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <div>
+          <span class="modal-badge-id" id="modalCodigoTramite">SOL-2026-0001</span>
+          <h3 class="modal-title" id="modalTituloEvento">Detalle de Solicitud</h3>
+        </div>
+        <button type="button" class="btn-close-modal" onclick="app.closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body" id="modalContentBody">
+        <!-- RENDERIZADO DINÁMICAMENTE POR app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICACIÓN TOAST FLOTANTE -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- FOOTER INSTITUCIONAL -->
+  <footer class="gamea-footer">
+    <div class="container d-flex justify-between align-center flex-wrap gap-2">
+      <div>
+        <p class="footer-title">GOBIERNO AUTÓNOMO MUNICIPAL DE EL ALTO</p>
+        <p class="footer-copy">Dirección de Comunicación (DICOM) • Casa Municipal Jach'a Uta • Av. Costanera</p>
+      </div>
+      <div class="footer-links">
+        <span>Sistema de Gestión Creativa v1.0 (SDD) • PostgreSQL 16</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
