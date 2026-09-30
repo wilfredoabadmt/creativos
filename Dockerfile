@@ -1,6 +1,9 @@
 # Dockerfile optimizado para COMUNICA DIGITAL GAM El Alto (Coolify)
 FROM node:20-alpine
 
+# Instalar curl para healthchecks de Docker y Coolify
+RUN apk add --no-cache curl
+
 WORKDIR /app
 
 # Instalar dependencias
@@ -18,8 +21,8 @@ ENV PORT=3000
 
 EXPOSE 3000
 
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
+# Healthcheck interno
+HEALTHCHECK --interval=20s --timeout=5s --start-period=5s --retries=3 \
+  CMD curl -f http://127.0.0.1:3000/api/health || exit 1
 
 CMD ["node", "server.js"]
