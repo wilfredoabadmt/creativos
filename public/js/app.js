@@ -455,14 +455,31 @@ const state = {
 // 4. OBJETO PRINCIPAL DE LA APLICACIÓN
 // ==============================================================================
 const app = {
-  init() {
+  async init() {
     this.bindEvents();
     this.updateCurrentDate();
     this.populateSecretariasSelect();
-    this.renderRequests();
+    await this.loadSolicitudesFromApi();
     this.calculateSlaPreview();
     this.updateCounts();
     this.updateAuthUI();
+  },
+
+  async loadSolicitudesFromApi() {
+    try {
+      const res = await fetch('/api/solicitudes');
+      if (res.ok) {
+        const json = await res.json();
+        if (json.exito && Array.isArray(json.data) && json.data.length > 0) {
+          state.solicitudes = json.data;
+          this.renderRequests();
+          this.updateCounts();
+          this.renderDashboard();
+        }
+      }
+    } catch (err) {
+      console.warn('⚠️ No se pudo cargar solicitudes de la base de datos:', err);
+    }
   },
 
   bindEvents() {
@@ -968,7 +985,7 @@ const app = {
     this.showToast(`${files.length} archivo(s) agregado(s) a la solicitud`, 'info');
   },
 
-  handleFormSubmit(e) {
+  async handleFormSubmit(e) {
     e.preventDefault();
 
     if (!state.currentUser) {
@@ -991,13 +1008,15 @@ const app = {
     const infoAdicional = document.getElementById('campoInfoAdicional').value;
 
     let tipoPieza = document.querySelector('input[name="tipoPieza"]:checked')?.value || 'Afiche informativo';
+    let tipoPiezaOtro = null;
     if (tipoPieza === 'Otro') {
-      tipoPieza = document.getElementById('campoTipoPiezaOtro').value || 'Otro diseño especificado';
+      tipoPiezaOtro = document.getElementById('campoTipoPiezaOtro').value || 'Otro diseño especificado';
     }
 
     let estilo = document.querySelector('input[name="estiloVisual"]:checked')?.value || 'Institucional / formal';
+    let estiloOtro = null;
     if (estilo === 'Otro') {
-      estilo = document.getElementById('campoEstiloVisualOtro').value || 'Otro estilo especificado';
+      estiloOtro = document.getElementById('campoEstiloVisualOtro').value || 'Otro estilo especificado';
     }
 
     const material = document.querySelector('input[name="material"]:checked')?.value || 'Digital';
@@ -1027,12 +1046,7 @@ const app = {
       return;
     }
 
-    const anio = new Date().getFullYear();
-    const correlativo = `SOL-${anio}-00${state.solicitudes.length + 39}`;
-
-    const nuevaSolicitud = {
-      id: `sol-${Date.now()}`,
-      codigo_tramite: correlativo,
+    const payload = {
       secretaria: secText,
       direccion: dirText,
       nombre_evento: nom,
@@ -1043,7 +1057,9 @@ const app = {
       objetivo_mensaje: obj,
       datos_adicionales: infoAdicional,
       tipo_pieza: tipoPieza,
+      tipo_pieza_otro: tipoPiezaOtro,
       estilo_visual: estilo,
+      estilo_otro: estiloOtro,
       material: material,
       tamano_impreso: tamanoImpreso,
       orientacion: orientacion,
@@ -1055,24 +1071,76 @@ const app = {
         cargo: solicitanteCargo,
         telefono: solicitanteTelefono
       },
-      vobo_aprobado: true,
-      estado: 'PENDIENTE',
-      fecha_recepcion: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      fecha_limite: 'SLA: 7 días hábiles',
-      disenador_asignado: null,
-      rondas_cambios_usadas: 0,
-      historial_cambios: [],
-      archivos: ['brief_oficial_firmado.pdf', 'logo_institucional.png']
+      solicitante_id: state.currentUser ? state.currentUser.id : null,
+      check_fotografias: document.querySelector('input[name="insumosCheck"][value="fotos"]')?.checked || false,
+      check_qr_enlaces: document.querySelector('input[name="insumosCheck"][value="qr"]')?.checked || false,
+      check_otros_elementos: document.querySelector('input[name="insumosCheck"][value="otros"]')?.checked || false
     };
 
-    state.solicitudes.unshift(nuevaSolicitud);
-    this.renderRequests();
-    this.updateCounts();
+    let correlativoGenerado = `SOL-${new Date().getFullYear()}-0001`;
+
+    try {
+      this.showToast('⏳ Registrando ficha técnica en PostgreSQL...', 'info');
+      const res = await fetch('/api/solicitudes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const result = await res.json();
+
+      if (result.exito) {
+        correlativoGenerado = result.data.codigo_tramite || correlativoGenerado;
+        this.showToast(`🎉 ¡${result.mensaje || 'Ficha técnica guardada en PostgreSQL'}!`, 'success');
+        await this.loadSolicitudesFromApi();
+      } else {
+        throw new Error(result.error || result.mensaje);
+      }
+    } catch (err) {
+      console.warn('⚠️ Guardado local temporal (PostgreSQL en reconexión):', err.message);
+      const anio = new Date().getFullYear();
+      const correlativo = `SOL-${anio}-00${state.solicitudes.length + 39}`;
+      const nuevaSolicitud = {
+        id: `sol-${Date.now()}`,
+        codigo_tramite: correlativo,
+        secretaria: secText,
+        direccion: dirText,
+        nombre_evento: nom,
+        fecha_evento: fec,
+        hora_evento: hor || '09:00',
+        lugar_evento: lug,
+        publico_objetivo: pub,
+        objetivo_mensaje: obj,
+        datos_adicionales: infoAdicional,
+        tipo_pieza: tipoPieza,
+        estilo_visual: estilo,
+        material: material,
+        tamano_impreso: tamanoImpreso,
+        orientacion: orientacion,
+        plataformas: plataformas.length ? plataformas : ['Facebook'],
+        formato_requerido: formatoRequerido,
+        texto_aprobado: brief,
+        solicitante: {
+          nombre: solicitanteNombre,
+          cargo: solicitanteCargo,
+          telefono: solicitanteTelefono
+        },
+        vobo_aprobado: true,
+        estado: 'PENDIENTE',
+        fecha_recepcion: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        fecha_limite: 'SLA: 7 días hábiles',
+        disenador_asignado: null,
+        rondas_cambios_usadas: 0,
+        historial_cambios: [],
+        archivos: ['brief_oficial_firmado.pdf', 'logo_institucional.png']
+      };
+      state.solicitudes.unshift(nuevaSolicitud);
+      this.renderRequests();
+      this.updateCounts();
+    }
 
     document.getElementById('formSolicitud').reset();
     this.goToStep(1);
     this.showTab('bandeja');
-    this.showToast(`🎉 ¡Ficha Técnica Oficial ${correlativo} registrada exitosamente por ${dirText}!`, 'success');
   },
 
   // ==============================================================================
@@ -1090,7 +1158,7 @@ const app = {
     }
 
     if (state.activeFilter !== 'TODOS') {
-      items = items.filter(s => s.estado === state.activeFilter);
+      items = items.filter(s => this.normalizeEstado(s.estado || s.estado_codigo) === state.activeFilter);
     }
 
     if (items.length === 0) {
@@ -1151,7 +1219,20 @@ const app = {
     }).join('');
   },
 
+  normalizeEstado(estado) {
+    if (!estado) return 'PENDIENTE';
+    const s = estado.toString().toUpperCase();
+    if (s.includes('PENDIENT')) return 'PENDIENTE';
+    if (s.includes('REVISI')) return 'EN_REVISION';
+    if (s.includes('PROCES')) return 'DISENO_PROCESO';
+    if (s.includes('AJUST')) return 'AJUSTES';
+    if (s.includes('APROBAD')) return 'APROBADO';
+    if (s.includes('FINALIZ')) return 'FINALIZADO';
+    return s;
+  },
+
   getStatusBadge(estado) {
+    const norm = this.normalizeEstado(estado);
     const badges = {
       'PENDIENTE': { label: '🟡 Pendiente', class: 'status-amarillo' },
       'EN_REVISION': { label: '🔵 En revisión', class: 'status-azul' },
@@ -1160,7 +1241,7 @@ const app = {
       'APROBADO': { label: '🟢 Aprobado', class: 'status-verde' },
       'FINALIZADO': { label: '⚫ Finalizado', class: 'status-gris' }
     };
-    return badges[estado] || { label: estado, class: 'status-gris' };
+    return badges[norm] || { label: estado || '🟡 Pendiente', class: 'status-amarillo' };
   },
 
   updateCounts() {
@@ -1170,12 +1251,12 @@ const app = {
     }
 
     const total = items.length;
-    const pen = items.filter(s => s.estado === 'PENDIENTE').length;
-    const rev = items.filter(s => s.estado === 'EN_REVISION').length;
-    const pro = items.filter(s => s.estado === 'DISENO_PROCESO').length;
-    const aju = items.filter(s => s.estado === 'AJUSTES').length;
-    const apr = items.filter(s => s.estado === 'APROBADO').length;
-    const fin = items.filter(s => s.estado === 'FINALIZADO').length;
+    const pen = items.filter(s => this.normalizeEstado(s.estado || s.estado_codigo) === 'PENDIENTE').length;
+    const rev = items.filter(s => this.normalizeEstado(s.estado || s.estado_codigo) === 'EN_REVISION').length;
+    const pro = items.filter(s => this.normalizeEstado(s.estado || s.estado_codigo) === 'DISENO_PROCESO').length;
+    const aju = items.filter(s => this.normalizeEstado(s.estado || s.estado_codigo) === 'AJUSTES').length;
+    const apr = items.filter(s => this.normalizeEstado(s.estado || s.estado_codigo) === 'APROBADO').length;
+    const fin = items.filter(s => this.normalizeEstado(s.estado || s.estado_codigo) === 'FINALIZADO').length;
 
     const el = (id) => document.getElementById(id);
     if (el('tramitesCount')) el('tramitesCount').textContent = total;
@@ -1325,7 +1406,7 @@ const app = {
     if (modalBackdrop) modalBackdrop.classList.remove('active');
   },
 
-  submitCambio(solicitudId) {
+  async submitCambio(solicitudId) {
     const sol = state.solicitudes.find(s => s.id === solicitudId);
     if (!sol) return;
 
@@ -1340,28 +1421,60 @@ const app = {
       return;
     }
 
-    sol.rondas_cambios_usadas++;
-    sol.estado = 'AJUSTES';
-    sol.historial_cambios.push({
-      ronda: sol.rondas_cambios_usadas,
-      fecha: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      usuario: `${state.currentUser ? state.currentUser.nombres + ' ' + state.currentUser.apellidos : 'Solicitante'}`,
-      motivo: txt
-    });
+    try {
+      const res = await fetch(`/api/solicitudes/${solicitudId}/cambios`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          motivo_cambio: txt,
+          rondas_actuales: sol.rondas_cambios_usadas,
+          solicitado_por: state.currentUser ? `${state.currentUser.nombres} ${state.currentUser.apellidos}` : 'Solicitante Municipal',
+          solicitante_id: state.currentUser?.id
+        })
+      });
 
-    this.renderRequests();
-    this.updateCounts();
-    this.openDetailModal(solicitudId);
-    this.showToast(`✅ Ronda de cambios ${sol.rondas_cambios_usadas} de 2 registrada. Solicitud enviada a Ajustes.`, 'success');
+      const json = await res.json();
+      if (json.exito) {
+        await this.loadSolicitudesFromApi();
+        this.openDetailModal(solicitudId);
+        this.showToast(`✅ ${json.mensaje}`, 'success');
+        return;
+      } else {
+        this.showToast(`⚠️ ${json.mensaje}`, 'error');
+      }
+    } catch (err) {
+      console.warn('Fallback local para cambios:', err);
+      sol.rondas_cambios_usadas++;
+      sol.estado = 'AJUSTES';
+      if (!sol.historial_cambios) sol.historial_cambios = [];
+      sol.historial_cambios.push({
+        ronda: sol.rondas_cambios_usadas,
+        fecha: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        usuario: `${state.currentUser ? state.currentUser.nombres + ' ' + state.currentUser.apellidos : 'Solicitante'}`,
+        motivo: txt
+      });
+      this.renderRequests();
+      this.updateCounts();
+      this.openDetailModal(solicitudId);
+      this.showToast(`✅ Ronda de cambios ${sol.rondas_cambios_usadas} de 2 registrada en memoria.`, 'success');
+    }
   },
 
-  cambiarEstado(solicitudId, nuevoEstado) {
-    const sol = state.solicitudes.find(s => s.id === solicitudId);
-    if (!sol) return;
-
-    sol.estado = nuevoEstado;
-    this.renderRequests();
-    this.updateCounts();
+  async cambiarEstado(solicitudId, nuevoEstado) {
+    try {
+      await fetch(`/api/solicitudes/${solicitudId}/estado`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ codigo_estado: nuevoEstado })
+      });
+      await this.loadSolicitudesFromApi();
+    } catch (err) {
+      console.warn('Error conectando a API para cambio de estado:', err);
+      const sol = state.solicitudes.find(s => s.id === solicitudId);
+      if (sol) sol.estado = nuevoEstado;
+      this.renderRequests();
+      this.updateCounts();
+    }
     this.openDetailModal(solicitudId);
     this.showToast(`Estado actualizado a: ${this.getStatusBadge(nuevoEstado).label}`, 'success');
   },
