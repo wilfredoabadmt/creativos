@@ -170,6 +170,8 @@ const ORGANIGRAMA_GAMEA = [
 // ==============================================================================
 const USUARIOS_DIRECCIONES = {
   'dir.salud@elalto.gob.bo': {
+    id: 'b0000001-0000-0000-0000-000000000001',
+    email: 'dir.salud@elalto.gob.bo',
     nombres: 'Dra. Patricia',
     apellidos: 'Mendoza Limachi',
     cargo: 'Directora de Gestión en Salud',
@@ -177,10 +179,13 @@ const USUARIOS_DIRECCIONES = {
     secretaria_id: 9,
     direccion: 'Dirección de Gestión en Salud',
     direccion_id: 23,
+    telefono: '78900001',
     rol: 'SOLICITANTE',
     badge: '🩺 Salud (SMS)'
   },
   'dir.obras@elalto.gob.bo': {
+    id: 'b0000001-0000-0000-0000-000000000002',
+    email: 'dir.obras@elalto.gob.bo',
     nombres: 'Ing. Roberto',
     apellidos: 'Mamani Condori',
     cargo: 'Director de Obras Municipales',
@@ -188,10 +193,13 @@ const USUARIOS_DIRECCIONES = {
     secretaria_id: 10,
     direccion: 'Dirección de Obras Municipales',
     direccion_id: 30,
+    telefono: '78900002',
     rol: 'SOLICITANTE',
     badge: '🏗️ Obras (SMIP)'
   },
   'dir.cultura@elalto.gob.bo': {
+    id: 'b0000001-0000-0000-0000-000000000003',
+    email: 'dir.cultura@elalto.gob.bo',
     nombres: 'Lic. Marcelo',
     apellidos: 'Paredes Choque',
     cargo: 'Director de Cultura',
@@ -199,10 +207,13 @@ const USUARIOS_DIRECCIONES = {
     secretaria_id: 6,
     direccion: 'Dirección de Cultura',
     direccion_id: 15,
+    telefono: '78900003',
     rol: 'SOLICITANTE',
     badge: '🎭 Cultura (SMEC)'
   },
   'dir.seguridad@elalto.gob.bo': {
+    id: 'b0000001-0000-0000-0000-000000000004',
+    email: 'dir.seguridad@elalto.gob.bo',
     nombres: 'Cap. Edwin',
     apellidos: 'Huanca Laura',
     cargo: 'Director de Seguridad Pública',
@@ -210,10 +221,13 @@ const USUARIOS_DIRECCIONES = {
     secretaria_id: 8,
     direccion: 'Dirección de Seguridad Pública, Programas y Soluciones Tecnológicas',
     direccion_id: 20,
+    telefono: '78900004',
     rol: 'SOLICITANTE',
     badge: '🛡️ Seguridad (SMSC)'
   },
   'dir.finanzas@elalto.gob.bo': {
+    id: 'b0000001-0000-0000-0000-000000000005',
+    email: 'dir.finanzas@elalto.gob.bo',
     nombres: 'Lic. Carmen',
     apellidos: 'Villavicencio',
     cargo: 'Directora Administrativa',
@@ -221,10 +235,13 @@ const USUARIOS_DIRECCIONES = {
     secretaria_id: 3,
     direccion: 'Dirección Administrativa',
     direccion_id: 6,
+    telefono: '78900005',
     rol: 'SOLICITANTE',
     badge: '🏢 Finanzas (SMAF)'
   },
   'dir.artesanias@elalto.gob.bo': {
+    id: 'b0000001-0000-0000-0000-000000000006',
+    email: 'dir.artesanias@elalto.gob.bo',
     nombres: 'Lic. René',
     apellidos: 'Condori Huallpa',
     cargo: 'Director de Promoción Artesanal',
@@ -232,10 +249,13 @@ const USUARIOS_DIRECCIONES = {
     secretaria_id: 12,
     direccion: 'Dirección de Desarrollo Productivo Artesanal',
     direccion_id: 36,
+    telefono: '78900006',
     rol: 'SOLICITANTE',
     badge: '💼 Desarrollo Económico'
   },
   'disenador.marco@elalto.gob.bo': {
+    id: 'a0000001-0000-0000-0000-000000000002',
+    email: 'disenador.marco@elalto.gob.bo',
     nombres: 'Lic. Marco Antonio',
     apellidos: 'Choque Callisaya',
     cargo: 'Diseñador Creativo Senior',
@@ -243,10 +263,13 @@ const USUARIOS_DIRECCIONES = {
     secretaria_id: 2,
     direccion: 'Dirección de Comunicación',
     direccion_id: 4,
+    telefono: '77210002',
     rol: 'DISENADOR',
     badge: '🎨 Diseñador DICOM'
   },
   'director.dicom@elalto.gob.bo': {
+    id: 'a0000001-0000-0000-0000-000000000001',
+    email: 'director.dicom@elalto.gob.bo',
     nombres: 'Lic. Roxana',
     apellidos: 'Vargas Quispe',
     cargo: 'Directora de Comunicación',
@@ -254,10 +277,13 @@ const USUARIOS_DIRECCIONES = {
     secretaria_id: 2,
     direccion: 'Dirección de Comunicación',
     direccion_id: 4,
+    telefono: '77210001',
     rol: 'SUPERVISOR',
     badge: '⭐ Directora DICOM'
   },
   'admin@elalto.gob.bo': {
+    id: 'a0000001-0000-0000-0000-000000000003',
+    email: 'admin@elalto.gob.bo',
     nombres: 'Ing. Wilfredo',
     apellidos: 'Abad Mancilla',
     cargo: 'Administrador General de Sistemas',
@@ -265,6 +291,7 @@ const USUARIOS_DIRECCIONES = {
     secretaria_id: 1,
     direccion: 'Dirección General de Asesoría Legal / Sistemas',
     direccion_id: 1,
+    telefono: '77210000',
     rol: 'ADMIN',
     badge: '🛡️ Administrador Sistemas'
   }
@@ -277,6 +304,7 @@ const state = {
   currentUser: null, // Si es null, está en modo PÚBLICO (formulario y bandeja protegidos)
   currentStep: 1,
   activeFilter: 'TODOS',
+  showOnlyMyDirection: true, // Para Solicitantes: alterna vista propia vs vista institucional completa
   solicitudes: [
     {
       id: 'sol-01',
@@ -459,7 +487,19 @@ const app = {
     this.bindEvents();
     this.updateCurrentDate();
     this.populateSecretariasSelect();
+
+    // Restaurar sesión institucional persistente si existe
+    try {
+      const savedEmail = localStorage.getItem('creativos_user_email');
+      if (savedEmail && USUARIOS_DIRECCIONES[savedEmail.toLowerCase()]) {
+        state.currentUser = USUARIOS_DIRECCIONES[savedEmail.toLowerCase()];
+      }
+    } catch (e) {
+      console.warn('localStorage no disponible');
+    }
+
     await this.loadSolicitudesFromApi();
+    this.applyUserConstraintsToForm();
     this.calculateSlaPreview();
     this.updateCounts();
     this.updateAuthUI();
@@ -470,7 +510,7 @@ const app = {
       const res = await fetch('/api/solicitudes');
       if (res.ok) {
         const json = await res.json();
-        if (json.exito && Array.isArray(json.data) && json.data.length > 0) {
+        if (json.exito && Array.isArray(json.data)) {
           state.solicitudes = json.data;
           this.renderRequests();
           this.updateCounts();
@@ -594,6 +634,10 @@ const app = {
     }
 
     state.currentUser = user;
+    try {
+      localStorage.setItem('creativos_user_email', email.toLowerCase());
+    } catch (e) {}
+
     this.closeLoginModal();
     this.updateAuthUI();
     this.applyUserConstraintsToForm();
@@ -605,8 +649,10 @@ const app = {
   },
 
   logout() {
-    const prevUser = state.currentUser;
     state.currentUser = null;
+    try {
+      localStorage.removeItem('creativos_user_email');
+    } catch (e) {}
     this.updateAuthUI();
     this.showTab('landing');
     this.showToast('Sesión institucional cerrada exitosamente.', 'info');
@@ -683,7 +729,7 @@ const app = {
 
     if (selectSec && selectDir) {
       if (state.currentUser.rol === 'SOLICITANTE') {
-        // Bloquear al Solicitante en su propia Secretaría y Dirección
+        // Bloquear al Solicitante en su propia Secretaría y Dirección institucional
         selectSec.value = state.currentUser.secretaria_id;
         this.onSecretariaChange(state.currentUser.secretaria_id);
         selectDir.value = state.currentUser.direccion_id;
@@ -694,17 +740,26 @@ const app = {
         // Directores, Supervisores o Admins pueden seleccionar cualquiera
         selectSec.disabled = false;
         selectDir.disabled = false;
+        if (!selectSec.value && state.currentUser.secretaria_id) {
+          selectSec.value = state.currentUser.secretaria_id;
+          this.onSecretariaChange(state.currentUser.secretaria_id);
+          if (state.currentUser.direccion_id) selectDir.value = state.currentUser.direccion_id;
+        }
       }
     }
 
     // Autocompletar datos del solicitante (Sección 5)
     const nomInput = document.getElementById('campoSolicitanteNombre');
     const cargoInput = document.getElementById('campoSolicitanteCargo');
-    if (nomInput && !nomInput.value) {
+    const telInput = document.getElementById('campoSolicitanteTelefono');
+    if (nomInput) {
       nomInput.value = `${state.currentUser.nombres} ${state.currentUser.apellidos}`;
     }
-    if (cargoInput && !cargoInput.value) {
+    if (cargoInput) {
       cargoInput.value = state.currentUser.cargo || 'Funcionario Municipal';
+    }
+    if (telInput && state.currentUser.telefono) {
+      telInput.value = state.currentUser.telefono;
     }
   },
 
@@ -772,6 +827,13 @@ const app = {
       if (el) el.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    if (tabName === 'solicitud') {
+      this.applyUserConstraintsToForm();
+    } else if (tabName === 'bandeja') {
+      this.renderRequests();
+      this.updateCounts();
+    }
   },
 
   // ==============================================================================
@@ -799,15 +861,18 @@ const app = {
 
   nextStep(currentStep) {
     if (currentStep === 1) {
-      const sec = document.getElementById('campoSecretaria').value;
-      const dir = document.getElementById('campoDireccionSelect').value;
-      const nom = document.getElementById('campoNombreEvento').value.trim();
-      const fec = document.getElementById('campoFechaEvento').value;
-      const lug = document.getElementById('campoLugarEvento').value.trim();
-      const pub = document.getElementById('campoPublicoObjetivo').value.trim();
-      const obj = document.getElementById('campoObjetivoMensaje').value.trim();
+      const sec = document.getElementById('campoSecretaria')?.value;
+      const dir = document.getElementById('campoDireccionSelect')?.value;
+      const nom = document.getElementById('campoNombreEvento')?.value.trim();
+      const fec = document.getElementById('campoFechaEvento')?.value;
+      const lug = document.getElementById('campoLugarEvento')?.value.trim();
+      const pub = document.getElementById('campoPublicoObjetivo')?.value.trim();
+      const obj = document.getElementById('campoObjetivoMensaje')?.value.trim();
 
-      if (!sec || !dir || !nom || !fec || !lug || !pub || !obj) {
+      const hasSec = sec || (state.currentUser && state.currentUser.secretaria_id);
+      const hasDir = dir || (state.currentUser && state.currentUser.direccion_id);
+
+      if (!hasSec || !hasDir || !nom || !fec || !lug || !pub || !obj) {
         this.showToast('Por favor complete todos los campos obligatorios (*) de la Sección 1.', 'error');
         return;
       }
@@ -994,18 +1059,41 @@ const app = {
     }
 
     const secSelect = document.getElementById('campoSecretaria');
-    const secText = secSelect.options[secSelect.selectedIndex].text;
-
     const dirSelect = document.getElementById('campoDireccionSelect');
-    const dirText = dirSelect.options[dirSelect.selectedIndex].text;
 
-    const nom = document.getElementById('campoNombreEvento').value;
+    const secId = state.currentUser?.rol === 'SOLICITANTE'
+      ? state.currentUser.secretaria_id
+      : (parseInt(secSelect?.value, 10) || state.currentUser?.secretaria_id || 2);
+
+    const dirId = state.currentUser?.rol === 'SOLICITANTE'
+      ? state.currentUser.direccion_id
+      : (parseInt(dirSelect?.value, 10) || state.currentUser?.direccion_id || 4);
+
+    const secText = (state.currentUser?.rol === 'SOLICITANTE' && state.currentUser.secretaria)
+      ? state.currentUser.secretaria
+      : (secSelect && secSelect.selectedIndex >= 0 && secSelect.options[secSelect.selectedIndex]
+          ? secSelect.options[secSelect.selectedIndex].text
+          : (state.currentUser?.secretaria || 'Secretaría Municipal de Gestión Institucional'));
+
+    const dirText = (state.currentUser?.rol === 'SOLICITANTE' && state.currentUser.direccion)
+      ? state.currentUser.direccion
+      : (dirSelect && dirSelect.selectedIndex >= 0 && dirSelect.options[dirSelect.selectedIndex]
+          ? dirSelect.options[dirSelect.selectedIndex].text
+          : (state.currentUser?.direccion || 'Dirección de Comunicación'));
+
+    const nom = document.getElementById('campoNombreEvento').value.trim();
     const fec = document.getElementById('campoFechaEvento').value;
     const hor = document.getElementById('campoHoraEvento').value;
-    const lug = document.getElementById('campoLugarEvento').value;
-    const pub = document.getElementById('campoPublicoObjetivo').value;
-    const obj = document.getElementById('campoObjetivoMensaje').value;
-    const infoAdicional = document.getElementById('campoInfoAdicional').value;
+    const lug = document.getElementById('campoLugarEvento').value.trim();
+    const pub = document.getElementById('campoPublicoObjetivo').value.trim();
+    const obj = document.getElementById('campoObjetivoMensaje').value.trim();
+    const infoAdicional = document.getElementById('campoInfoAdicional').value.trim();
+
+    if (!nom || !fec || !lug || !pub || !obj) {
+      this.showToast('Por favor complete todos los datos obligatorios (*) del evento en el Paso 1.', 'error');
+      this.goToStep(1);
+      return;
+    }
 
     let tipoPieza = document.querySelector('input[name="tipoPieza"]:checked')?.value || 'Afiche informativo';
     let tipoPiezaOtro = null;
@@ -1048,7 +1136,9 @@ const app = {
 
     const payload = {
       secretaria: secText,
+      secretaria_id: secId,
       direccion: dirText,
+      direccion_id: dirId,
       nombre_evento: nom,
       fecha_evento: fec,
       hora_evento: hor || '09:00',
@@ -1089,8 +1179,51 @@ const app = {
       const result = await res.json();
 
       if (result.exito) {
-        correlativoGenerado = result.data.codigo_tramite || correlativoGenerado;
+        correlativoGenerado = result.data?.codigo_tramite || correlativoGenerado;
         this.showToast(`🎉 ¡${result.mensaje || 'Ficha técnica guardada en PostgreSQL'}!`, 'success');
+
+        // Insertar inmediatamente en la lista para visualización instantánea
+        const nuevaSolicitud = {
+          id: result.data?.id || `sol-${Date.now()}`,
+          codigo_tramite: correlativoGenerado,
+          secretaria: secText,
+          direccion: dirText,
+          nombre_evento: nom,
+          fecha_evento: fec,
+          hora_evento: hor || '09:00',
+          lugar_evento: lug,
+          publico_objetivo: pub,
+          objetivo_mensaje: obj,
+          informacion_adicional: infoAdicional,
+          tipo_pieza: tipoPieza,
+          estilo_visual: estilo,
+          material: material,
+          tamano_impreso: tamanoImpreso,
+          orientacion: orientacion,
+          plataformas: plataformas.length ? plataformas : ['Facebook'],
+          formato_requerido: formatoRequerido,
+          texto_aprobado: brief,
+          solicitante: {
+            nombre: solicitanteNombre,
+            cargo: solicitanteCargo,
+            telefono: solicitanteTelefono
+          },
+          vobo_aceptado: true,
+          estado_codigo: 'PENDIENTE',
+          estado: '🟡 Pendiente',
+          estado_color: '#EAB308',
+          fecha_recepcion: result.data?.fecha_recepcion || new Date().toISOString().replace('T', ' ').substring(0, 16),
+          fecha_limite: result.data?.fecha_limite || 'SLA: 7 días hábiles',
+          disenador_asignado: 'Por Asignar',
+          rondas_cambios_usadas: 0,
+          historial_cambios: [],
+          archivos: ['logo_gamea_oficial.png', 'brief_firmado.pdf'],
+          created_at: new Date().toISOString()
+        };
+
+        state.solicitudes.unshift(nuevaSolicitud);
+        this.renderRequests();
+        this.updateCounts();
         await this.loadSolicitudesFromApi();
       } else {
         throw new Error(result.error || result.mensaje);
@@ -1139,6 +1272,7 @@ const app = {
     }
 
     document.getElementById('formSolicitud').reset();
+    this.applyUserConstraintsToForm();
     this.goToStep(1);
     this.showTab('bandeja');
   },
@@ -1146,15 +1280,73 @@ const app = {
   // ==============================================================================
   // 8. BANDEJA DE TRÁMITES Y CONTROL DE ACCESO
   // ==============================================================================
+  toggleTrayFilter(onlyMine) {
+    state.showOnlyMyDirection = onlyMine;
+    this.renderRequests();
+    this.updateCounts();
+  },
+
+  setFilter(filterName) {
+    document.querySelectorAll('.filter-pill').forEach(p => {
+      p.classList.toggle('active', p.getAttribute('data-filter') === filterName);
+    });
+    state.activeFilter = filterName;
+    this.renderRequests();
+  },
+
   renderRequests() {
     const container = document.getElementById('solicitudesContainer');
     if (!container) return;
 
-    let items = state.solicitudes;
+    const noticeContainer = document.getElementById('trayFilterNotice');
+    let items = state.solicitudes || [];
 
-    // Si el usuario es SOLICITANTE, filtrar por su Dirección para privacidad
-    if (state.currentUser && state.currentUser.rol === 'SOLICITANTE') {
-      items = items.filter(s => s.direccion.includes(state.currentUser.direccion) || s.secretaria.includes(state.currentUser.secretaria));
+    // Comprobar rol de solicitante para filtro contextual
+    const isSolicitante = state.currentUser && state.currentUser.rol === 'SOLICITANTE';
+
+    if (noticeContainer) {
+      if (isSolicitante) {
+        noticeContainer.style.display = 'flex';
+        if (state.showOnlyMyDirection) {
+          noticeContainer.innerHTML = `
+            <div>
+              <span>🏛️ <strong>Filtrado por tu dependencia:</strong> ${state.currentUser.direccion}</span>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline" style="border-color:#3B82F6; color:#1E40AF; background:#fff;" onclick="app.toggleTrayFilter(false)">
+              🌐 Ver todas las solicitudes del municipio
+            </button>
+          `;
+        } else {
+          noticeContainer.innerHTML = `
+            <div>
+              <span>🌐 <strong>Vista Global:</strong> Mostrando solicitudes de todas las dependencias del GAM El Alto</span>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline" style="border-color:#3B82F6; color:#1E40AF; background:#fff;" onclick="app.toggleTrayFilter(true)">
+              🏛️ Filtrar solo mi dependencia (${state.currentUser.badge || state.currentUser.direccion})
+            </button>
+          `;
+        }
+      } else if (state.currentUser) {
+        noticeContainer.style.display = 'flex';
+        noticeContainer.innerHTML = `
+          <div>
+            <span>⭐ <strong>Bandeja Central DICOM:</strong> Vista institucional para supervisión, asignación y control técnico</span>
+          </div>
+          <span class="badge-role" style="background:var(--gamea-blue); color:#fff; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:600;">${state.currentUser.badge || state.currentUser.cargo}</span>
+        `;
+      } else {
+        noticeContainer.style.display = 'none';
+      }
+    }
+
+    if (isSolicitante && state.showOnlyMyDirection) {
+      const userDir = (state.currentUser.direccion || '').toLowerCase();
+      const userSec = (state.currentUser.secretaria || '').toLowerCase();
+      items = items.filter(s => {
+        const sDir = (s.direccion || '').toLowerCase();
+        const sSec = (s.secretaria || '').toLowerCase();
+        return sDir.includes(userDir) || userDir.includes(sDir) || sSec.includes(userSec);
+      });
     }
 
     if (state.activeFilter !== 'TODOS') {
@@ -1162,10 +1354,34 @@ const app = {
     }
 
     if (items.length === 0) {
-      container.innerHTML = `
-        <div class="card-box p-4 text-center" style="grid-column: 1 / -1;">
-          <p class="text-muted">No se encontraron solicitudes registradas para este filtro o dependencia.</p>
-        </div>`;
+      if (isSolicitante && state.showOnlyMyDirection) {
+        container.innerHTML = `
+          <div class="card-box p-4 text-center" style="grid-column: 1 / -1; background:#ffffff; border-radius:12px; border:1px dashed #CBD5E1; padding: 40px 20px;">
+            <div style="font-size: 3rem; margin-bottom: 12px;">📋</div>
+            <h4 style="color: var(--gamea-blue); margin-bottom: 8px;">No hay solicitudes registradas para tu dependencia</h4>
+            <p class="text-muted" style="max-width: 550px; margin: 0 auto 20px; font-size: 0.95rem;">
+              Tu unidad (<strong>${state.currentUser.direccion}</strong>) aún no tiene solicitudes con este estado.
+            </p>
+            <div class="d-flex justify-center gap-2 flex-wrap">
+              <button class="btn btn-primary" onclick="app.showTab('solicitud')">
+                <span>➕</span> Crear Nueva Solicitud
+              </button>
+              <button class="btn btn-outline" onclick="app.toggleTrayFilter(false)">
+                🌐 Ver todas las solicitudes del municipio
+              </button>
+            </div>
+          </div>`;
+      } else {
+        container.innerHTML = `
+          <div class="card-box p-4 text-center" style="grid-column: 1 / -1; background:#ffffff; border-radius:12px; border:1px dashed #CBD5E1; padding: 40px 20px;">
+            <div style="font-size: 3rem; margin-bottom: 12px;">🔍</div>
+            <h4 style="color: var(--gamea-blue); margin-bottom: 8px;">No se encontraron solicitudes</h4>
+            <p class="text-muted" style="margin-bottom: 16px;">No hay trámites para el filtro seleccionado (${state.activeFilter}).</p>
+            <button class="btn btn-outline btn-sm" onclick="app.setFilter('TODOS')">
+              Mostrar todas las solicitudes
+            </button>
+          </div>`;
+      }
       return;
     }
 
@@ -1245,9 +1461,17 @@ const app = {
   },
 
   updateCounts() {
-    let items = state.solicitudes;
-    if (state.currentUser && state.currentUser.rol === 'SOLICITANTE') {
-      items = items.filter(s => s.direccion.includes(state.currentUser.direccion) || s.secretaria.includes(state.currentUser.secretaria));
+    let items = state.solicitudes || [];
+    const isSolicitante = state.currentUser && state.currentUser.rol === 'SOLICITANTE';
+
+    if (isSolicitante && state.showOnlyMyDirection) {
+      const userDir = (state.currentUser.direccion || '').toLowerCase();
+      const userSec = (state.currentUser.secretaria || '').toLowerCase();
+      items = items.filter(s => {
+        const sDir = (s.direccion || '').toLowerCase();
+        const sSec = (s.secretaria || '').toLowerCase();
+        return sDir.includes(userDir) || userDir.includes(sDir) || sSec.includes(userSec);
+      });
     }
 
     const total = items.length;

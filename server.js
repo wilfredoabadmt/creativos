@@ -131,8 +131,14 @@ async function inicializarBaseDatos() {
       FOR EACH ROW
       WHEN (NEW.codigo_tramite IS NULL OR NEW.codigo_tramite = '')
       EXECUTE FUNCTION comunica.generar_codigo_tramite();
+
+      -- Sincronizar secretaria_id con la direccion correspondiente para evitar desajustes
+      UPDATE comunica.solicitudes s
+      SET secretaria_id = d.secretaria_id
+      FROM comunica.direcciones d
+      WHERE s.direccion_id = d.id AND s.secretaria_id != d.secretaria_id;
     `);
-    console.log('✅ [PostgreSQL 16] Trigger de correlativo sincronizado con esquema comunica.');
+    console.log('✅ [PostgreSQL 16] Trigger y consistencia relacional verificados.');
 
     client.release();
   } catch (err) {
@@ -261,24 +267,46 @@ app.post('/api/solicitudes', async (req, res) => {
     try {
       await client.query('BEGIN');
 
-      // 1. Obtener o asignar secretaria_id y direccion_id
+      // 1. Obtener o asignar secretaria_id y direccion_id con resolución exacta
       let secId = 2; // Default SMGI
       let dirId = 4; // Default DICOM
 
-      if (body.secretaria) {
-        const secRes = await client.query(
-          `SELECT id FROM comunica.secretarias WHERE nombre ILIKE $1 OR sigla ILIKE $1 LIMIT 1`,
-          [`%${body.secretaria.substring(0, 15)}%`]
+      // Resolver direccion_id primero si se proporciona
+      if (body.direccion_id && !isNaN(parseInt(body.direccion_id, 10))) {
+        const dirRes = await client.query(
+          `SELECT id, secretaria_id FROM comunica.direcciones WHERE id = $1 LIMIT 1`,
+          [parseInt(body.direccion_id, 10)]
         );
-        if (secRes.rowCount > 0) secId = secRes.rows[0].id;
+        if (dirRes.rowCount > 0) {
+          dirId = dirRes.rows[0].id;
+          if (dirRes.rows[0].secretaria_id) secId = dirRes.rows[0].secretaria_id;
+        }
+      } else if (body.direccion) {
+        const dirClean = body.direccion.trim();
+        const dirRes = await client.query(
+          `SELECT id, secretaria_id FROM comunica.direcciones WHERE nombre ILIKE $1 OR sigla ILIKE $1 OR $2 ILIKE ('%' || nombre || '%') LIMIT 1`,
+          [dirClean, dirClean]
+        );
+        if (dirRes.rowCount > 0) {
+          dirId = dirRes.rows[0].id;
+          if (dirRes.rows[0].secretaria_id) secId = dirRes.rows[0].secretaria_id;
+        }
       }
 
-      if (body.direccion) {
-        const dirRes = await client.query(
-          `SELECT id FROM comunica.direcciones WHERE nombre ILIKE $1 OR sigla ILIKE $1 LIMIT 1`,
-          [`%${body.direccion.substring(0, 15)}%`]
+      // Resolver secretaria_id explícito si se proporcionó y no se resolvió con la dirección
+      if (body.secretaria_id && !isNaN(parseInt(body.secretaria_id, 10))) {
+        const secRes = await client.query(
+          `SELECT id FROM comunica.secretarias WHERE id = $1 LIMIT 1`,
+          [parseInt(body.secretaria_id, 10)]
         );
-        if (dirRes.rowCount > 0) dirId = dirRes.rows[0].id;
+        if (secRes.rowCount > 0) secId = secRes.rows[0].id;
+      } else if (!dirId && body.secretaria) {
+        const secClean = body.secretaria.trim();
+        const secRes = await client.query(
+          `SELECT id FROM comunica.secretarias WHERE nombre ILIKE $1 OR sigla ILIKE $1 OR $2 ILIKE ('%' || nombre || '%') LIMIT 1`,
+          [secClean, secClean]
+        );
+        if (secRes.rowCount > 0) secId = secRes.rows[0].id;
       }
 
       // 2. Obtener tipo_diseno_id
@@ -294,11 +322,19 @@ app.post('/api/solicitudes', async (req, res) => {
 
       // 3. Obtener solicitante_id default o autenticado
       let solicitanteId = 'b0000001-0000-0000-0000-000000000001';
-      const usrRes = await client.query(
-        `SELECT id FROM comunica.usuarios WHERE direccion_id = $1 LIMIT 1`,
-        [dirId]
-      );
-      if (usrRes.rowCount > 0) solicitanteId = usrRes.rows[0].id;
+      if (body.solicitante_id) {
+        const usrCheck = await client.query(
+          `SELECT id FROM comunica.usuarios WHERE id = $1 LIMIT 1`,
+          [body.solicitante_id]
+        );
+        if (usrCheck.rowCount > 0) solicitanteId = usrCheck.rows[0].id;
+      } else {
+        const usrRes = await client.query(
+          `SELECT id FROM comunica.usuarios WHERE direccion_id = $1 LIMIT 1`,
+          [dirId]
+        );
+        if (usrRes.rowCount > 0) solicitanteId = usrRes.rows[0].id;
+      }
 
       // 4. Estado inicial: PENDIENTE (id: 1)
       const estadoId = 1;
