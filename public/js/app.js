@@ -305,6 +305,19 @@ const state = {
   currentStep: 1,
   activeFilter: 'TODOS',
   showOnlyMyDirection: true, // Para Solicitantes: alterna vista propia vs vista institucional completa
+  usuariosState: {
+    pagina: 1,
+    limite: 10,
+    total: 0,
+    paginas: 1,
+    filtroRol: '',
+    filtroSecretaria: '',
+    filtroEstado: 'todos',
+    busqueda: '',
+    subtabActual: 'usuarios',
+    usuarios: [],
+    roles: []
+  },
   solicitudes: [
     {
       id: 'sol-01',
@@ -579,11 +592,95 @@ const app = {
       });
     }
 
+    // Subtabs del módulo de usuarios
+    document.querySelectorAll('.usuarios-subtabs .subtab-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const subtab = e.currentTarget.getAttribute('data-subtab');
+        this.switchUsuariosSubtab(subtab);
+      });
+    });
+
+    // Botón Nuevo Usuario
+    const btnNuevoUsuario = document.getElementById('btnNuevoUsuario');
+    if (btnNuevoUsuario) {
+      btnNuevoUsuario.addEventListener('click', () => this.openModalUsuario());
+    }
+
+    // Filtros de usuarios
+    const filterRol = document.getElementById('filterUsuarioRol');
+    if (filterRol) {
+      filterRol.addEventListener('change', (e) => {
+        state.usuariosState.filtroRol = e.target.value;
+        state.usuariosState.pagina = 1;
+        this.loadUsuarios();
+      });
+    }
+
+    const filterSec = document.getElementById('filterUsuarioSecretaria');
+    if (filterSec) {
+      filterSec.addEventListener('change', (e) => {
+        state.usuariosState.filtroSecretaria = e.target.value;
+        state.usuariosState.pagina = 1;
+        this.loadUsuarios();
+      });
+    }
+
+    const filterEstado = document.getElementById('filterUsuarioEstado');
+    if (filterEstado) {
+      filterEstado.addEventListener('change', (e) => {
+        state.usuariosState.filtroEstado = e.target.value;
+        state.usuariosState.pagina = 1;
+        this.loadUsuarios();
+      });
+    }
+
+    const searchInput = document.getElementById('searchUsuario');
+    if (searchInput) {
+      let debounceTimer = null;
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          state.usuariosState.busqueda = e.target.value.trim();
+          state.usuariosState.pagina = 1;
+          this.loadUsuarios();
+        }, 300);
+      });
+    }
+
+    // Eventos Modal Usuario
+    const btnCerrarModal = document.getElementById('btnCerrarModalUsuario');
+    const btnCancelarModal = document.getElementById('btnCancelarUsuario');
+    if (btnCerrarModal) btnCerrarModal.addEventListener('click', () => this.closeModalUsuario());
+    if (btnCancelarModal) btnCancelarModal.addEventListener('click', () => this.closeModalUsuario());
+
+    const formUsuario = document.getElementById('formUsuario');
+    if (formUsuario) {
+      formUsuario.addEventListener('submit', (e) => this.handleUsuarioSubmit(e));
+    }
+
+    const selectModalSec = document.getElementById('usuarioSecretaria');
+    if (selectModalSec) {
+      selectModalSec.addEventListener('change', (e) => {
+        this.onUsuarioSecretariaModalChange(e.target.value);
+      });
+    }
+
+    // Modal Reset Password
+    const btnCerrarReset = document.getElementById('btnCerrarResetPass');
+    if (btnCerrarReset) btnCerrarReset.addEventListener('click', () => this.closeModalResetPass());
+
+    const btnCopyPass = document.getElementById('btnCopyPassword');
+    if (btnCopyPass) {
+      btnCopyPass.addEventListener('click', () => this.copyResetPassword());
+    }
+
     // ESC para cerrar modales
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         this.closeModal();
         this.closeLoginModal();
+        this.closeModalUsuario();
+        this.closeModalResetPass();
       }
     });
   },
@@ -601,8 +698,18 @@ const app = {
   // 5. CONTROL DE AUTENTICACIÓN Y PRIVACIDAD DEL SISTEMA
   // ==============================================================================
   navigateWithAuthGuard(tabName) {
-    // Si intenta acceder a pestañas privadas sin sesión
-    if (!state.currentUser && (tabName === 'solicitud' || tabName === 'bandeja' || tabName === 'dashboard')) {
+    if (tabName === 'usuarios') {
+      if (!state.currentUser) {
+        this.openLoginModal(
+          '⚠️ Acceso Restringido: Inicie sesión como Administrador para acceder a la Gestión de Usuarios.'
+        );
+        return;
+      }
+      if (state.currentUser.rol !== 'ADMIN' && state.currentUser.rol_id !== 1) {
+        this.showToast('Acceso denegado: solo el Administrador General puede gestionar usuarios.', 'error');
+        return;
+      }
+    } else if (!state.currentUser && (tabName === 'solicitud' || tabName === 'bandeja' || tabName === 'dashboard')) {
       this.openLoginModal(
         '⚠️ Acceso Restringido: Inicie sesión con la cuenta de su Dirección Municipal para acceder a las solicitudes y seguimiento.'
       );
@@ -682,7 +789,13 @@ const app = {
         `;
       }
 
-      protectedBtns.forEach(btn => btn.style.display = 'inline-flex');
+      protectedBtns.forEach(btn => {
+        if (btn.classList.contains('nav-btn-admin')) {
+          btn.style.display = (state.currentUser.rol === 'ADMIN' || state.currentUser.rol_id === 1) ? 'inline-flex' : 'none';
+        } else {
+          btn.style.display = 'inline-flex';
+        }
+      });
 
       if (authNoticeBanner) {
         authNoticeBanner.innerHTML = `
@@ -800,7 +913,12 @@ const app = {
   },
 
   showTab(tabName) {
-    if (!state.currentUser && (tabName === 'solicitud' || tabName === 'bandeja' || tabName === 'dashboard')) {
+    if (tabName === 'usuarios') {
+      if (!state.currentUser || (state.currentUser.rol !== 'ADMIN' && state.currentUser.rol_id !== 1)) {
+        this.showToast('Acceso denegado: solo el Administrador General puede acceder a la Gestión de Usuarios.', 'error');
+        return;
+      }
+    } else if (!state.currentUser && (tabName === 'solicitud' || tabName === 'bandeja' || tabName === 'dashboard')) {
       this.openLoginModal(
         '⚠️ Acceso Restringido: Inicie sesión con la cuenta de su Dirección Municipal para acceder a las solicitudes y seguimiento.'
       );
@@ -819,7 +937,8 @@ const app = {
       'landing': 'viewLanding',
       'solicitud': 'viewSolicitud',
       'bandeja': 'viewBandeja',
-      'dashboard': 'viewDashboard'
+      'dashboard': 'viewDashboard',
+      'usuarios': 'viewUsuarios'
     }[tabName];
 
     if (targetSection) {
@@ -833,6 +952,8 @@ const app = {
     } else if (tabName === 'bandeja') {
       this.renderRequests();
       this.updateCounts();
+    } else if (tabName === 'usuarios') {
+      this.renderUsersView();
     }
   },
 
@@ -1836,6 +1957,676 @@ const app = {
       toast.style.transform = 'translateY(10px)';
       setTimeout(() => toast.remove(), 300);
     }, 4000);
+  },
+
+  // ==============================================================================
+  // 15. MÓDULO DE GESTIÓN DE USUARIOS Y ROLES (Feature 013-SDD)
+  // ==============================================================================
+  escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  },
+
+  populateUsuarioSecretariasSelects() {
+    const filterSec = document.getElementById('filterUsuarioSecretaria');
+    const modalSec = document.getElementById('usuarioSecretaria');
+
+    if (filterSec && filterSec.options.length <= 1) {
+      filterSec.innerHTML = '<option value="">Todas las secretarías</option>';
+      ORGANIGRAMA_OFICIAL.forEach(sec => {
+        const opt = document.createElement('option');
+        opt.value = sec.id;
+        opt.textContent = sec.sigla ? `${sec.sigla} - ${sec.nombre}` : sec.nombre;
+        filterSec.appendChild(opt);
+      });
+    }
+
+    if (modalSec && modalSec.options.length <= 1) {
+      modalSec.innerHTML = '<option value="">Seleccione secretaría...</option>';
+      ORGANIGRAMA_OFICIAL.forEach(sec => {
+        const opt = document.createElement('option');
+        opt.value = sec.id;
+        opt.textContent = sec.sigla ? `${sec.sigla} - ${sec.nombre}` : sec.nombre;
+        modalSec.appendChild(opt);
+      });
+    }
+  },
+
+  onUsuarioSecretariaModalChange(secretariaId) {
+    const dirSelect = document.getElementById('usuarioDireccion');
+    if (!dirSelect) return;
+    dirSelect.innerHTML = '<option value="">Seleccione dirección...</option>';
+    if (!secretariaId) return;
+
+    const sec = ORGANIGRAMA_OFICIAL.find(s => String(s.id) === String(secretariaId));
+    if (sec && Array.isArray(sec.direcciones)) {
+      sec.direcciones.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.textContent = d.sigla ? `${d.sigla} - ${d.nombre}` : d.nombre;
+        dirSelect.appendChild(opt);
+      });
+    }
+  },
+
+  switchUsuariosSubtab(subtab) {
+    state.usuariosState.subtabActual = subtab;
+    const btnUsuarios = document.getElementById('subtabUsuarios');
+    const btnRoles = document.getElementById('subtabRoles');
+    const panelUsuarios = document.getElementById('panelUsuarios');
+    const panelRoles = document.getElementById('panelRoles');
+
+    if (btnUsuarios && btnRoles && panelUsuarios && panelRoles) {
+      if (subtab === 'usuarios') {
+        btnUsuarios.classList.add('active');
+        btnRoles.classList.remove('active');
+        panelUsuarios.style.display = 'block';
+        panelRoles.style.display = 'none';
+        this.loadUsuarios();
+      } else {
+        btnUsuarios.classList.remove('active');
+        btnRoles.classList.add('active');
+        panelUsuarios.style.display = 'none';
+        panelRoles.style.display = 'block';
+        this.loadRoles();
+      }
+    }
+  },
+
+  async renderUsersView() {
+    this.populateUsuarioSecretariasSelects();
+    this.switchUsuariosSubtab(state.usuariosState.subtabActual || 'usuarios');
+  },
+
+  async loadUsuarios() {
+    const tbody = document.getElementById('tbodyUsuarios');
+    const emptyState = document.getElementById('usuariosEmptyState');
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4" style="color: #94a3b8;">⏳ Cargando usuarios institucionales...</td></tr>`;
+    }
+
+    try {
+      const params = new URLSearchParams();
+      params.append('page', state.usuariosState.pagina);
+      params.append('limit', state.usuariosState.limite);
+      if (state.usuariosState.filtroRol) params.append('rol', state.usuariosState.filtroRol);
+      if (state.usuariosState.filtroSecretaria) params.append('secretaria_id', state.usuariosState.filtroSecretaria);
+      if (state.usuariosState.filtroEstado !== 'todos') params.append('activo', state.usuariosState.filtroEstado);
+      if (state.usuariosState.busqueda) params.append('buscar', state.usuariosState.busqueda);
+
+      const res = await fetch(`/api/usuarios?${params.toString()}`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.exito && json.data) {
+          state.usuariosState.usuarios = json.data.usuarios || [];
+          state.usuariosState.total = json.data.paginacion?.total || 0;
+          state.usuariosState.paginas = json.data.paginacion?.paginas || 1;
+          this.renderUsuariosTable(state.usuariosState.usuarios);
+          this.renderUsuariosPagination();
+          return;
+        }
+      }
+      throw new Error('Respuesta inválida del servidor');
+    } catch (err) {
+      console.warn('⚠️ Error al cargar usuarios desde API, usando fallback local:', err);
+      let list = Object.values(USUARIOS_DIRECCIONES).map((u, idx) => ({
+        id: u.id || `local-${idx}`,
+        nombres: u.nombres,
+        apellidos: u.apellidos,
+        cargo: u.cargo || '',
+        email: u.email,
+        telefono: u.telefono || '',
+        rol_codigo: u.rol,
+        rol_nombre: u.rol === 'ADMIN' ? 'Administrador General' : (u.rol === 'SUPERVISOR' ? 'Supervisor / Directora DICOM' : (u.rol === 'DISENADOR' ? 'Diseñador Gráfico' : 'Solicitante Municipal')),
+        secretaria_nombre: u.secretaria,
+        direccion_nombre: u.direccion,
+        secretaria_id: u.secretaria_id,
+        direccion_id: u.direccion_id,
+        activo: true
+      }));
+
+      if (state.usuariosState.filtroRol) {
+        list = list.filter(u => u.rol_codigo === state.usuariosState.filtroRol);
+      }
+      if (state.usuariosState.filtroSecretaria) {
+        list = list.filter(u => String(u.secretaria_id) === String(state.usuariosState.filtroSecretaria));
+      }
+      if (state.usuariosState.busqueda) {
+        const q = state.usuariosState.busqueda.toLowerCase();
+        list = list.filter(u => `${u.nombres} ${u.apellidos} ${u.email}`.toLowerCase().includes(q));
+      }
+
+      state.usuariosState.usuarios = list;
+      state.usuariosState.total = list.length;
+      state.usuariosState.paginas = 1;
+      this.renderUsuariosTable(list);
+      this.renderUsuariosPagination();
+    }
+  },
+
+  renderUsuariosTable(usuarios) {
+    const tbody = document.getElementById('tbodyUsuarios');
+    const emptyState = document.getElementById('usuariosEmptyState');
+    if (!tbody) return;
+
+    if (!usuarios || usuarios.length === 0) {
+      tbody.innerHTML = '';
+      if (emptyState) emptyState.style.display = 'block';
+      return;
+    }
+
+    if (emptyState) emptyState.style.display = 'none';
+
+    tbody.innerHTML = usuarios.map(u => {
+      const iniciales = `${(u.nombres || '').charAt(0)}${(u.apellidos || '').charAt(0)}`.toUpperCase() || 'U';
+      const rolClass = (u.rol_codigo || '').toLowerCase();
+      const rolBadge = rolClass === 'admin' ? 'badge-admin' : (rolClass === 'supervisor' ? 'badge-supervisor' : (rolClass === 'disenador' ? 'badge-disenador' : 'badge-solicitante'));
+      const avatarClass = rolClass === 'admin' ? 'avatar-admin' : (rolClass === 'supervisor' ? 'avatar-supervisor' : (rolClass === 'disenador' ? 'avatar-disenador' : 'avatar-solicitante'));
+
+      const isCurrentAdmin = state.currentUser && (state.currentUser.id === u.id || state.currentUser.email === u.email);
+
+      return `
+        <tr>
+          <td data-label="Avatar">
+            <div class="user-avatar ${avatarClass}" title="${this.escapeHtml(u.nombres + ' ' + u.apellidos)}">${iniciales}</div>
+          </td>
+          <td data-label="Nombre Completo">
+            <div class="user-name-cell">
+              <span class="user-fullname">${this.escapeHtml(u.nombres)} ${this.escapeHtml(u.apellidos)}</span>
+              <span class="user-cargo">${this.escapeHtml(u.cargo || 'Funcionario')}</span>
+            </div>
+          </td>
+          <td data-label="Email">
+            <code style="color:#D4AF37;">${this.escapeHtml(u.email)}</code>
+            ${u.telefono ? `<div style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">📱 ${this.escapeHtml(u.telefono)}</div>` : ''}
+          </td>
+          <td data-label="Rol">
+            <span class="role-badge ${rolBadge}">${this.escapeHtml(u.rol_nombre || u.rol_codigo)}</span>
+          </td>
+          <td data-label="Dependencia">
+            <div class="user-org-cell">
+              <span class="org-secretaria">${this.escapeHtml(u.secretaria_nombre || 'Despacho Municipal')}</span>
+              <span class="org-direccion">${this.escapeHtml(u.direccion_nombre || '')}</span>
+            </div>
+          </td>
+          <td data-label="Estado">
+            <span class="status-badge ${u.activo ? 'status-activo' : 'status-inactivo'}">
+              <span class="status-dot"></span>
+              ${u.activo ? 'Activo' : 'Inactivo'}
+            </span>
+          </td>
+          <td data-label="Acciones">
+            <div class="action-btns">
+              <button class="btn-action btn-edit" title="Editar datos" onclick="app.openModalUsuario('${u.id}')">
+                ✏️
+              </button>
+              <button class="btn-action btn-reset" title="Resetear contraseña" onclick="app.resetUsuarioPassword('${u.id}', '${this.escapeHtml(u.email)}')">
+                🔑
+              </button>
+              ${isCurrentAdmin ? `
+                <button class="btn-action" title="No puede desactivar su propia cuenta" disabled style="opacity:0.4; cursor:not-allowed;">
+                  🚫
+                </button>
+              ` : `
+                <button class="btn-action ${u.activo ? 'btn-toggle-off' : 'btn-toggle-on'}" 
+                        title="${u.activo ? 'Desactivar usuario' : 'Activar usuario'}" 
+                        onclick="app.toggleUsuarioEstado('${u.id}', ${!u.activo}, '${this.escapeHtml(u.nombres + ' ' + u.apellidos)}')">
+                  ${u.activo ? '🚫' : '✅'}
+                </button>
+              `}
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  },
+
+  renderUsuariosPagination() {
+    const container = document.getElementById('usuariosPagination');
+    if (!container) return;
+
+    const { pagina, paginas, total } = state.usuariosState;
+    if (paginas <= 1 && total <= state.usuariosState.limite) {
+      container.innerHTML = `<span style="font-size:0.82rem; color:#64748b;">Total: ${total} usuario(s)</span>`;
+      return;
+    }
+
+    let html = `
+      <div style="display:flex; align-items:center; justify-content:space-between; width:100%; flex-wrap:wrap; gap:10px;">
+        <span style="font-size:0.84rem; color:#94a3b8;">
+          Página <strong>${pagina}</strong> de <strong>${paginas}</strong> (${total} usuarios)
+        </span>
+        <div style="display:flex; gap:6px;">
+          <button class="pag-btn" ${pagina <= 1 ? 'disabled' : ''} onclick="app.changeUsuariosPage(${pagina - 1})">
+            ◀ Anterior
+          </button>
+    `;
+
+    for (let p = 1; p <= paginas; p++) {
+      if (p === 1 || p === paginas || (p >= pagina - 1 && p <= pagina + 1)) {
+        html += `<button class="pag-btn ${p === pagina ? 'active' : ''}" onclick="app.changeUsuariosPage(${p})">${p}</button>`;
+      } else if (p === pagina - 2 || p === pagina + 2) {
+        html += `<span style="color:#64748b; padding:4px 6px;">...</span>`;
+      }
+    }
+
+    html += `
+          <button class="pag-btn" ${pagina >= paginas ? 'disabled' : ''} onclick="app.changeUsuariosPage(${pagina + 1})">
+            Siguiente ▶
+          </button>
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = html;
+  },
+
+  changeUsuariosPage(newPage) {
+    if (newPage < 1 || newPage > state.usuariosState.paginas) return;
+    state.usuariosState.pagina = newPage;
+    this.loadUsuarios();
+  },
+
+  async loadRoles() {
+    const grid = document.getElementById('rolesGrid');
+    if (!grid) return;
+    grid.innerHTML = '<div style="color:#94a3b8; padding:20px;">⏳ Cargando roles del sistema...</div>';
+
+    try {
+      const res = await fetch('/api/roles');
+      if (res.ok) {
+        const json = await res.json();
+        if (json.exito && Array.isArray(json.data)) {
+          state.usuariosState.roles = json.data;
+          this.renderRolesGrid(json.data);
+          return;
+        }
+      }
+      throw new Error('No se pudo cargar roles');
+    } catch (err) {
+      console.warn('Fallback local para roles:', err);
+      const defaultRoles = [
+        { id: 1, codigo: 'ADMIN', nombre: 'Administrador General', descripcion: 'Control total de la plataforma, usuarios, auditoría y catálogos institucionales.', total_usuarios: 1 },
+        { id: 2, codigo: 'SUPERVISOR', nombre: 'Supervisor / Directora DICOM', descripcion: 'Priorización, control de SLA, asignación a creativos y aprobación final.', total_usuarios: 1 },
+        { id: 3, codigo: 'DISENADOR', nombre: 'Diseñador Gráfico Institucional', descripcion: 'Atención de solicitudes asignadas, subida de propuestas gráficas y atención de cambios.', total_usuarios: 1 },
+        { id: 4, codigo: 'SOLICITANTE', nombre: 'Solicitante Municipal', descripcion: 'Creación de fichas técnicas oficiales y seguimiento de solicitudes de su Dirección.', total_usuarios: 6 }
+      ];
+      state.usuariosState.roles = defaultRoles;
+      this.renderRolesGrid(defaultRoles);
+    }
+  },
+
+  renderRolesGrid(roles) {
+    const grid = document.getElementById('rolesGrid');
+    if (!grid) return;
+
+    const icons = {
+      ADMIN: { icon: '🛡️', class: 'icon-admin' },
+      SUPERVISOR: { icon: '⭐', class: 'icon-supervisor' },
+      DISENADOR: { icon: '🎨', class: 'icon-disenador' },
+      SOLICITANTE: { icon: '✍️', class: 'icon-solicitante' }
+    };
+
+    grid.innerHTML = roles.map(r => {
+      const ic = icons[r.codigo] || { icon: '👤', class: 'icon-admin' };
+      return `
+        <div class="role-card">
+          <div class="role-card-header">
+            <div class="role-card-icon ${ic.class}">${ic.icon}</div>
+            <div>
+              <div class="role-card-name">${this.escapeHtml(r.nombre)}</div>
+              <div class="role-card-code">CÓDIGO: ${this.escapeHtml(r.codigo)}</div>
+            </div>
+          </div>
+          <div class="role-card-count">
+            👥 ${r.total_usuarios || 0} usuarios activos asignados
+          </div>
+          <div class="role-card-desc" id="roleDescBox_${r.id}">
+            <p id="roleDescText_${r.id}">${this.escapeHtml(r.descripcion || 'Sin descripción.')}</p>
+          </div>
+          <div class="role-card-actions">
+            <button class="btn btn-sm btn-outline" onclick="app.toggleEditRoleDescription(${r.id})">
+              ✏️ Editar Descripción
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  toggleEditRoleDescription(roleId) {
+    const descBox = document.getElementById(`roleDescBox_${roleId}`);
+    const currentTextEl = document.getElementById(`roleDescText_${roleId}`);
+    if (!descBox || !currentTextEl) return;
+
+    const currentText = currentTextEl.textContent;
+    descBox.innerHTML = `
+      <textarea id="roleDescInput_${roleId}" class="form-control" style="font-size:0.84rem; min-height:70px; margin-bottom:6px;">${this.escapeHtml(currentText)}</textarea>
+      <div style="display:flex; justify-content:flex-end; gap:6px;">
+        <button class="btn btn-xs btn-secondary" onclick="app.loadRoles()">Cancelar</button>
+        <button class="btn btn-xs btn-gold" onclick="app.saveRoleDescription(${roleId})">💾 Guardar</button>
+      </div>
+    `;
+  },
+
+  async saveRoleDescription(roleId) {
+    const input = document.getElementById(`roleDescInput_${roleId}`);
+    if (!input) return;
+    const newDesc = input.value.trim();
+
+    try {
+      const res = await fetch(`/api/roles/${roleId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ descripcion: newDesc })
+      });
+      const json = await res.json();
+      if (json.exito) {
+        this.showToast('✅ Descripción del rol actualizada', 'success');
+        this.loadRoles();
+      } else {
+        this.showToast(json.mensaje || 'Error al actualizar rol', 'error');
+      }
+    } catch (err) {
+      this.showToast('Error de red al actualizar rol', 'error');
+    }
+  },
+
+  openModalUsuario(usuarioId = null) {
+    this.populateUsuarioSecretariasSelects();
+    const modal = document.getElementById('modalUsuarioBackdrop');
+    const form = document.getElementById('formUsuario');
+    const titulo = document.getElementById('modalUsuarioTitulo');
+    const inputId = document.getElementById('usuarioEditId');
+    const grupoPass = document.getElementById('grupoPassword');
+    const grupoPassConf = document.getElementById('grupoPasswordConfirm');
+    const inputEmail = document.getElementById('usuarioEmail');
+    const passInput = document.getElementById('usuarioPassword');
+    const passConfInput = document.getElementById('usuarioPasswordConfirm');
+
+    if (!modal || !form) return;
+
+    form.reset();
+
+    if (usuarioId) {
+      // MODO EDICIÓN
+      titulo.textContent = '✏️ Editar Usuario Institucional';
+      inputId.value = usuarioId;
+      inputEmail.readOnly = true;
+      inputEmail.style.backgroundColor = 'rgba(255,255,255,0.05)';
+      if (grupoPass) grupoPass.style.display = 'none';
+      if (grupoPassConf) grupoPassConf.style.display = 'none';
+      if (passInput) passInput.required = false;
+      if (passConfInput) passConfInput.required = false;
+
+      const user = state.usuariosState.usuarios.find(u => String(u.id) === String(usuarioId));
+      if (user) {
+        this.populateModalUsuarioFields(user);
+      } else {
+        fetch(`/api/usuarios/${usuarioId}`)
+          .then(r => r.json())
+          .then(json => {
+            if (json.exito && json.data) {
+              this.populateModalUsuarioFields(json.data);
+            }
+          })
+          .catch(e => console.warn('Error fetching usuario:', e));
+      }
+    } else {
+      // MODO CREACIÓN
+      titulo.textContent = '➕ Nuevo Usuario Institucional';
+      inputId.value = '';
+      inputEmail.readOnly = false;
+      inputEmail.style.backgroundColor = '';
+      if (grupoPass) grupoPass.style.display = 'block';
+      if (grupoPassConf) grupoPassConf.style.display = 'block';
+      if (passInput) passInput.required = true;
+      if (passConfInput) passConfInput.required = true;
+      this.onUsuarioSecretariaModalChange(null);
+    }
+
+    modal.classList.add('active');
+    modal.style.display = 'flex';
+  },
+
+  populateModalUsuarioFields(user) {
+    document.getElementById('usuarioNombres').value = user.nombres || '';
+    document.getElementById('usuarioApellidos').value = user.apellidos || '';
+    document.getElementById('usuarioCargo').value = user.cargo || '';
+    document.getElementById('usuarioEmail').value = user.email || '';
+    document.getElementById('usuarioTelefono').value = user.telefono || '';
+    document.getElementById('usuarioRol').value = user.rol_id || (user.rol_codigo === 'ADMIN' ? '1' : (user.rol_codigo === 'SUPERVISOR' ? '2' : (user.rol_codigo === 'DISENADOR' ? '3' : '4')));
+    
+    const secSelect = document.getElementById('usuarioSecretaria');
+    if (secSelect && user.secretaria_id) {
+      secSelect.value = user.secretaria_id;
+      this.onUsuarioSecretariaModalChange(user.secretaria_id);
+      const dirSelect = document.getElementById('usuarioDireccion');
+      if (dirSelect && user.direccion_id) {
+        dirSelect.value = user.direccion_id;
+      }
+    }
+  },
+
+  closeModalUsuario() {
+    const modal = document.getElementById('modalUsuarioBackdrop');
+    if (modal) {
+      modal.classList.remove('active');
+      modal.style.display = 'none';
+    }
+  },
+
+  async handleUsuarioSubmit(e) {
+    e.preventDefault();
+    const id = document.getElementById('usuarioEditId').value.trim();
+    const nombres = document.getElementById('usuarioNombres').value.trim();
+    const apellidos = document.getElementById('usuarioApellidos').value.trim();
+    const cargo = document.getElementById('usuarioCargo').value.trim();
+    const email = document.getElementById('usuarioEmail').value.trim();
+    const telefono = document.getElementById('usuarioTelefono').value.trim();
+    const rol_id = document.getElementById('usuarioRol').value;
+    const secretaria_id = document.getElementById('usuarioSecretaria').value || null;
+    const direccion_id = document.getElementById('usuarioDireccion').value || null;
+
+    if (!nombres || nombres.length < 2) {
+      this.showToast('El nombre debe tener al menos 2 caracteres.', 'error');
+      return;
+    }
+    if (!apellidos || apellidos.length < 2) {
+      this.showToast('Los apellidos deben tener al menos 2 caracteres.', 'error');
+      return;
+    }
+    if (!email || !email.includes('@')) {
+      this.showToast('Ingrese un correo electrónico válido.', 'error');
+      return;
+    }
+    if (!rol_id) {
+      this.showToast('Debe seleccionar un rol para el usuario.', 'error');
+      return;
+    }
+
+    const payload = {
+      nombres,
+      apellidos,
+      cargo,
+      email,
+      telefono,
+      rol_id: parseInt(rol_id, 10),
+      secretaria_id: secretaria_id ? parseInt(secretaria_id, 10) : null,
+      direccion_id: direccion_id ? parseInt(direccion_id, 10) : null
+    };
+
+    if (!id) {
+      // CREACIÓN
+      const password = document.getElementById('usuarioPassword').value;
+      const confirm = document.getElementById('usuarioPasswordConfirm').value;
+
+      if (!password || password.length < 8) {
+        this.showToast('La contraseña debe tener mínimo 8 caracteres.', 'error');
+        return;
+      }
+      if (!/[A-Z]/.test(password)) {
+        this.showToast('La contraseña debe incluir al menos una letra mayúscula.', 'error');
+        return;
+      }
+      if (!/[0-9]/.test(password)) {
+        this.showToast('La contraseña debe incluir al menos un número.', 'error');
+        return;
+      }
+      if (password !== confirm) {
+        this.showToast('Las contraseñas no coinciden.', 'error');
+        return;
+      }
+
+      payload.password = password;
+
+      try {
+        const res = await fetch('/api/usuarios', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.exito) {
+          this.showToast(`✅ Usuario creado: ${nombres} ${apellidos}`, 'success');
+          this.closeModalUsuario();
+          this.loadUsuarios();
+        } else {
+          this.showToast(`Error: ${json.mensaje || 'No se pudo crear el usuario'}`, 'error');
+        }
+      } catch (err) {
+        this.showToast('Error de conexión con el servidor', 'error');
+      }
+    } else {
+      // EDICIÓN
+      try {
+        const res = await fetch(`/api/usuarios/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.exito) {
+          this.showToast('✅ Usuario actualizado exitosamente', 'success');
+          this.closeModalUsuario();
+          this.loadUsuarios();
+
+          if (state.currentUser && (state.currentUser.id === id || state.currentUser.email === email)) {
+            state.currentUser.nombres = nombres;
+            state.currentUser.apellidos = apellidos;
+            state.currentUser.cargo = cargo;
+            state.currentUser.telefono = telefono;
+            this.updateAuthUI();
+          }
+        } else {
+          this.showToast(`Error: ${json.mensaje || 'No se pudo actualizar'}`, 'error');
+        }
+      } catch (err) {
+        this.showToast('Error de conexión con el servidor', 'error');
+      }
+    }
+  },
+
+  async toggleUsuarioEstado(id, nuevoEstado, nombre) {
+    const accion = nuevoEstado ? 'activar' : 'desactivar';
+    const conf = confirm(`¿Está seguro de que desea ${accion} al usuario "${nombre}"?`);
+    if (!conf) return;
+
+    try {
+      const res = await fetch(`/api/usuarios/${id}/estado`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          activo: nuevoEstado,
+          requesting_user_id: state.currentUser ? state.currentUser.id : null
+        })
+      });
+      const json = await res.json();
+      if (json.exito) {
+        if (json.advertencia) {
+          this.showToast(`⚠️ ${json.advertencia}`, 'warning');
+        }
+        this.showToast(`✅ ${json.mensaje}`, 'success');
+        this.loadUsuarios();
+      } else {
+        this.showToast(`🛑 ${json.mensaje}`, 'error');
+      }
+    } catch (err) {
+      this.showToast('Error de red al actualizar estado del usuario', 'error');
+    }
+  },
+
+  async resetUsuarioPassword(id, email) {
+    const conf = confirm(`¿Está seguro de restablecer la contraseña para "${email}"?\nSe generará una contraseña temporal aleatoria segura.`);
+    if (!conf) return;
+
+    try {
+      const res = await fetch(`/api/usuarios/${id}/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const json = await res.json();
+      if (json.exito && json.password_temporal) {
+        const modal = document.getElementById('modalResetPassBackdrop');
+        const emailEl = document.getElementById('resetPassEmail');
+        const passEl = document.getElementById('resetPassValue');
+
+        if (emailEl) emailEl.textContent = email;
+        if (passEl) passEl.textContent = json.password_temporal;
+
+        if (modal) {
+          modal.classList.add('active');
+          modal.style.display = 'flex';
+        }
+        this.showToast('🔑 Contraseña restablecida exitosamente', 'success');
+      } else {
+        this.showToast(`🛑 ${json.mensaje || 'Error al restablecer contraseña'}`, 'error');
+      }
+    } catch (err) {
+      this.showToast('Error de red al restablecer la contraseña', 'error');
+    }
+  },
+
+  closeModalResetPass() {
+    const modal = document.getElementById('modalResetPassBackdrop');
+    if (modal) {
+      modal.classList.remove('active');
+      modal.style.display = 'none';
+    }
+  },
+
+  copyResetPassword() {
+    const passEl = document.getElementById('resetPassValue');
+    if (!passEl) return;
+    const pass = passEl.textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(pass).then(() => {
+        this.showToast('📋 Contraseña copiada al portapapeles', 'success');
+      }).catch(() => {
+        this.fallbackCopyText(pass);
+      });
+    } else {
+      this.fallbackCopyText(pass);
+    }
+  },
+
+  fallbackCopyText(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      this.showToast('📋 Contraseña copiada al portapapeles', 'success');
+    } catch (e) {
+      this.showToast('Seleccione y copie la contraseña manualmente', 'info');
+    }
+    document.body.removeChild(ta);
   }
 };
 

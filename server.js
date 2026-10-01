@@ -10,6 +10,7 @@ const helmet = require('helmet');
 const path = require('path');
 const fs = require('fs');
 const { Pool } = require('pg');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -711,6 +712,550 @@ app.get('/api/dashboard/metricas', async (req, res) => {
       ]
     }
   });
+});
+
+// ==============================================================================
+// MÓDULO DE GESTIÓN DE USUARIOS Y ROLES (Feature 013-SDD)
+// ==============================================================================
+
+// Helper: Generar contraseña temporal aleatoria
+function generarPasswordTemporal(longitud = 12) {
+  const charset = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$%';
+  let pass = '';
+  for (let i = 0; i < longitud; i++) {
+    pass += charset.charAt(Math.floor(Math.random() * charset.length));
+  }
+  return pass;
+}
+
+// T001: GET /api/usuarios — Listar usuarios con filtros y paginación
+app.get('/api/usuarios', async (req, res) => {
+  if (!pool || !dbConnected) {
+    return res.json({ exito: true, fuente: 'Sin BD', total: 0, data: [], totalPages: 0 });
+  }
+
+  try {
+    const { rol, secretaria_id, activo, buscar, page = 1, limit = 20 } = req.query;
+    const offset = (Math.max(1, parseInt(page)) - 1) * parseInt(limit);
+    const conditions = [];
+    const params = [];
+    let paramIdx = 1;
+
+    if (rol) {
+      conditions.push(`r.codigo = $${paramIdx++}`);
+      params.push(rol);
+    }
+    if (secretaria_id) {
+      conditions.push(`u.secretaria_id = $${paramIdx++}`);
+      params.push(parseInt(secretaria_id));
+    }
+    if (activo !== undefined && activo !== '' && activo !== 'todos') {
+      conditions.push(`u.activo = $${paramIdx++}`);
+      params.push(activo === 'true');
+    }
+    if (buscar) {
+      conditions.push(`(u.nombres ILIKE $${paramIdx} OR u.apellidos ILIKE $${paramIdx} OR u.email ILIKE $${paramIdx} OR u.cargo ILIKE $${paramIdx})`);
+      params.push(`%${buscar}%`);
+      paramIdx++;
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    // Count total
+    const countRes = await pool.query(
+      `SELECT COUNT(*)::INT AS total FROM comunica.usuarios u JOIN comunica.roles r ON u.rol_id = r.id ${whereClause}`,
+      params
+    );
+    const total = countRes.rows[0].total;
+
+    // Fetch paginated data
+    const dataParams = [...params, parseInt(limit), offset];
+    const dataRes = await pool.query(`
+      SELECT 
+        u.id,
+        u.nombres,
+        u.apellidos,
+        u.cargo,
+        u.email,
+        u.telefono_contacto,
+        u.activo,
+        TO_CHAR(u.ultimo_acceso, 'YYYY-MM-DD HH24:MI') AS ultimo_acceso,
+        TO_CHAR(u.created_at, 'YYYY-MM-DD') AS created_at,
+        r.id AS rol_id,
+        r.codigo AS rol_codigo,
+        r.nombre AS rol_nombre,
+        COALESCE(sec.id, 0) AS secretaria_id,
+        COALESCE(sec.nombre, 'Sin asignar') AS secretaria_nombre,
+        COALESCE(sec.sigla, '') AS secretaria_sigla,
+        COALESCE(dir.id, 0) AS direccion_id,
+        COALESCE(dir.nombre, 'Sin asignar') AS direccion_nombre,
+        COALESCE(dir.sigla, '') AS direccion_sigla,
+        u.unidad_id
+      FROM comunica.usuarios u
+      JOIN comunica.roles r ON u.rol_id = r.id
+      LEFT JOIN comunica.secretarias sec ON u.secretaria_id = sec.id
+      LEFT JOIN comunica.direcciones dir ON u.direccion_id = dir.id
+      ${whereClause}
+      ORDER BY u.created_at DESC
+      LIMIT $${paramIdx++} OFFSET $${paramIdx++}
+    `, dataParams);
+
+    return res.json({
+      exito: true,
+      fuente: 'PostgreSQL 16',
+      total,
+      totalPages: Math.ceil(total / parseInt(limit)),
+      page: parseInt(page),
+      data: dataRes.rows
+    });
+  } catch (err) {
+    console.error('❌ Error listando usuarios:', err.message);
+    return res.status(500).json({ exito: false, error: err.message });
+  }
+});
+
+// T008: GET /api/usuarios/:id — Detalle de un usuario
+app.get('/api/usuarios/:id', async (req, res) => {
+  if (!pool || !dbConnected) {
+    return res.status(503).json({ exito: false, mensaje: 'Base de datos no disponible' });
+  }
+
+  try {
+    const result = await pool.query(`
+      SELECT 
+        u.id, u.nombres, u.apellidos, u.cargo, u.email, u.telefono_contacto,
+        u.activo, u.rol_id, r.codigo AS rol_codigo, r.nombre AS rol_nombre,
+        u.secretaria_id, COALESCE(sec.nombre, '') AS secretaria_nombre,
+        u.direccion_id, COALESCE(dir.nombre, '') AS direccion_nombre,
+        u.unidad_id,
+        TO_CHAR(u.ultimo_acceso, 'YYYY-MM-DD HH24:MI') AS ultimo_acceso,
+        TO_CHAR(u.created_at, 'YYYY-MM-DD HH24:MI') AS created_at
+      FROM comunica.usuarios u
+      JOIN comunica.roles r ON u.rol_id = r.id
+      LEFT JOIN comunica.secretarias sec ON u.secretaria_id = sec.id
+      LEFT JOIN comunica.direcciones dir ON u.direccion_id = dir.id
+      WHERE u.id = $1
+    `, [req.params.id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ exito: false, mensaje: 'Usuario no encontrado' });
+    }
+
+    return res.json({ exito: true, data: result.rows[0] });
+  } catch (err) {
+    return res.status(500).json({ exito: false, error: err.message });
+  }
+});
+
+// T002: POST /api/usuarios — Crear nuevo usuario
+app.post('/api/usuarios', async (req, res) => {
+  if (!pool || !dbConnected) {
+    return res.status(503).json({ exito: false, mensaje: 'Base de datos no disponible' });
+  }
+
+  const { nombres, apellidos, cargo, email, telefono_contacto, password, rol_id, secretaria_id, direccion_id, unidad_id } = req.body;
+
+  // Validaciones
+  if (!nombres || nombres.trim().length < 2) {
+    return res.status(400).json({ exito: false, mensaje: 'Los nombres son obligatorios (mín. 2 caracteres)' });
+  }
+  if (!apellidos || apellidos.trim().length < 2) {
+    return res.status(400).json({ exito: false, mensaje: 'Los apellidos son obligatorios (mín. 2 caracteres)' });
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ exito: false, mensaje: 'El email institucional es obligatorio y debe tener formato válido' });
+  }
+  if (!password || password.length < 8) {
+    return res.status(400).json({ exito: false, mensaje: 'La contraseña debe tener al menos 8 caracteres' });
+  }
+  if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+    return res.status(400).json({ exito: false, mensaje: 'La contraseña debe contener al menos una mayúscula y un número' });
+  }
+  if (!rol_id) {
+    return res.status(400).json({ exito: false, mensaje: 'Debe seleccionar un rol' });
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Verificar email único
+    const emailCheck = await client.query(
+      `SELECT id FROM comunica.usuarios WHERE email = $1`,
+      [email.toLowerCase().trim()]
+    );
+    if (emailCheck.rowCount > 0) {
+      await client.query('ROLLBACK');
+      client.release();
+      return res.status(409).json({ exito: false, mensaje: 'Este email ya está registrado en el sistema' });
+    }
+
+    // Verificar rol válido
+    const rolCheck = await client.query(`SELECT id FROM comunica.roles WHERE id = $1`, [rol_id]);
+    if (rolCheck.rowCount === 0) {
+      await client.query('ROLLBACK');
+      client.release();
+      return res.status(400).json({ exito: false, mensaje: 'Rol no válido' });
+    }
+
+    // Validar cascada secretaria→dirección
+    if (direccion_id) {
+      const dirCheck = await client.query(
+        `SELECT id FROM comunica.direcciones WHERE id = $1 AND secretaria_id = $2`,
+        [direccion_id, secretaria_id || 0]
+      );
+      if (dirCheck.rowCount === 0 && secretaria_id) {
+        await client.query('ROLLBACK');
+        client.release();
+        return res.status(400).json({ exito: false, mensaje: 'La dirección no pertenece a la secretaría seleccionada' });
+      }
+    }
+
+    // Hashear password con bcrypt factor 12
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const insertRes = await client.query(`
+      INSERT INTO comunica.usuarios (
+        rol_id, secretaria_id, direccion_id, unidad_id,
+        nombres, apellidos, cargo, email, telefono_contacto, password_hash
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING id, nombres, apellidos, email, created_at
+    `, [
+      rol_id,
+      secretaria_id || null,
+      direccion_id || null,
+      unidad_id || null,
+      nombres.trim(),
+      apellidos.trim(),
+      cargo || null,
+      email.toLowerCase().trim(),
+      telefono_contacto || null,
+      passwordHash
+    ]);
+
+    const nuevoUsuario = insertRes.rows[0];
+
+    // Auditoría
+    await client.query(`
+      INSERT INTO comunica.auditoria (evento, entidad_tipo, entidad_id, ip_origen, estado_nuevo)
+      VALUES ('CREACION_USUARIO', 'USUARIO', $1, $2, $3)
+    `, [
+      nuevoUsuario.id,
+      req.ip || '127.0.0.1',
+      JSON.stringify({ nombres: nombres.trim(), apellidos: apellidos.trim(), email: email.toLowerCase().trim(), rol_id })
+    ]);
+
+    await client.query('COMMIT');
+    client.release();
+
+    console.log(`✅ [Usuarios] Nuevo usuario creado: ${nuevoUsuario.email} (ID: ${nuevoUsuario.id})`);
+
+    return res.status(201).json({
+      exito: true,
+      mensaje: 'Usuario creado exitosamente',
+      data: nuevoUsuario
+    });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    client.release();
+    console.error('❌ Error creando usuario:', err.message);
+    return res.status(500).json({ exito: false, error: err.message });
+  }
+});
+
+// T003: PUT /api/usuarios/:id — Editar usuario (sin email ni password)
+app.put('/api/usuarios/:id', async (req, res) => {
+  if (!pool || !dbConnected) {
+    return res.status(503).json({ exito: false, mensaje: 'Base de datos no disponible' });
+  }
+
+  const { id } = req.params;
+  const { nombres, apellidos, cargo, telefono_contacto, rol_id, secretaria_id, direccion_id, unidad_id } = req.body;
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Obtener estado anterior
+    const prevRes = await client.query(
+      `SELECT nombres, apellidos, cargo, telefono_contacto, rol_id, secretaria_id, direccion_id, unidad_id FROM comunica.usuarios WHERE id = $1`,
+      [id]
+    );
+    if (prevRes.rowCount === 0) {
+      await client.query('ROLLBACK');
+      client.release();
+      return res.status(404).json({ exito: false, mensaje: 'Usuario no encontrado' });
+    }
+    const prev = prevRes.rows[0];
+
+    // Protección: no degradar al último admin
+    if (rol_id && rol_id !== prev.rol_id) {
+      const adminCheck = await client.query(
+        `SELECT COUNT(*)::INT AS total FROM comunica.usuarios WHERE rol_id = (SELECT id FROM comunica.roles WHERE codigo = 'ADMIN') AND activo = TRUE AND id != $1`,
+        [id]
+      );
+      const esAdmin = prev.rol_id === (await client.query(`SELECT id FROM comunica.roles WHERE codigo = 'ADMIN'`)).rows[0]?.id;
+      if (esAdmin && adminCheck.rows[0].total === 0) {
+        await client.query('ROLLBACK');
+        client.release();
+        return res.status(400).json({ exito: false, mensaje: 'No se puede cambiar el rol del último administrador activo del sistema' });
+      }
+    }
+
+    // Validar cascada secretaria→dirección
+    if (direccion_id && secretaria_id) {
+      const dirCheck = await client.query(
+        `SELECT id FROM comunica.direcciones WHERE id = $1 AND secretaria_id = $2`,
+        [direccion_id, secretaria_id]
+      );
+      if (dirCheck.rowCount === 0) {
+        await client.query('ROLLBACK');
+        client.release();
+        return res.status(400).json({ exito: false, mensaje: 'La dirección no pertenece a la secretaría seleccionada' });
+      }
+    }
+
+    const updateRes = await client.query(`
+      UPDATE comunica.usuarios SET
+        nombres = COALESCE($1, nombres),
+        apellidos = COALESCE($2, apellidos),
+        cargo = COALESCE($3, cargo),
+        telefono_contacto = COALESCE($4, telefono_contacto),
+        rol_id = COALESCE($5, rol_id),
+        secretaria_id = $6,
+        direccion_id = $7,
+        unidad_id = $8,
+        updated_at = NOW()
+      WHERE id = $9
+      RETURNING id, nombres, apellidos, email
+    `, [
+      nombres || null,
+      apellidos || null,
+      cargo || null,
+      telefono_contacto || null,
+      rol_id || null,
+      secretaria_id || null,
+      direccion_id || null,
+      unidad_id || null,
+      id
+    ]);
+
+    // Auditoría
+    await client.query(`
+      INSERT INTO comunica.auditoria (evento, entidad_tipo, entidad_id, ip_origen, estado_anterior, estado_nuevo)
+      VALUES ('EDICION_USUARIO', 'USUARIO', $1, $2, $3, $4)
+    `, [
+      id, req.ip || '127.0.0.1',
+      JSON.stringify(prev),
+      JSON.stringify({ nombres, apellidos, cargo, rol_id, secretaria_id, direccion_id })
+    ]);
+
+    await client.query('COMMIT');
+    client.release();
+
+    return res.json({ exito: true, mensaje: 'Usuario actualizado exitosamente', data: updateRes.rows[0] });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    client.release();
+    return res.status(500).json({ exito: false, error: err.message });
+  }
+});
+
+// T004: PATCH /api/usuarios/:id/estado — Activar/Desactivar usuario
+app.patch('/api/usuarios/:id/estado', async (req, res) => {
+  if (!pool || !dbConnected) {
+    return res.status(503).json({ exito: false, mensaje: 'Base de datos no disponible' });
+  }
+
+  const { id } = req.params;
+  const { activo } = req.body;
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    const userRes = await client.query(
+      `SELECT u.id, u.activo, u.nombres, u.apellidos, r.codigo AS rol_codigo FROM comunica.usuarios u JOIN comunica.roles r ON u.rol_id = r.id WHERE u.id = $1`,
+      [id]
+    );
+    if (userRes.rowCount === 0) {
+      await client.query('ROLLBACK');
+      client.release();
+      return res.status(404).json({ exito: false, mensaje: 'Usuario no encontrado' });
+    }
+
+    const user = userRes.rows[0];
+
+    // No auto-desactivar (si el request tiene un requesting_user_id)
+    if (req.body.requesting_user_id && req.body.requesting_user_id === id && activo === false) {
+      await client.query('ROLLBACK');
+      client.release();
+      return res.status(400).json({ exito: false, mensaje: 'No puede desactivar su propia cuenta de administrador' });
+    }
+
+    // No desactivar al último admin
+    if (!activo && user.rol_codigo === 'ADMIN') {
+      const adminCount = await client.query(
+        `SELECT COUNT(*)::INT AS total FROM comunica.usuarios u JOIN comunica.roles r ON u.rol_id = r.id WHERE r.codigo = 'ADMIN' AND u.activo = TRUE AND u.id != $1`,
+        [id]
+      );
+      if (adminCount.rows[0].total === 0) {
+        await client.query('ROLLBACK');
+        client.release();
+        return res.status(400).json({ exito: false, mensaje: 'No se puede desactivar al último administrador activo del sistema' });
+      }
+    }
+
+    // Verificar solicitudes activas
+    let advertencia = null;
+    if (!activo) {
+      const solActivas = await client.query(
+        `SELECT COUNT(*)::INT AS total FROM comunica.solicitudes s JOIN comunica.estados e ON s.estado_id = e.id WHERE s.disenador_asignado_id = $1 AND e.codigo NOT IN ('APROBADO', 'FINALIZADO')`,
+        [id]
+      );
+      if (solActivas.rows[0].total > 0) {
+        advertencia = `Este usuario tiene ${solActivas.rows[0].total} solicitud(es) activa(s) asignada(s)`;
+      }
+    }
+
+    await client.query(
+      `UPDATE comunica.usuarios SET activo = $1, updated_at = NOW() WHERE id = $2`,
+      [activo, id]
+    );
+
+    // Auditoría
+    await client.query(`
+      INSERT INTO comunica.auditoria (evento, entidad_tipo, entidad_id, ip_origen, estado_anterior, estado_nuevo)
+      VALUES ($1, 'USUARIO', $2, $3, $4, $5)
+    `, [
+      activo ? 'REACTIVACION_USUARIO' : 'DESACTIVACION_USUARIO',
+      id, req.ip || '127.0.0.1',
+      JSON.stringify({ activo: user.activo }),
+      JSON.stringify({ activo })
+    ]);
+
+    await client.query('COMMIT');
+    client.release();
+
+    return res.json({
+      exito: true,
+      mensaje: activo ? 'Usuario reactivado exitosamente' : 'Usuario desactivado exitosamente',
+      advertencia,
+      data: { id, activo }
+    });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    client.release();
+    return res.status(500).json({ exito: false, error: err.message });
+  }
+});
+
+// T005: POST /api/usuarios/:id/reset-password — Resetear contraseña
+app.post('/api/usuarios/:id/reset-password', async (req, res) => {
+  if (!pool || !dbConnected) {
+    return res.status(503).json({ exito: false, mensaje: 'Base de datos no disponible' });
+  }
+
+  const { id } = req.params;
+
+  try {
+    const userRes = await pool.query(`SELECT id, email FROM comunica.usuarios WHERE id = $1`, [id]);
+    if (userRes.rowCount === 0) {
+      return res.status(404).json({ exito: false, mensaje: 'Usuario no encontrado' });
+    }
+
+    const passwordTemporal = generarPasswordTemporal(12);
+    const passwordHash = await bcrypt.hash(passwordTemporal, 12);
+
+    await pool.query(
+      `UPDATE comunica.usuarios SET password_hash = $1, updated_at = NOW() WHERE id = $2`,
+      [passwordHash, id]
+    );
+
+    // Auditoría
+    await pool.query(`
+      INSERT INTO comunica.auditoria (evento, entidad_tipo, entidad_id, ip_origen, estado_nuevo)
+      VALUES ('RESET_PASSWORD', 'USUARIO', $1, $2, $3)
+    `, [
+      id, req.ip || '127.0.0.1',
+      JSON.stringify({ email: userRes.rows[0].email, accion: 'password_reset' })
+    ]);
+
+    console.log(`🔑 [Usuarios] Contraseña reseteada para: ${userRes.rows[0].email}`);
+
+    return res.json({
+      exito: true,
+      mensaje: 'Contraseña reseteada exitosamente',
+      password_temporal: passwordTemporal,
+      data: { id, email: userRes.rows[0].email }
+    });
+  } catch (err) {
+    return res.status(500).json({ exito: false, error: err.message });
+  }
+});
+
+// T006: GET /api/roles — Listar roles con conteo de usuarios
+app.get('/api/roles', async (req, res) => {
+  if (!pool || !dbConnected) {
+    return res.json({
+      exito: true,
+      data: [
+        { id: 1, codigo: 'ADMIN', nombre: 'Administrador General', descripcion: 'Control total', activo: true, total_usuarios: 1 },
+        { id: 2, codigo: 'SUPERVISOR', nombre: 'Supervisor / Director DICOM', descripcion: 'Priorización y asignación', activo: true, total_usuarios: 1 },
+        { id: 3, codigo: 'DISENADOR', nombre: 'Diseñador Gráfico', descripcion: 'Ejecución creativa', activo: true, total_usuarios: 1 },
+        { id: 4, codigo: 'SOLICITANTE', nombre: 'Solicitante Municipal', descripcion: 'Secretarías y Direcciones', activo: true, total_usuarios: 6 }
+      ]
+    });
+  }
+
+  try {
+    const result = await pool.query(`
+      SELECT 
+        r.id, r.codigo, r.nombre, r.descripcion, r.activo,
+        COUNT(u.id)::INT AS total_usuarios
+      FROM comunica.roles r
+      LEFT JOIN comunica.usuarios u ON r.id = u.rol_id AND u.activo = TRUE
+      GROUP BY r.id, r.codigo, r.nombre, r.descripcion, r.activo
+      ORDER BY r.id
+    `);
+
+    return res.json({ exito: true, data: result.rows });
+  } catch (err) {
+    return res.status(500).json({ exito: false, error: err.message });
+  }
+});
+
+// T007: PUT /api/roles/:id — Editar descripción del rol
+app.put('/api/roles/:id', async (req, res) => {
+  if (!pool || !dbConnected) {
+    return res.status(503).json({ exito: false, mensaje: 'Base de datos no disponible' });
+  }
+
+  const { id } = req.params;
+  const { descripcion } = req.body;
+
+  try {
+    const prevRes = await pool.query(`SELECT id, descripcion FROM comunica.roles WHERE id = $1`, [id]);
+    if (prevRes.rowCount === 0) {
+      return res.status(404).json({ exito: false, mensaje: 'Rol no encontrado' });
+    }
+
+    await pool.query(`UPDATE comunica.roles SET descripcion = $1 WHERE id = $2`, [descripcion, id]);
+
+    // Auditoría
+    await pool.query(`
+      INSERT INTO comunica.auditoria (evento, entidad_tipo, entidad_id, ip_origen, estado_anterior, estado_nuevo)
+      VALUES ('EDICION_ROL', 'ROL', $1, $2, $3, $4)
+    `, [
+      id, req.ip || '127.0.0.1',
+      JSON.stringify({ descripcion: prevRes.rows[0].descripcion }),
+      JSON.stringify({ descripcion })
+    ]);
+
+    return res.json({ exito: true, mensaje: 'Descripción del rol actualizada exitosamente' });
+  } catch (err) {
+    return res.status(500).json({ exito: false, error: err.message });
+  }
 });
 
 // 7. Organigrama Oficial (Secretarías y Direcciones)

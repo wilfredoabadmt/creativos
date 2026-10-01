@@ -51,6 +51,9 @@
             <button class="nav-btn nav-btn-protected" data-tab="dashboard" id="btnTabDashboard">
               <span>📊</span> Dashboard DICOM
             </button>
+            <button class="nav-btn nav-btn-protected nav-btn-admin" data-tab="usuarios" id="btnTabUsuarios" style="display:none;">
+              <span>👥</span> Gestión de Usuarios
+            </button>
           </nav>
 
           <div id="authNavControls">
@@ -921,7 +924,192 @@
       </div>
     </section>
 
+    <!-- ========================================== -->
+    <!-- VISTA 5: GESTIÓN DE USUARIOS Y ROLES       -->
+    <!-- ========================================== -->
+    <section id="viewUsuarios" class="view-section">
+      <div class="container">
+        <!-- Header -->
+        <div class="d-flex justify-between align-center mb-3 flex-wrap gap-2">
+          <div>
+            <span class="section-tag">ADMINISTRACIÓN</span>
+            <h2 class="page-title">Gestión de Usuarios y Roles</h2>
+            <p class="page-subtitle">Administración de cuentas institucionales del sistema COMUNICA DIGITAL</p>
+          </div>
+        </div>
+
+        <!-- Sub-tabs: Usuarios | Roles -->
+        <div class="usuarios-subtabs mb-3">
+          <button class="subtab-btn active" data-subtab="usuarios" id="subtabUsuarios">👥 Usuarios</button>
+          <button class="subtab-btn" data-subtab="roles" id="subtabRoles">🛡️ Roles</button>
+        </div>
+
+        <!-- Panel: Usuarios -->
+        <div id="panelUsuarios" class="usuarios-panel">
+          <!-- Toolbar -->
+          <div class="usuarios-toolbar">
+            <button class="btn btn-gold" id="btnNuevoUsuario">
+              <span>➕</span> Nuevo Usuario
+            </button>
+            <div class="usuarios-filters">
+              <select id="filterUsuarioRol" class="filter-select">
+                <option value="">Todos los roles</option>
+                <option value="ADMIN">Administrador</option>
+                <option value="SUPERVISOR">Supervisor</option>
+                <option value="DISENADOR">Diseñador</option>
+                <option value="SOLICITANTE">Solicitante</option>
+              </select>
+              <select id="filterUsuarioSecretaria" class="filter-select">
+                <option value="">Todas las secretarías</option>
+              </select>
+              <select id="filterUsuarioEstado" class="filter-select">
+                <option value="todos">Todos los estados</option>
+                <option value="true">Activos</option>
+                <option value="false">Inactivos</option>
+              </select>
+              <div class="search-input-wrap">
+                <input type="text" id="searchUsuario" placeholder="Buscar por nombre o email..." class="search-input">
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabla de Usuarios -->
+          <div class="table-responsive">
+            <table class="tabla-usuarios" id="tablaUsuarios">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Nombre Completo</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Secretaría / Dirección</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyUsuarios">
+                <!-- Renderizado dinámico por app.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Paginación -->
+          <div class="usuarios-pagination" id="usuariosPagination">
+          </div>
+
+          <!-- Estado vacío -->
+          <div class="empty-state" id="usuariosEmptyState" style="display:none;">
+            <span class="empty-icon">👤</span>
+            <h4>No se encontraron usuarios</h4>
+            <p>Intenta ajustar los filtros de búsqueda o crea un nuevo usuario.</p>
+          </div>
+        </div>
+
+        <!-- Panel: Roles -->
+        <div id="panelRoles" class="usuarios-panel" style="display:none;">
+          <div class="roles-grid" id="rolesGrid">
+            <!-- Renderizado dinámico por app.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
+
+  <!-- ======================================================= -->
+  <!-- MODAL: CREAR / EDITAR USUARIO                           -->
+  <!-- ======================================================= -->
+  <div class="modal-backdrop" id="modalUsuarioBackdrop" style="display:none;">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modalUsuarioTitulo">Nuevo Usuario</h3>
+          <button class="modal-close" id="btnCerrarModalUsuario">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="formUsuario" novalidate>
+            <input type="hidden" id="usuarioEditId">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="usuarioNombres">Nombres *</label>
+                <input type="text" id="usuarioNombres" class="form-control" required minlength="2" placeholder="Ej: Lic. Juan">
+              </div>
+              <div class="form-group">
+                <label for="usuarioApellidos">Apellidos *</label>
+                <input type="text" id="usuarioApellidos" class="form-control" required minlength="2" placeholder="Ej: Pérez Mamani">
+              </div>
+              <div class="form-group">
+                <label for="usuarioCargo">Cargo Institucional</label>
+                <input type="text" id="usuarioCargo" class="form-control" placeholder="Ej: Director de Deportes">
+              </div>
+              <div class="form-group">
+                <label for="usuarioEmail">Email Institucional *</label>
+                <input type="email" id="usuarioEmail" class="form-control" required placeholder="nombre@elalto.gob.bo">
+              </div>
+              <div class="form-group">
+                <label for="usuarioTelefono">Teléfono / WhatsApp</label>
+                <input type="text" id="usuarioTelefono" class="form-control" placeholder="77200000">
+              </div>
+              <div class="form-group">
+                <label for="usuarioRol">Rol del Sistema *</label>
+                <select id="usuarioRol" class="form-control" required>
+                  <option value="">Seleccione un rol...</option>
+                  <option value="1">Administrador General</option>
+                  <option value="2">Supervisor / Director DICOM</option>
+                  <option value="3">Diseñador Gráfico Institucional</option>
+                  <option value="4">Solicitante Municipal</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="usuarioSecretaria">Secretaría Municipal</label>
+                <select id="usuarioSecretaria" class="form-control">
+                  <option value="">Seleccione secretaría...</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="usuarioDireccion">Dirección</label>
+                <select id="usuarioDireccion" class="form-control">
+                  <option value="">Seleccione dirección...</option>
+                </select>
+              </div>
+              <div class="form-group" id="grupoPassword">
+                <label for="usuarioPassword">Contraseña *</label>
+                <input type="password" id="usuarioPassword" class="form-control" minlength="8" placeholder="Mín. 8 caracteres, 1 mayúscula, 1 número">
+              </div>
+              <div class="form-group" id="grupoPasswordConfirm">
+                <label for="usuarioPasswordConfirm">Confirmar Contraseña *</label>
+                <input type="password" id="usuarioPasswordConfirm" class="form-control" minlength="8" placeholder="Repita la contraseña">
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" id="btnCancelarUsuario">Cancelar</button>
+              <button type="submit" class="btn btn-gold" id="btnGuardarUsuario">💾 Guardar Usuario</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RESET PASSWORD -->
+  <div class="modal-backdrop" id="modalResetPassBackdrop" style="display:none;">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>🔑 Contraseña Reseteada</h3>
+          <button class="modal-close" id="btnCerrarResetPass">&times;</button>
+        </div>
+        <div class="modal-body text-center">
+          <p class="mb-2">La nueva contraseña temporal para <strong id="resetPassEmail"></strong> es:</p>
+          <div class="password-display">
+            <code id="resetPassValue" class="password-code"></code>
+            <button class="btn btn-sm btn-outline" id="btnCopyPassword" title="Copiar al portapapeles">📋 Copiar</button>
+          </div>
+          <p class="text-sm text-muted mt-2">⚠️ Esta contraseña se muestra una sola vez. Compártala de forma segura al usuario.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ======================================================= -->
   <!-- MODAL: DETALLE DE TRÁMITE Y CONTROL DE MODIFICACIONES   -->

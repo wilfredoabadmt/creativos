@@ -25,6 +25,7 @@ pnpm-debug.log*
 .cache/
 tmp/
 .tmp/
+scratch/
 
 # --- OS / editor ---
 .DS_Store

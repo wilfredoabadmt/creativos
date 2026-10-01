@@ -19,6 +19,7 @@
   "author": "Wilfredo Abad Mancilla Teran - GAM El Alto",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "helmet": "^7.1.0",
