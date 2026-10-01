@@ -144,8 +144,16 @@ async function inicializarBaseDatos() {
       UPDATE comunica.secretarias
       SET nombre = 'Despacho del Alcalde'
       WHERE codigo = 'DESPACHO' AND nombre != 'Despacho del Alcalde';
+
+      -- Asegurar existencia del estado RECHAZADO
+      INSERT INTO comunica.estados (codigo, nombre, color_hex, orden, descripcion)
+      VALUES ('RECHAZADO', '🔴 Rechazado', '#DC2626', 7, 'Solicitud o propuesta denegada con motivo fundado')
+      ON CONFLICT (codigo) DO NOTHING;
+
+      -- Columna de motivo de rechazo en solicitudes
+      ALTER TABLE comunica.solicitudes ADD COLUMN IF NOT EXISTS motivo_rechazo TEXT;
     `);
-    console.log('✅ [PostgreSQL 16] Trigger y consistencia relacional verificados.');
+    console.log('✅ [PostgreSQL 16] Trigger, estados y consistencia relacional verificados.');
 
     client.release();
   } catch (err) {
@@ -216,6 +224,7 @@ app.get('/api/solicitudes', async (req, res) => {
           TO_CHAR(s.fecha_limite, 'YYYY-MM-DD') AS fecha_limite,
           COALESCE(u_dis.nombres || ' ' || u_dis.apellidos, 'Por Asignar') AS disenador_asignado,
           s.rondas_cambios_usadas,
+          s.motivo_rechazo,
           COALESCE((
             SELECT json_agg(json_build_object(
               'ronda', sc.ronda_numero,
@@ -606,7 +615,7 @@ app.put('/api/solicitudes/:id/estado', async (req, res) => {
       const params = [codigo_estado, id];
 
       if (disenador_asignado_id) {
-        query += `, disenador_asignado_id = $3 `;
+        query += `, disenador_asignado_id = $${params.length + 1} `;
         params.push(disenador_asignado_id);
       } else if (disenador_nombre) {
         const usr = await pool.query(
@@ -614,12 +623,17 @@ app.put('/api/solicitudes/:id/estado', async (req, res) => {
           [`%${disenador_nombre.split(' ')[0]}%`]
         );
         if (usr.rowCount > 0) {
-          query += `, disenador_asignado_id = $3 `;
+          query += `, disenador_asignado_id = $${params.length + 1} `;
           params.push(usr.rows[0].id);
         }
       }
 
-      query += ` WHERE id = $2 RETURNING id, codigo_tramite, estado_id;`;
+      if (req.body.motivo_rechazo) {
+        query += `, motivo_rechazo = $${params.length + 1} `;
+        params.push(req.body.motivo_rechazo);
+      }
+
+      query += ` WHERE id = $2 RETURNING id, codigo_tramite, estado_id, motivo_rechazo;`;
 
       const updateRes = await pool.query(query, params);
 
@@ -637,7 +651,15 @@ app.put('/api/solicitudes/:id/estado', async (req, res) => {
     }
   }
 
-  res.json({ exito: true, mensaje: `Estado actualizado a ${codigo_estado}` });
+  res.json({
+    exito: true,
+    mensaje: `Estado actualizado a ${codigo_estado}`,
+    data: {
+      id,
+      estado: codigo_estado,
+      motivo_rechazo: req.body.motivo_rechazo || null
+    }
+  });
 });
 
 // 6. Métricas y Estadísticas de Dashboard (Agregadas en PostgreSQL)

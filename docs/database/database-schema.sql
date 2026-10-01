@@ -301,7 +301,8 @@ INSERT INTO estados (codigo, nombre, color_hex, orden, descripcion) VALUES
 ('DISENO_PROCESO', '🟣 Diseño en proceso', '#8B5CF6', 3, 'El diseñador se encuentra elaborando la propuesta gráfica'),
 ('AJUSTES', '🟠 Ajustes', '#F97316', 4, 'Observaciones de cambio en curso (Ronda 1 o 2)'),
 ('APROBADO', '🟢 Aprobado', '#10B981', 5, 'Propuesta aprobada por solicitante y supervisor'),
-('FINALIZADO', '⚫ Finalizado', '#475569', 6, 'Artes finales entregados y archivados en memoria institucional');
+('FINALIZADO', '⚫ Finalizado', '#475569', 6, 'Artes finales entregados y archivados en memoria institucional'),
+('RECHAZADO', '🔴 Rechazado / No Conforme', '#DC2626', 7, 'Solicitud o propuesta denegada con motivo fundado');
 
 -- Catálogo Tipos de Diseño
 INSERT INTO tipos_diseno (nombre, descripcion, icono) VALUES

@@ -1568,6 +1568,7 @@ const app = {
     if (s.includes('AJUST')) return 'AJUSTES';
     if (s.includes('APROBAD')) return 'APROBADO';
     if (s.includes('FINALIZ')) return 'FINALIZADO';
+    if (s.includes('RECHAZ') || s.includes('NEGAD')) return 'RECHAZADO';
     return s;
   },
 
@@ -1579,7 +1580,8 @@ const app = {
       'DISENO_PROCESO': { label: '🟣 Diseño en proceso', class: 'status-morado' },
       'AJUSTES': { label: '🟠 Ajustes', class: 'status-naranja' },
       'APROBADO': { label: '🟢 Aprobado', class: 'status-verde' },
-      'FINALIZADO': { label: '⚫ Finalizado', class: 'status-gris' }
+      'FINALIZADO': { label: '⚫ Finalizado', class: 'status-gris' },
+      'RECHAZADO': { label: '🔴 Rechazado', class: 'status-rojo' }
     };
     return badges[norm] || { label: estado || '🟡 Pendiente', class: 'status-amarillo' };
   },
@@ -1605,6 +1607,7 @@ const app = {
     const aju = items.filter(s => this.normalizeEstado(s.estado || s.estado_codigo) === 'AJUSTES').length;
     const apr = items.filter(s => this.normalizeEstado(s.estado || s.estado_codigo) === 'APROBADO').length;
     const fin = items.filter(s => this.normalizeEstado(s.estado || s.estado_codigo) === 'FINALIZADO').length;
+    const rec = items.filter(s => this.normalizeEstado(s.estado || s.estado_codigo) === 'RECHAZADO').length;
 
     const el = (id) => document.getElementById(id);
     if (el('tramitesCount')) el('tramitesCount').textContent = total;
@@ -1615,6 +1618,7 @@ const app = {
     if (el('countAjustes')) el('countAjustes').textContent = aju;
     if (el('countAprobado')) el('countAprobado').textContent = apr;
     if (el('countFinalizado')) el('countFinalizado').textContent = fin;
+    if (el('countRechazado')) el('countRechazado').textContent = rec;
   },
 
   // ==============================================================================
@@ -1668,7 +1672,45 @@ const app = {
       const materialText = sol.material ? String(sol.material).toUpperCase() : 'DIGITAL';
       const tamanoText = sol.tamano_impreso ? `(Tamaño: ${sol.tamano_impreso})` : '';
 
+      const esRechazado = this.normalizeEstado(sol.estado || sol.estado_codigo) === 'RECHAZADO';
+      const motivoRechazoText = sol.motivo_rechazo || 'Requerimiento o diseño denegado formalmente con causal técnica.';
+
       bodyEl.innerHTML = `
+        ${esRechazado ? `
+          <div class="banner-rechazo">
+            <h4>🛑 TRÁMITE / DISEÑO DENEGADO FORMALMENTE (NO CONFORME)</h4>
+            <p style="margin: 4px 0 8px 0; font-size: 0.88rem;"><strong>Causal / Fundamentación Registrada:</strong> ${motivoRechazoText}</p>
+            <div class="d-flex gap-2 align-center flex-wrap">
+              <button class="btn btn-sm" style="background:#DC2626; color:#fff;" onclick="app.imprimirRechazo('${sol.id}')">
+                📑 Imprimir / Descargar Acta de No Conformidad (PDF)
+              </button>
+              <button class="btn btn-sm btn-outline" style="border-color:#DC2626; color:#991B1B; background:#fff;" onclick="app.openModalRechazo('${sol.id}')">
+                ✏️ Modificar Causal de Rechazo
+              </button>
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- BARRA INSTITUCIONAL DE EXPORTACIÓN / IMPRESIÓN OFICIAL PDF -->
+        <div class="print-actions-toolbar mb-3">
+          <span class="toolbar-title">🖨️ Documentos Oficiales (PDF):</span>
+          <button class="btn btn-sm btn-outline" style="background:#fff; color:#0F172A;" onclick="app.imprimirSolicitud('${sol.id}')" title="Generar Ficha Técnica Institucional en PDF">
+            📄 Ficha de Solicitud (PDF)
+          </button>
+          <button class="btn btn-sm" style="background:#15803D; color:#fff;" onclick="app.imprimirConformidad('${sol.id}')" title="Generar Acta de Conformidad y Entrega Final en PDF">
+            📜 Acta de Conformidad Final (PDF)
+          </button>
+          ${!esRechazado ? `
+            <button class="btn btn-sm btn-outline" style="border-color:#DC2626; color:#DC2626; background:#FFF5F5;" onclick="app.openModalRechazo('${sol.id}')" title="Rechazar solicitud o diseño formalmente">
+              🛑 Denegar / Rechazar Diseño
+            </button>
+          ` : `
+            <button class="btn btn-sm" style="background:#B91C1C; color:#fff;" onclick="app.imprimirRechazo('${sol.id}')">
+              📑 Acta de No Conformidad (PDF)
+            </button>
+          `}
+        </div>
+
         <div class="modal-info-section mb-3">
           <h4 style="font-size:1.05rem; font-weight:700; color:var(--gamea-blue-dark); margin-bottom:8px;">
             📋 Ficha Técnica Institucional (D.M. N° 200)
@@ -1727,7 +1769,7 @@ const app = {
           </div>
 
           <!-- FORMULARIO DE NUEVA OBSERVACIÓN -->
-          ${puedeSolicitarCambio ? `
+          ${puedeSolicitarCambio && !esRechazado ? `
             <div style="background:#FFFFFF; padding:14px; border-radius:8px; border:1px solid #FDE68A;">
               <label style="font-size:0.85rem; font-weight:700; display:block; margin-bottom:6px; color:#92400E;">
                 Emitir Observación de Cambio (Ronda ${rondasUsadas + 1} de 2):
@@ -1742,7 +1784,7 @@ const app = {
             </div>
           ` : `
             <div style="background:#FEE2E2; padding:12px; border-radius:8px; border:1px solid #FCA5A5; color:#991B1B; font-size:0.85rem;">
-              🛑 <strong>LÍMITE ALCANZADO:</strong> Se han agotado las 2 rondas de cambios permitidas. Para cualquier ajuste adicional se requiere autorización expresa de la Dirección de Comunicación.
+              🛑 <strong>${esRechazado ? 'TRÁMITE EN ESTADO RECHAZADO' : 'LÍMITE ALCANZADO'}:</strong> ${esRechazado ? 'No se admiten nuevas rondas de cambio en trámites denegados.' : 'Se han agotado las 2 rondas de cambios permitidas. Si no hay conformidad, corresponde emitir el Rechazo Formal o solicitar autorización de DICOM.'}
             </div>
           `}
         </div>
@@ -1780,6 +1822,10 @@ const app = {
             <button type="button" class="btn btn-xs ${this.normalizeEstado(sol.estado || sol.estado_codigo) === 'FINALIZADO' ? 'btn-gris-active' : 'btn-outline'}" 
               onclick="app.cambiarEstado('${sol.id}', 'FINALIZADO')" title="Arte final entregado">
               ⚫ 6. Finalizado
+            </button>
+            <button type="button" class="btn btn-xs ${this.normalizeEstado(sol.estado || sol.estado_codigo) === 'RECHAZADO' ? 'btn-rojo-active' : 'btn-outline'}" 
+              onclick="app.openModalRechazo('${sol.id}')" title="Denegar o rechazar formalmente con causal">
+              🔴 7. Rechazado
             </button>
           </div>
         </div>
@@ -1960,6 +2006,513 @@ const app = {
       toast.style.transform = 'translateY(10px)';
       setTimeout(() => toast.remove(), 300);
     }, 4000);
+  },
+
+  // ==============================================================================
+  // 14. GESTIÓN DE RECHAZO / NO CONFORMIDAD & MOTOR DE IMPRESIÓN OFICIAL PDF
+  // ==============================================================================
+  openModalRechazo(solicitudId) {
+    const sol = state.solicitudes.find(s => String(s.id) === String(solicitudId));
+    if (!sol) return;
+
+    const modal = document.getElementById('modalRechazoBackdrop');
+    const inputId = document.getElementById('rechazoSolicitudId');
+    const selCausal = document.getElementById('selectCausalRechazo');
+    const txtDetalle = document.getElementById('txtDetalleRechazo');
+
+    if (inputId) inputId.value = sol.id;
+    if (selCausal) {
+      if (sol.rondas_cambios_usadas >= 2) {
+        selCausal.value = 'Límite institucional de 2 rondas de cambios agotado sin conformidad';
+      } else {
+        selCausal.value = '';
+      }
+    }
+    if (txtDetalle) txtDetalle.value = sol.motivo_rechazo || '';
+
+    if (modal) modal.classList.add('active');
+  },
+
+  closeModalRechazo() {
+    const modal = document.getElementById('modalRechazoBackdrop');
+    if (modal) modal.classList.remove('active');
+  },
+
+  async confirmarRechazo() {
+    const inputId = document.getElementById('rechazoSolicitudId');
+    const selCausal = document.getElementById('selectCausalRechazo');
+    const txtDetalle = document.getElementById('txtDetalleRechazo');
+
+    const solId = inputId ? inputId.value : null;
+    const causal = selCausal ? selCausal.value.trim() : '';
+    const detalle = txtDetalle ? txtDetalle.value.trim() : '';
+
+    if (!solId) {
+      this.showToast('Identificador de trámite no válido.', 'error');
+      return;
+    }
+    if (!causal) {
+      this.showToast('Debe seleccionar la causal principal de rechazo.', 'error');
+      return;
+    }
+    if (!detalle) {
+      this.showToast('Debe ingresar la fundamentación u observaciones técnicas.', 'error');
+      return;
+    }
+
+    const motivoCompleto = `[${causal}] - ${detalle}`;
+
+    try {
+      this.showToast('⏳ Registrando rechazo y acta de no conformidad...', 'info');
+      const res = await fetch(`/api/solicitudes/${solId}/estado`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          codigo_estado: 'RECHAZADO',
+          motivo_rechazo: motivoCompleto
+        })
+      });
+
+      const data = await res.json();
+      if (data.exito) {
+        this.closeModalRechazo();
+        await this.loadSolicitudesFromApi();
+        this.openDetailModal(solId);
+        this.showToast('🛑 Rechazo formal registrado. Acta de no conformidad generada.', 'warning');
+      } else {
+        throw new Error(data.error || data.mensaje);
+      }
+    } catch (err) {
+      console.warn('Fallback local para rechazo:', err);
+      const sol = state.solicitudes.find(s => String(s.id) === String(solId));
+      if (sol) {
+        sol.estado = 'RECHAZADO';
+        sol.estado_codigo = 'RECHAZADO';
+        sol.motivo_rechazo = motivoCompleto;
+        this.renderRequests();
+        this.updateCounts();
+        this.closeModalRechazo();
+        this.openDetailModal(solId);
+        this.showToast('🛑 Rechazo registrado localmente.', 'warning');
+      }
+    }
+  },
+
+  ejecutarImpresion(htmlContenido, tituloDocumento = 'Documento Institucional') {
+    const contenedor = document.getElementById('documentoImpresionOficial');
+    if (!contenedor) {
+      this.showToast('Contenedor de impresión no disponible.', 'error');
+      return;
+    }
+
+    const originalTitle = document.title;
+    document.title = `${tituloDocumento} - GAMEA DICOM 2026`;
+    contenedor.innerHTML = htmlContenido;
+
+    // Ejecutar impresión tras breve respiro para render de estilos y fuentes
+    setTimeout(() => {
+      window.print();
+      document.title = originalTitle;
+    }, 250);
+  },
+
+  imprimirSolicitud(solicitudId) {
+    const sol = state.solicitudes.find(s => String(s.id) === String(solicitudId));
+    if (!sol) {
+      this.showToast('Trámite no encontrado para impresión.', 'error');
+      return;
+    }
+
+    const fechaHoy = new Date().toLocaleDateString('es-BO', { day: '2-digit', month: 'long', year: 'numeric' });
+    const solicitanteNombre = (typeof sol.solicitante === 'object' && sol.solicitante ? sol.solicitante.nombre : sol.solicitante_nombre) || 'Servidor Público Responsable';
+    const solicitanteCargo = (typeof sol.solicitante === 'object' && sol.solicitante ? sol.solicitante.cargo : sol.solicitante_cargo) || 'Técnico / Responsable de Unidad';
+    const solicitanteTel = (typeof sol.solicitante === 'object' && sol.solicitante ? sol.solicitante.telefono : sol.solicitante_telefono) || 'S/N';
+    const disenador = sol.disenador_asignado || 'Área Creativa DICOM';
+
+    const html = `
+      <div class="print-page">
+        <!-- ENCABEZADO MEMBRETADO OFICIAL -->
+        <div class="doc-header">
+          <div class="doc-header-brand">
+            <img src="img/escudo-el-alto.png" alt="Escudo El Alto" class="doc-logo-escudo">
+            <div class="doc-header-titles">
+              <h2>Gobierno Autónomo Municipal de El Alto</h2>
+              <h3>Dirección de Comunicación (DICOM)</h3>
+              <p>Casa Municipal Jach'a Uta • Organigrama Oficial D.M. N° 200</p>
+            </div>
+          </div>
+          <div class="doc-correlativo-box">
+            <span class="doc-code">${sol.codigo_tramite || 'SOL-2026'}</span>
+            <span class="doc-tipo">Ficha Técnica Oficial</span>
+          </div>
+        </div>
+
+        <div class="doc-title-main">
+          FICHA TÉCNICA DE SOLICITUD DE SERVICIO CREATIVO
+        </div>
+
+        <!-- 1. IDENTIFICACIÓN DE LA UNIDAD SOLICITANTE -->
+        <div class="doc-section-header">1. DATOS DE LA UNIDAD SOLICITANTE</div>
+        <table class="doc-table">
+          <tr>
+            <th>Secretaría Municipal:</th>
+            <td>${sol.secretaria || 'Gobierno Autónomo Municipal de El Alto'}</td>
+            <th>Fecha de Recepción:</th>
+            <td>${sol.fecha_recepcion || fechaHoy}</td>
+          </tr>
+          <tr>
+            <th>Dirección / Unidad:</th>
+            <td>${sol.direccion || 'Dependencia Municipal'}</td>
+            <th>Plazo Estimado (SLA):</th>
+            <td>${sol.fecha_limite || '7 días hábiles normados'}</td>
+          </tr>
+          <tr>
+            <th>Servidor Solicitante:</th>
+            <td>${solicitanteNombre} (${solicitanteCargo})</td>
+            <th>Teléfono / WhatsApp:</th>
+            <td>${solicitanteTel}</td>
+          </tr>
+        </table>
+
+        <!-- 2. DETALLE DEL EVENTO O REQUERIMIENTO -->
+        <div class="doc-section-header">2. DESCRIPCIÓN DEL EVENTO O MENSAJE COMUNICACIONAL</div>
+        <table class="doc-table">
+          <tr>
+            <th>Nombre del Evento / Campaña:</th>
+            <td colspan="3"><strong>${sol.nombre_evento || 'Requerimiento Gráfico'}</strong></td>
+          </tr>
+          <tr>
+            <th>Fecha y Hora del Evento:</th>
+            <td>📅 ${sol.fecha_evento || 'Por definir'} — ⏰ ${sol.hora_evento || '09:00'}</td>
+            <th>Lugar / Ubicación:</th>
+            <td>📍 ${sol.lugar_evento || 'Ciudad de El Alto'}</td>
+          </tr>
+          <tr>
+            <th>Público Objetivo:</th>
+            <td colspan="3">${sol.publico_objetivo || 'Población general del Municipio de El Alto'}</td>
+          </tr>
+          <tr>
+            <th>Objetivo Comunicacional:</th>
+            <td colspan="3">${sol.objetivo_mensaje || 'Difusión y posicionamiento institucional'}</td>
+          </tr>
+          ${sol.informacion_adicional || sol.datos_adicionales ? `
+            <tr>
+              <th>Información Adicional:</th>
+              <td colspan="3">${sol.informacion_adicional || sol.datos_adicionales}</td>
+            </tr>
+          ` : ''}
+        </table>
+
+        <!-- 3. ESPECIFICACIONES TÉCNICAS -->
+        <div class="doc-section-header">3. ESPECIFICACIONES TÉCNICAS Y DIFUSIÓN</div>
+        <table class="doc-table">
+          <tr>
+            <th>Tipo de Pieza:</th>
+            <td>${sol.tipo_pieza || 'Pieza Gráfica'}</td>
+            <th>Estilo Visual:</th>
+            <td>${sol.estilo_visual || 'Institucional / Formal'}</td>
+          </tr>
+          <tr>
+            <th>Soporte / Material:</th>
+            <td>${sol.material || 'Digital'} ${sol.tamano_impreso ? '(' + sol.tamano_impreso + ')' : ''}</td>
+            <th>Orientación:</th>
+            <td>${sol.orientacion || 'Vertical'}</td>
+          </tr>
+          <tr>
+            <th>Plataformas de Difusión:</th>
+            <td>${Array.isArray(sol.plataformas) ? sol.plataformas.join(', ') : (sol.plataformas || 'Redes Sociales Oficiales')}</td>
+            <th>Formato Técnico Requerido:</th>
+            <td>${sol.formato_requerido || 'PDF imprenta / JPG alta calidad'}</td>
+          </tr>
+        </table>
+
+        <!-- 4. BRIEF OFICIAL Y CHECKLIST -->
+        <div class="doc-section-header">4. TEXTO APROBADO (BRIEF OFICIAL) Y CONTROL DE INSUMOS</div>
+        <div class="doc-brief-box">
+          "${sol.texto_aprobado || 'Texto oficial aprobado remitido por la unidad solicitante sin observaciones.'}"
+        </div>
+        <table class="doc-table">
+          <tr>
+            <th>Checklist de Insumos:</th>
+            <td colspan="3">
+              ☑️ Texto revisado y aprobado &nbsp;|&nbsp;
+              ☑️ Logotipos en alta resolución / vectores &nbsp;|&nbsp;
+              ☑️ Fotografías de respaldo &nbsp;|&nbsp;
+              ☑️ Cumplimiento D.M. N° 200
+            </td>
+          </tr>
+          <tr>
+            <th>Diseñador Asignado DICOM:</th>
+            <td>${disenador}</td>
+            <th>Rondas de Modificación:</th>
+            <td>Máximo 2 rondas normadas (Consumidas: ${sol.rondas_cambios_usadas || 0})</td>
+          </tr>
+        </table>
+
+        <!-- FIRMAS Y SELLOS -->
+        <div class="doc-signatures-grid three-col">
+          <div class="doc-sign-box">
+            <div class="doc-seal-area">[ SELLO DE LA UNIDAD SOLICITANTE ]</div>
+            <div class="doc-sign-line"></div>
+            <div class="doc-sign-name">${solicitanteNombre}</div>
+            <div class="doc-sign-cargo">${solicitanteCargo}</div>
+          </div>
+          <div class="doc-sign-box">
+            <div class="doc-seal-area">[ SELLO Y ASIGNACIÓN DICOM ]</div>
+            <div class="doc-sign-line"></div>
+            <div class="doc-sign-name">${disenador}</div>
+            <div class="doc-sign-cargo">Área Creativa • DICOM</div>
+          </div>
+          <div class="doc-sign-box">
+            <div class="doc-seal-area">[ V.º B.º DIRECCIÓN DE COMUNICACIÓN ]</div>
+            <div class="doc-sign-line"></div>
+            <div class="doc-sign-name">Lic. Roxana Vargas</div>
+            <div class="doc-sign-cargo">Directora de Comunicación - GAMEA</div>
+          </div>
+        </div>
+
+        <div class="doc-footer-legal">
+          <span>Gobierno Autónomo Municipal de El Alto • Sistema Oficial Comunica Digital SDD</span>
+          <span>Fecha de Impresión: ${fechaHoy}</span>
+        </div>
+      </div>
+    `;
+
+    this.ejecutarImpresion(html, `Ficha_Solicitud_${sol.codigo_tramite || 'GAMEA'}`);
+  },
+
+  imprimirConformidad(solicitudId) {
+    const sol = state.solicitudes.find(s => String(s.id) === String(solicitudId));
+    if (!sol) {
+      this.showToast('Trámite no encontrado para generar acta de conformidad.', 'error');
+      return;
+    }
+
+    const fechaHoy = new Date().toLocaleDateString('es-BO', { day: '2-digit', month: 'long', year: 'numeric' });
+    const solicitanteNombre = (typeof sol.solicitante === 'object' && sol.solicitante ? sol.solicitante.nombre : sol.solicitante_nombre) || 'Servidor Público Responsable';
+    const solicitanteCargo = (typeof sol.solicitante === 'object' && sol.solicitante ? sol.solicitante.cargo : sol.solicitante_cargo) || 'Técnico / Responsable de Unidad';
+    const disenador = sol.disenador_asignado || 'Lic. Marco Antonio Choque (Diseñador DICOM)';
+    const rondas = Number(sol.rondas_cambios_usadas) || 0;
+
+    const html = `
+      <div class="print-page">
+        <!-- ENCABEZADO MEMBRETADO OFICIAL -->
+        <div class="doc-header">
+          <div class="doc-header-brand">
+            <img src="img/escudo-el-alto.png" alt="Escudo El Alto" class="doc-logo-escudo">
+            <div class="doc-header-titles">
+              <h2>Gobierno Autónomo Municipal de El Alto</h2>
+              <h3>Dirección de Comunicación (DICOM)</h3>
+              <p>Casa Municipal Jach'a Uta • Organigrama Oficial D.M. N° 200</p>
+            </div>
+          </div>
+          <div class="doc-correlativo-box">
+            <span class="doc-code">${sol.codigo_tramite || 'SOL-2026'}</span>
+            <span class="doc-tipo">Acta de Conformidad Final</span>
+          </div>
+        </div>
+
+        <div class="doc-title-main doc-title-conformidad">
+          ACTA OFICIAL DE CONFORMIDAD Y ENTREGA FINAL DE SERVICIO CREATIVO
+        </div>
+
+        <p style="font-size:9.5pt; text-align:justify; line-height:1.45; margin-bottom:14px;">
+          En la ciudad de El Alto, a los <strong>${fechaHoy}</strong>, se suscribe la presente <strong>Acta de Conformidad y Entrega Final</strong> en el marco de los servicios prestados por el Área de Diseño de la Dirección de Comunicación (DICOM), dejando constancia expresa de la entrega a total satisfacción de las piezas gráficas institucionales requeridas mediante el trámite <strong>${sol.codigo_tramite || 'SOL-2026'}</strong>.
+        </p>
+
+        <!-- 1. ANTECEDENTES Y DETALLE DEL TRÁMITE -->
+        <div class="doc-section-header">1. DATOS DE IDENTIFICACIÓN DEL TRÁMITE</div>
+        <table class="doc-table">
+          <tr>
+            <th>Trámite Oficial:</th>
+            <td><strong>${sol.codigo_tramite || 'SOL-2026'}</strong></td>
+            <th>Fecha de Solicitud:</th>
+            <td>${sol.fecha_recepcion || 'Gestión 2026'}</td>
+          </tr>
+          <tr>
+            <th>Dependencia Solicitante:</th>
+            <td>${sol.secretaria || 'GAM El Alto'} — ${sol.direccion || 'Dirección Solicitante'}</td>
+            <th>Servidor Responsable:</th>
+            <td>${solicitanteNombre} (${solicitanteCargo})</td>
+          </tr>
+          <tr>
+            <th>Pieza / Objeto del Servicio:</th>
+            <td colspan="3"><strong>${sol.nombre_evento || 'Diseño Institucional'}</strong> — Tipo: ${sol.tipo_pieza || 'Gráfica'} (${sol.formato_requerido || 'Formato Final'})</td>
+          </tr>
+          <tr>
+            <th>Diseñador Responsable DICOM:</th>
+            <td>${disenador}</td>
+            <th>Rondas de Modificación:</th>
+            <td>${rondas} de 2 rondas normadas utilizadas (Cumplimiento Procedimental 100%)</td>
+          </tr>
+        </table>
+
+        <!-- 2. DECLARACIÓN FORMAL DE CONFORMIDAD TÉCNICA -->
+        <div class="doc-section-header">2. DECLARACIÓN DE CONFORMIDAD Y RECEPCIÓN SATISFACTORIA</div>
+        <div class="doc-brief-box" style="font-style:normal; background:#F0FDF4 !important; border-color:#86EFAC;">
+          <p style="margin:0 0 6px 0;"><strong>Declaración del Solicitante:</strong></p>
+          <p style="margin:0; font-size:8.8pt; line-height:1.4;">
+            La unidad solicitante declara haber recibido los archivos digitales y artes finales en las resoluciones, dimensiones y formatos requeridos, verificando la correcta aplicación de la identidad gráfica institucional del Gobierno Autónomo Municipal de El Alto, la ortografía de los textos aprobados y el estricto apego al requerimiento formulado, otorgando en consecuencia su <strong>VISTO BUENO Y CONFORMIDAD DEFINITIVA</strong> sin lugar a reclamo posterior.
+          </p>
+        </div>
+
+        <!-- 3. DETALLE DE ARCHIVOS Y PRODUCTOS ENTREGADOS -->
+        <div class="doc-section-header">3. PRODUCTOS Y ENTREGABLES OFICIALES</div>
+        <table class="doc-table">
+          <tr>
+            <th>Archivos Finales Entregados:</th>
+            <td colspan="3">
+              📦 Archivos para Imprenta (PDF Alta Resolución CMYK 300 DPI)<br>
+              📱 Archivos Digitales para Redes Sociales y Web (JPG / PNG sRGB)<br>
+              📂 Copia de Respaldo en Archivo Digital DICOM (Jach'a Uta)
+            </td>
+          </tr>
+          <tr>
+            <th>Estado Final del Trámite:</th>
+            <td><strong style="color:#15803D;">🟢 APROBADO / FINALIZADO A SATISFACCIÓN</strong></td>
+            <th>Garantía Institucional:</th>
+            <td>Validez Oficial Gestión 2026</td>
+          </tr>
+        </table>
+
+        <!-- CUADRO DE FIRMAS -->
+        <div class="doc-signatures-grid">
+          <div class="doc-sign-box">
+            <div class="doc-seal-area">[ SELLO DE RECEPCIÓN Y CONFORMIDAD ]</div>
+            <div class="doc-sign-line"></div>
+            <div class="doc-sign-name">${solicitanteNombre}</div>
+            <div class="doc-sign-cargo">${solicitanteCargo} • Unidad Solicitante</div>
+          </div>
+          <div class="doc-sign-box">
+            <div class="doc-seal-area">[ SELLO Y FIRMA DE ENTREGA DICOM ]</div>
+            <div class="doc-sign-line"></div>
+            <div class="doc-sign-name">${disenador}</div>
+            <div class="doc-sign-cargo">Área de Diseño Creativo • DICOM</div>
+          </div>
+        </div>
+
+        <div class="doc-footer-legal">
+          <span>Gobierno Autónomo Municipal de El Alto • Dirección de Comunicación (DICOM)</span>
+          <span>Emitido el: ${fechaHoy} • Conforme a D.M. N° 200</span>
+        </div>
+      </div>
+    `;
+
+    this.ejecutarImpresion(html, `Acta_Conformidad_${sol.codigo_tramite || 'GAMEA'}`);
+  },
+
+  imprimirRechazo(solicitudId) {
+    const sol = state.solicitudes.find(s => String(s.id) === String(solicitudId));
+    if (!sol) {
+      this.showToast('Trámite no encontrado para generar acta de no conformidad.', 'error');
+      return;
+    }
+
+    const fechaHoy = new Date().toLocaleDateString('es-BO', { day: '2-digit', month: 'long', year: 'numeric' });
+    const solicitanteNombre = (typeof sol.solicitante === 'object' && sol.solicitante ? sol.solicitante.nombre : sol.solicitante_nombre) || 'Servidor Público Responsable';
+    const solicitanteCargo = (typeof sol.solicitante === 'object' && sol.solicitante ? sol.solicitante.cargo : sol.solicitante_cargo) || 'Técnico / Responsable de Unidad';
+    const disenador = sol.disenador_asignado || 'Área Creativa DICOM';
+    const motivoRechazo = sol.motivo_rechazo || 'No conformidad técnica manifestada conforme a procedimiento DICOM.';
+
+    const html = `
+      <div class="print-page">
+        <!-- ENCABEZADO MEMBRETADO OFICIAL -->
+        <div class="doc-header">
+          <div class="doc-header-brand">
+            <img src="img/escudo-el-alto.png" alt="Escudo El Alto" class="doc-logo-escudo">
+            <div class="doc-header-titles">
+              <h2>Gobierno Autónomo Municipal de El Alto</h2>
+              <h3>Dirección de Comunicación (DICOM)</h3>
+              <p>Casa Municipal Jach'a Uta • Organigrama Oficial D.M. N° 200</p>
+            </div>
+          </div>
+          <div class="doc-correlativo-box" style="border-color:#DC2626;">
+            <span class="doc-code" style="color:#DC2626;">${sol.codigo_tramite || 'SOL-2026'}</span>
+            <span class="doc-tipo" style="color:#991B1B;">Acta de No Conformidad</span>
+          </div>
+        </div>
+
+        <div class="doc-title-main doc-title-rechazo">
+          ACTA OFICIAL DE NO CONFORMIDAD Y RECHAZO TÉCNICO DE DISEÑO
+        </div>
+
+        <p style="font-size:9.5pt; text-align:justify; line-height:1.45; margin-bottom:14px;">
+          En la ciudad de El Alto, a los <strong>${fechaHoy}</strong>, la Dirección de Comunicación (DICOM) del Gobierno Autónomo Municipal de El Alto emite la presente <strong>Acta de No Conformidad y Denegación Formal</strong> correspondiente a la solicitud registrada bajo el código <strong>${sol.codigo_tramite || 'SOL-2026'}</strong>, en estricto cumplimiento de las normas de identidad visual municipal, plazos de producción y control de modificaciones.
+        </p>
+
+        <!-- 1. IDENTIFICACIÓN DEL TRÁMITE -->
+        <div class="doc-section-header">1. ANTECEDENTES DEL REQUERIMIENTO</div>
+        <table class="doc-table">
+          <tr>
+            <th>Código de Trámite:</th>
+            <td><strong>${sol.codigo_tramite || 'SOL-2026'}</strong></td>
+            <th>Fecha de Registro:</th>
+            <td>${sol.fecha_recepcion || 'Gestión 2026'}</td>
+          </tr>
+          <tr>
+            <th>Dependencia Solicitante:</th>
+            <td>${sol.secretaria || 'GAM El Alto'} — ${sol.direccion || 'Dirección Solicitante'}</td>
+            <th>Servidor Solicitante:</th>
+            <td>${solicitanteNombre} (${solicitanteCargo})</td>
+          </tr>
+          <tr>
+            <th>Evento / Pieza Evaluada:</th>
+            <td colspan="3"><strong>${sol.nombre_evento || 'Requerimiento Gráfico'}</strong> (${sol.tipo_pieza || 'Pieza Gráfica'})</td>
+          </tr>
+          <tr>
+            <th>Diseñador Asignado:</th>
+            <td>${disenador}</td>
+            <th>Rondas Consumidas:</th>
+            <td>${sol.rondas_cambios_usadas || 0} de 2 rondas reglamentarias</td>
+          </tr>
+        </table>
+
+        <!-- 2. CAUSAL Y FUNDAMENTACIÓN DEL RECHAZO -->
+        <div class="doc-section-header">2. CAUSAL Y FUNDAMENTACIÓN TÉCNICA DEL RECHAZO</div>
+        <div class="doc-brief-box" style="font-style:normal; background:#FEF2F2 !important; border-color:#FCA5A5; color:#991B1B;">
+          <p style="margin:0 0 6px 0; font-weight:700;">Motivo Técnico Fundamentado:</p>
+          <p style="margin:0; font-size:9pt; line-height:1.4;">
+            ${motivoRechazo}
+          </p>
+        </div>
+
+        <!-- 3. MARCO NORMATIVO Y EFECTOS -->
+        <div class="doc-section-header">3. EFECTOS ADMINISTRATIVOS Y DISPOSICIONES</div>
+        <table class="doc-table">
+          <tr>
+            <th>Efecto Inmediato:</th>
+            <td colspan="3">
+              1. Conclusión y cierre del trámite en estado <strong>🔴 Rechazado / No Conforme</strong>.<br>
+              2. Suspensión de la producción gráfica por causal fundamentada.<br>
+              3. Si la unidad requiere replantear la solicitud, deberá iniciar un nuevo trámite subsanando las causales expuestas.
+            </td>
+          </tr>
+        </table>
+
+        <!-- CUADRO DE FIRMAS -->
+        <div class="doc-signatures-grid">
+          <div class="doc-sign-box">
+            <div class="doc-seal-area">[ NOTIFICACIÓN UNIDAD SOLICITANTE ]</div>
+            <div class="doc-sign-line"></div>
+            <div class="doc-sign-name">${solicitanteNombre}</div>
+            <div class="doc-sign-cargo">${solicitanteCargo} • Unidad Solicitante</div>
+          </div>
+          <div class="doc-sign-box">
+            <div class="doc-seal-area">[ CONTROL DE CALIDAD Y SUPERVISIÓN DICOM ]</div>
+            <div class="doc-sign-line"></div>
+            <div class="doc-sign-name">Lic. Roxana Vargas</div>
+            <div class="doc-sign-cargo">Directora de Comunicación • GAMEA</div>
+          </div>
+        </div>
+
+        <div class="doc-footer-legal">
+          <span>Gobierno Autónomo Municipal de El Alto • Dirección de Comunicación (DICOM)</span>
+          <span>Fecha de Emisión: ${fechaHoy} • Control Normativo D.M. N° 200</span>
+        </div>
+      </div>
+    `;
+
+    this.ejecutarImpresion(html, `Acta_No_Conformidad_${sol.codigo_tramite || 'GAMEA'}`);
   },
 
   // ==============================================================================

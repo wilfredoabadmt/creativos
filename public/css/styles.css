@@ -3334,3 +3334,318 @@ img:not([height]):not(.modal-logo-img):not(.brand-logo-escudo):not(.brand-logo-i
     flex-direction: column;
   }
 }
+
+/* ==============================================================================
+ * ESTADO RECHAZADO / NO CONFORME & BOTONES ASOCIADOS
+ * ============================================================================== */
+.status-rojo {
+  background: #FEE2E2 !important;
+  color: #991B1B !important;
+  border: 1px solid #FCA5A5 !important;
+}
+
+.btn-rojo-active {
+  background: #DC2626 !important;
+  color: #FFFFFF !important;
+  border-color: #B91C1C !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3) !important;
+}
+
+.banner-rechazo {
+  background: #FEF2F2;
+  border: 1.5px solid #F87171;
+  border-radius: 8px;
+  padding: 14px;
+  color: #991B1B;
+  margin-bottom: 16px;
+}
+
+.banner-rechazo h4 {
+  margin: 0 0 6px 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ACCIONES DE EXPORTACIÓN / IMPRESIÓN EN DETALLE */
+.print-actions-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px;
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  margin-top: 14px;
+}
+
+.print-actions-toolbar .toolbar-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==============================================================================
+ * MOTOR DE IMPRESIÓN INSTITUCIONAL EN PDF (GAMEA DICOM)
+ * ============================================================================== */
+#documentoImpresionOficial {
+  display: none;
+}
+
+@media print {
+  /* Ocultar todos los elementos de la interfaz interactiva */
+  header,
+  nav,
+  footer,
+  .top-banner,
+  .brand-header,
+  .nav-controls,
+  .view-section,
+  .modal-backdrop,
+  .toast-container,
+  .gamea-footer,
+  #modalDetalleBackdrop,
+  #modalRechazoBackdrop,
+  #modalLoginBackdrop,
+  #modalUsuarioBackdrop,
+  #modalResetPassBackdrop {
+    display: none !important;
+  }
+
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 11pt !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    size: letter portrait;
+    margin: 12mm 15mm 15mm 15mm;
+  }
+
+  #documentoImpresionOficial {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: #FFFFFF !important;
+  }
+
+  .print-page {
+    page-break-after: avoid;
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  /* Encabezado Membretado Oficial */
+  .doc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2.5px solid #002B49;
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+  }
+
+  .doc-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .doc-logo-escudo {
+    width: 52px;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .doc-header-titles h2 {
+    font-size: 12pt;
+    font-weight: 800;
+    color: #002B49;
+    margin: 0;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .doc-header-titles h3 {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: #D52B1E;
+    margin: 2px 0 0 0;
+    text-transform: uppercase;
+  }
+
+  .doc-header-titles p {
+    font-size: 8pt;
+    color: #475569;
+    margin: 1px 0 0 0;
+  }
+
+  .doc-correlativo-box {
+    text-align: right;
+    border: 1.5px solid #002B49;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #F8FAFC !important;
+  }
+
+  .doc-correlativo-box .doc-code {
+    font-size: 11pt;
+    font-weight: 800;
+    color: #D52B1E;
+    letter-spacing: 0.5px;
+    display: block;
+  }
+
+  .doc-correlativo-box .doc-tipo {
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: #002B49;
+    text-transform: uppercase;
+  }
+
+  /* Título Central del Documento */
+  .doc-title-main {
+    text-align: center;
+    margin: 12px 0;
+    padding: 6px 0;
+    background: #002B49 !important;
+    color: #FFFFFF !important;
+    font-size: 11pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px;
+  }
+
+  .doc-title-main.doc-title-rechazo {
+    background: #DC2626 !important;
+  }
+
+  .doc-title-main.doc-title-conformidad {
+    background: #15803D !important;
+  }
+
+  /* Tablas de Datos Técnicos Oficiales */
+  .doc-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+    font-size: 9pt;
+  }
+
+  .doc-table th,
+  .doc-table td {
+    border: 1px solid #CBD5E1;
+    padding: 5px 8px;
+    vertical-align: top;
+    line-height: 1.3;
+  }
+
+  .doc-table th {
+    background: #F1F5F9 !important;
+    color: #0F172A;
+    font-weight: 700;
+    text-align: left;
+    width: 25%;
+  }
+
+  .doc-section-header {
+    background: #E2E8F0 !important;
+    color: #002B49;
+    font-weight: 800;
+    font-size: 8.5pt;
+    padding: 4px 8px;
+    text-transform: uppercase;
+    border: 1px solid #CBD5E1;
+  }
+
+  /* Recuadro de Brief / Texto Oficial */
+  .doc-brief-box {
+    border: 1px solid #CBD5E1;
+    background: #F8FAFC !important;
+    padding: 8px 10px;
+    font-size: 8.5pt;
+    font-style: italic;
+    color: #1E293B;
+    line-height: 1.35;
+    margin-bottom: 12px;
+    border-radius: 4px;
+  }
+
+  /* Recuadros de Firma y Sellos Oficiales */
+  .doc-signatures-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 24px;
+    page-break-inside: avoid;
+  }
+
+  .doc-signatures-grid.three-col {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .doc-sign-box {
+    border: 1px dashed #94A3B8;
+    padding: 10px 8px 6px 8px;
+    text-align: center;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: #FAFAFA !important;
+    border-radius: 6px;
+  }
+
+  .doc-sign-line {
+    border-top: 1px solid #000000;
+    margin: 0 auto 4px auto;
+    width: 80%;
+  }
+
+  .doc-sign-name {
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: #0F172A;
+    line-height: 1.2;
+  }
+
+  .doc-sign-cargo {
+    font-size: 7.5pt;
+    color: #475569;
+    line-height: 1.1;
+  }
+
+  .doc-seal-area {
+    font-size: 6.5pt;
+    color: #94A3B8;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Pie de Página Institucional del Documento */
+  .doc-footer-legal {
+    border-top: 1px solid #CBD5E1;
+    margin-top: 16px;
+    padding-top: 6px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 7pt;
+    color: #64748B;
+  }
+}
