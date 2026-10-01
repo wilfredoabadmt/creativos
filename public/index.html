@@ -234,49 +234,58 @@
         <div class="card-box shadow-lg">
           <div class="card-header bg-gamea-gradient text-white d-flex justify-between align-center">
             <div>
-              <span class="badge-form-header">FICHA TÉCNICA OFICIAL DICOM</span>
-              <h2 class="card-title-lg">Registro de Solicitud de Diseño Gráfico</h2>
-              <p class="card-subtitle">Gobierno Autónomo Municipal de El Alto</p>
+              <span class="badge-form-header">FICHA TÉCNICA DE SOLICITUD DE DISEÑO GRÁFICO</span>
+              <h2 class="card-title-lg">Gobierno Autónomo Municipal de El Alto – Jach’a Uta</h2>
+              <p class="card-subtitle mt-1">
+                <strong>Objetivo Oficial:</strong> Recopilar la información indispensable para orientar correctamente la elaboración de piezas gráficas institucionales y optimizar los tiempos de atención a las diferentes dependencias municipales.
+              </p>
             </div>
             <button class="btn btn-sm btn-outline-white" id="btnFillDemo" title="Rellenar con datos de prueba real">
               ⚡ Autocompletar Caso Demo
             </button>
           </div>
 
-          <!-- STEPPER INDICATOR -->
+          <!-- STEPPER INDICATOR (5 PASOS QUE CUBREN LAS 6 SECCIONES DEL PDF) -->
           <div class="stepper-bar">
             <div class="step-item active" id="stepIndicator1">
               <span class="step-dot">1</span>
-              <span class="step-label">Datos del Evento</span>
+              <span class="step-label">1. Datos Evento</span>
             </div>
             <div class="step-line"></div>
             <div class="step-item" id="stepIndicator2">
               <span class="step-dot">2</span>
-              <span class="step-label">Características</span>
+              <span class="step-label">2. Características</span>
             </div>
             <div class="step-line"></div>
             <div class="step-item" id="stepIndicator3">
               <span class="step-dot">3</span>
-              <span class="step-label">Formato y Difusión</span>
+              <span class="step-label">3. Formato y Difusión</span>
             </div>
             <div class="step-line"></div>
             <div class="step-item" id="stepIndicator4">
               <span class="step-dot">4</span>
-              <span class="step-label">Insumos y Envío</span>
+              <span class="step-label">4. Material / Insumos</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item" id="stepIndicator5">
+              <span class="step-dot">5</span>
+              <span class="step-label">5-6. Solicitante y V.º B.º</span>
             </div>
           </div>
 
-          <!-- FORMULARIO MULTI-PASO -->
+          <!-- FORMULARIO OFICIAL MULTI-PASO -->
           <form id="formSolicitud" class="form-body">
             
-            <!-- PASO 1: DATOS DEL EVENTO O ACTIVIDAD -->
+            <!-- ======================================================== -->
+            <!-- PASO 1: 1. DATOS DEL EVENTO O ACTIVIDAD                 -->
+            <!-- ======================================================== -->
             <div class="form-step-content active" id="stepContent1">
-              <h4 class="step-title"><span>Sección 1</span> Datos del Evento o Actividad Institucional</h4>
+              <h4 class="step-title"><span>1.</span> DATOS DEL EVENTO O ACTIVIDAD</h4>
               <p class="step-instructions">Indique la dependencia solicitante y los detalles del evento para el cual se requiere la pieza gráfica.</p>
               
               <div class="form-grid-2">
                 <div class="form-group">
-                  <label for="campoSecretaria">Secretaría Municipal Solicitante <span class="req">*</span></label>
+                  <label for="campoSecretaria">Organizadores / Secretaría Solicitante <span class="req">*</span></label>
                   <select id="campoSecretaria" class="form-control" required>
                     <option value="">-- Seleccione Secretaría Municipal u Órgano --</option>
                   </select>
@@ -284,7 +293,7 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="campoDireccionSelect">Dirección / Unidad Ejecutora <span class="req">*</span></label>
+                  <label for="campoDireccionSelect">Dirección / Unidad Solicitante <span class="req">*</span></label>
                   <select id="campoDireccionSelect" class="form-control" required disabled>
                     <option value="">-- Primero seleccione una Secretaría --</option>
                   </select>
@@ -293,7 +302,7 @@
               </div>
 
               <div class="form-group">
-                <label for="campoNombreEvento">Nombre Oficial del Evento o Actividad <span class="req">*</span></label>
+                <label for="campoNombreEvento">Título del Evento <span class="req">*</span></label>
                 <input type="text" id="campoNombreEvento" class="form-control" placeholder="Ej: Gran Campaña de Vacunación Canina y Felina Distrito 8" required>
               </div>
 
@@ -308,24 +317,24 @@
                   <input type="time" id="campoHoraEvento" class="form-control">
                 </div>
                 <div class="form-group">
-                  <label for="campoLugarEvento">Lugar / Distrito <span class="req">*</span></label>
+                  <label for="campoLugarEvento">Lugar <span class="req">*</span></label>
                   <input type="text" id="campoLugarEvento" class="form-control" placeholder="Ej: Plaza Central Senkata, Distrito 8" required>
                 </div>
               </div>
 
               <div class="form-group">
-                <label for="campoPublicoObjetivo">Público Objetivo <span class="req">*</span></label>
-                <input type="text" id="campoPublicoObjetivo" class="form-control" placeholder="Ej: Vecinas, vecinos y familias con mascotas del Distrito 8 de El Alto" required>
+                <label for="campoPublicoObjetivo">Dirigido a <span class="req">*</span></label>
+                <input type="text" id="campoPublicoObjetivo" class="form-control" placeholder="Público objetivo: jóvenes, estudiantes, población en general, funcionarios, etc." required>
               </div>
 
               <div class="form-group">
-                <label for="campoObjetivoMensaje">Objetivo del Mensaje <span class="req">*</span></label>
-                <textarea id="campoObjetivoMensaje" rows="3" class="form-control" placeholder="¿Qué se busca lograr con la pieza gráfica? Ej: Concientizar e invitar a la población a vacunar gratuitamente a sus mascotas para prevenir la rabia." required></textarea>
+                <label for="campoObjetivoMensaje">Objetivo / Mensaje Principal <span class="req">*</span></label>
+                <textarea id="campoObjetivoMensaje" rows="3" class="form-control" placeholder="¿Qué se quiere comunicar o lograr con esta pieza?" required></textarea>
               </div>
 
               <div class="form-group">
-                <label for="campoInfoAdicional">Información Adicional Relevante</label>
-                <input type="text" id="campoInfoAdicional" class="form-control" placeholder="Ej: Contaremos con la presencia de la Alcaldesa; incluir requisitos de edad de cachorros">
+                <label for="campoInfoAdicional">Datos Adicionales</label>
+                <input type="text" id="campoInfoAdicional" class="form-control" placeholder="Teléfono, redes, página web, QR, requisitos, inscripción, etc.">
               </div>
 
               <div class="form-actions d-flex justify-end gap-2">
@@ -333,84 +342,100 @@
               </div>
             </div>
 
-            <!-- PASO 2: CARACTERÍSTICAS DEL DISEÑO -->
+            <!-- ======================================================== -->
+            <!-- PASO 2: 2. CARACTERÍSTICAS DEL DISEÑO                   -->
+            <!-- ======================================================== -->
             <div class="form-step-content" id="stepContent2">
-              <h4 class="step-title"><span>Sección 2</span> Características del Diseño Gráfico</h4>
-              <p class="step-instructions">Defina el tipo de pieza gráfica y el estilo visual deseado.</p>
+              <h4 class="step-title"><span>2.</span> CARACTERÍSTICAS DEL DISEÑO</h4>
+              <p class="step-instructions">Indique el tipo de pieza gráfica y el estilo visual deseado según el catálogo institucional.</p>
 
               <div class="form-group">
-                <label class="d-block mb-2">Tipo de Pieza Requerida <span class="req">*</span></label>
+                <label class="d-block mb-2">¿Qué tipo de diseño necesita? <span class="req">*</span></label>
                 <div class="grid-checkboxes">
                   <label class="check-box-card">
-                    <input type="radio" name="tipoPieza" value="Afiche" checked>
-                    <span class="card-inner"><span>🎨</span> Afiche Institucional</span>
+                    <input type="radio" name="tipoPieza" value="Afiche informativo" checked onchange="app.toggleOtroTipoPieza(false)">
+                    <span class="card-inner"><span>🎨</span> Afiche informativo</span>
                   </label>
                   <label class="check-box-card">
-                    <input type="radio" name="tipoPieza" value="Poster">
-                    <span class="card-inner"><span>🖼️</span> Poster Gran Impacto</span>
+                    <input type="radio" name="tipoPieza" value="Póster" onchange="app.toggleOtroTipoPieza(false)">
+                    <span class="card-inner"><span>🖼️</span> Póster</span>
                   </label>
                   <label class="check-box-card">
-                    <input type="radio" name="tipoPieza" value="Flyer">
-                    <span class="card-inner"><span>📄</span> Flyer / Volante</span>
+                    <input type="radio" name="tipoPieza" value="Volante / Flyer" onchange="app.toggleOtroTipoPieza(false)">
+                    <span class="card-inner"><span>📄</span> Volante / Flyer</span>
                   </label>
                   <label class="check-box-card">
-                    <input type="radio" name="tipoPieza" value="Tríptico">
-                    <span class="card-inner"><span>📑</span> Tríptico / Folleto</span>
+                    <input type="radio" name="tipoPieza" value="Tríptico / Díptico" onchange="app.toggleOtroTipoPieza(false)">
+                    <span class="card-inner"><span>📑</span> Tríptico / Díptico</span>
                   </label>
                   <label class="check-box-card">
-                    <input type="radio" name="tipoPieza" value="Invitación">
-                    <span class="card-inner"><span>✉️</span> Invitación Protocolar</span>
+                    <input type="radio" name="tipoPieza" value="Invitación" onchange="app.toggleOtroTipoPieza(false)">
+                    <span class="card-inner"><span>✉️</span> Invitación</span>
                   </label>
                   <label class="check-box-card">
-                    <input type="radio" name="tipoPieza" value="Banner">
-                    <span class="card-inner"><span>🚩</span> Banner / Roll-up</span>
+                    <input type="radio" name="tipoPieza" value="Banner" onchange="app.toggleOtroTipoPieza(false)">
+                    <span class="card-inner"><span>🚩</span> Banner</span>
                   </label>
                   <label class="check-box-card">
-                    <input type="radio" name="tipoPieza" value="Infografía">
-                    <span class="card-inner"><span>📊</span> Infografía Explicativa</span>
+                    <input type="radio" name="tipoPieza" value="Infografía" onchange="app.toggleOtroTipoPieza(false)">
+                    <span class="card-inner"><span>📊</span> Infografía</span>
                   </label>
                   <label class="check-box-card">
-                    <input type="radio" name="tipoPieza" value="Redes Sociales">
-                    <span class="card-inner"><span>📱</span> Arte Redes Sociales</span>
+                    <input type="radio" name="tipoPieza" value="Redes sociales" onchange="app.toggleOtroTipoPieza(false)">
+                    <span class="card-inner"><span>📱</span> Redes sociales</span>
                   </label>
                   <label class="check-box-card">
-                    <input type="radio" name="tipoPieza" value="Otro">
-                    <span class="card-inner"><span>➕</span> Otro Formato</span>
+                    <input type="radio" name="tipoPieza" value="Otro" id="radioTipoOtro" onchange="app.toggleOtroTipoPieza(true)">
+                    <span class="card-inner"><span>➕</span> Otro</span>
                   </label>
+                </div>
+
+                <div id="wrapperTipoPiezaOtro" class="campo-otro-container" style="display: none;">
+                  <label for="campoTipoPiezaOtro" class="text-sm font-semibold">Especifique el tipo de diseño requerido: <span class="req">*</span></label>
+                  <input type="text" id="campoTipoPiezaOtro" class="form-control" placeholder="Ej: Credenciales, Pasacalles, Certificados de Reconocimiento...">
                 </div>
               </div>
 
-              <div class="form-group mt-3">
-                <label class="d-block mb-2">Estilo Visual Requerido <span class="req">*</span></label>
+              <div class="form-group mt-4">
+                <label class="d-block mb-2">¿Qué estilo visual desea? <span class="req">*</span></label>
                 <div class="grid-radios">
                   <label class="radio-pill">
-                    <input type="radio" name="estiloVisual" value="Institucional" checked>
-                    <span>🏛️ Institucional</span>
+                    <input type="radio" name="estiloVisual" value="Institucional / formal" checked onchange="app.toggleOtroEstiloVisual(false)">
+                    <span>🏛️ Institucional / formal</span>
                   </label>
                   <label class="radio-pill">
-                    <input type="radio" name="estiloVisual" value="Moderno">
+                    <input type="radio" name="estiloVisual" value="Moderno" onchange="app.toggleOtroEstiloVisual(false)">
                     <span>✨ Moderno</span>
                   </label>
                   <label class="radio-pill">
-                    <input type="radio" name="estiloVisual" value="Juvenil">
-                    <span>⚡ Juvenil / Dinámico</span>
+                    <input type="radio" name="estiloVisual" value="Juvenil" onchange="app.toggleOtroEstiloVisual(false)">
+                    <span>⚡ Juvenil</span>
                   </label>
                   <label class="radio-pill">
-                    <input type="radio" name="estiloVisual" value="Colorido">
-                    <span>🌈 Colorido / Festivo</span>
+                    <input type="radio" name="estiloVisual" value="Colorido / dinámico" onchange="app.toggleOtroEstiloVisual(false)">
+                    <span>🌈 Colorido / dinámico</span>
                   </label>
                   <label class="radio-pill">
-                    <input type="radio" name="estiloVisual" value="Minimalista">
-                    <span>📐 Minimalista</span>
+                    <input type="radio" name="estiloVisual" value="Minimalista / limpio" onchange="app.toggleOtroEstiloVisual(false)">
+                    <span>📐 Minimalista / limpio</span>
                   </label>
                   <label class="radio-pill">
-                    <input type="radio" name="estiloVisual" value="Educativo">
-                    <span>💡 Educativo / Cívico</span>
+                    <input type="radio" name="estiloVisual" value="Educativo" onchange="app.toggleOtroEstiloVisual(false)">
+                    <span>💡 Educativo</span>
                   </label>
                   <label class="radio-pill">
-                    <input type="radio" name="estiloVisual" value="Cultural">
-                    <span>🎭 Cultural / Identidad</span>
+                    <input type="radio" name="estiloVisual" value="Cultural" onchange="app.toggleOtroEstiloVisual(false)">
+                    <span>🎭 Cultural</span>
                   </label>
+                  <label class="radio-pill">
+                    <input type="radio" name="estiloVisual" value="Otro" id="radioEstiloOtro" onchange="app.toggleOtroEstiloVisual(true)">
+                    <span>➕ Otro</span>
+                  </label>
+                </div>
+
+                <div id="wrapperEstiloVisualOtro" class="campo-otro-container" style="display: none;">
+                  <label for="campoEstiloVisualOtro" class="text-sm font-semibold">Especifique el estilo visual deseado: <span class="req">*</span></label>
+                  <input type="text" id="campoEstiloVisualOtro" class="form-control" placeholder="Ej: Histórico-conmemorativo, Ecológico, Neón...">
                 </div>
               </div>
 
@@ -420,32 +445,34 @@
               </div>
             </div>
 
-            <!-- PASO 3: FORMATO Y DIFUSIÓN -->
+            <!-- ======================================================== -->
+            <!-- PASO 3: 3. FORMATO Y MEDIO DE DIFUSIÓN                  -->
+            <!-- ======================================================== -->
             <div class="form-step-content" id="stepContent3">
-              <h4 class="step-title"><span>Sección 3</span> Formato Técnico y Plataformas de Difusión</h4>
-              <p class="step-instructions">Indique las especificaciones de entrega y los canales municipales donde se difundirá.</p>
+              <h4 class="step-title"><span>3.</span> FORMATO Y MEDIO DE DIFUSIÓN</h4>
+              <p class="step-instructions">Especifique las dimensiones de impresión, orientación, canales digitales y el formato técnico final requerido.</p>
 
               <div class="form-grid-2">
                 <div class="form-group">
-                  <label class="d-block mb-2">Tipo de Material <span class="req">*</span></label>
+                  <label class="d-block mb-2">Material <span class="req">*</span></label>
                   <div class="d-flex gap-2">
                     <label class="radio-tag">
-                      <input type="radio" name="material" value="Digital" checked>
-                      <span>🌐 Solo Digital</span>
+                      <input type="radio" name="material" value="Digital" checked onchange="app.toggleMaterialImpreso(false)">
+                      <span>🌐 Digital</span>
                     </label>
                     <label class="radio-tag">
-                      <input type="radio" name="material" value="Impreso">
-                      <span>🖨️ Solo Impreso</span>
+                      <input type="radio" name="material" value="Impreso" onchange="app.toggleMaterialImpreso(true)">
+                      <span>🖨️ Impreso</span>
                     </label>
                     <label class="radio-tag">
-                      <input type="radio" name="material" value="Ambos">
-                      <span>🔄 Ambos Formatos</span>
+                      <input type="radio" name="material" value="Ambos" onchange="app.toggleMaterialImpreso(true)">
+                      <span>🔄 Ambos</span>
                     </label>
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label class="d-block mb-2">Orientación Requerida <span class="req">*</span></label>
+                  <label class="d-block mb-2">Orientación <span class="req">*</span></label>
                   <div class="d-flex gap-2">
                     <label class="radio-tag">
                       <input type="radio" name="orientacion" value="Vertical" checked>
@@ -455,20 +482,21 @@
                       <input type="radio" name="orientacion" value="Horizontal">
                       <span>↔️ Horizontal</span>
                     </label>
-                    <label class="radio-tag">
-                      <input type="radio" name="orientacion" value="Cuadrado">
-                      <span>⏹️ Cuadrado (1:1)</span>
-                    </label>
                   </div>
                 </div>
               </div>
 
+              <div class="form-group" id="wrapperTamanoImpreso" style="display: none;">
+                <label for="campoTamanoImpreso">Si es impreso, tamaño:</label>
+                <input type="text" id="campoTamanoImpreso" class="form-control" placeholder="Ej: Carta (21.5x28 cm), Oficio, A3, Doble Carta, Gigantografía 3x2 metros...">
+              </div>
+
               <div class="form-group mt-3">
-                <label class="d-block mb-2">Plataformas de Difusión (Seleccione todas las aplicables) <span class="req">*</span></label>
+                <label class="d-block mb-2">Si es digital, indicar plataforma: (Seleccione todas las aplicables)</label>
                 <div class="d-flex flex-wrap gap-2">
                   <label class="checkbox-tag">
                     <input type="checkbox" name="plataformas" value="Facebook" checked>
-                    <span>📘 Facebook Institucional</span>
+                    <span>📘 Facebook</span>
                   </label>
                   <label class="checkbox-tag">
                     <input type="checkbox" name="plataformas" value="Instagram" checked>
@@ -476,33 +504,84 @@
                   </label>
                   <label class="checkbox-tag">
                     <input type="checkbox" name="plataformas" value="TikTok" checked>
-                    <span>🎵 TikTok Municipal</span>
+                    <span>🎵 TikTok</span>
                   </label>
                   <label class="checkbox-tag">
                     <input type="checkbox" name="plataformas" value="WhatsApp" checked>
-                    <span>💬 WhatsApp / Canales</span>
+                    <span>💬 WhatsApp</span>
                   </label>
                   <label class="checkbox-tag">
                     <input type="checkbox" name="plataformas" value="Web">
-                    <span>🌐 Portal Web Municipal</span>
+                    <span>🌐 Web</span>
                   </label>
                   <label class="checkbox-tag">
                     <input type="checkbox" name="plataformas" value="Pantallas">
-                    <span>📺 Pantallas LED Gigantes</span>
+                    <span>📺 Pantallas</span>
+                  </label>
+                  <label class="checkbox-tag">
+                    <input type="checkbox" name="plataformas" value="Otro" id="checkPlataformaOtro" onchange="app.toggleOtraPlataforma(this.checked)">
+                    <span>➕ Otro</span>
                   </label>
                 </div>
+
+                <div id="wrapperPlataformaOtro" class="campo-otro-container" style="display: none;">
+                  <label for="campoPlataformaOtro" class="text-sm font-semibold">Especifique otra plataforma digital:</label>
+                  <input type="text" id="campoPlataformaOtro" class="form-control" placeholder="Ej: Telegram, Twitter/X, Prensa Digital, Radio streaming...">
+                </div>
+              </div>
+
+              <div class="form-group mt-3">
+                <label for="campoFormatoRequerido">Formato requerido <span class="req">*</span></label>
+                <input type="text" id="campoFormatoRequerido" class="form-control" placeholder="Ej: PDF para imprenta CMYK, JPG alta resolución, PNG sin fondo, Vectorial AI..." required value="PDF alta resolución y JPG digital">
               </div>
 
               <div class="form-actions d-flex justify-between gap-2 mt-4">
                 <button type="button" class="btn btn-outline" onclick="app.prevStep(3)">⬅ Anterior</button>
-                <button type="button" class="btn btn-primary" onclick="app.nextStep(3)">Siguiente: Insumos y Envío ➔</button>
+                <button type="button" class="btn btn-primary" onclick="app.nextStep(3)">Siguiente: Material / Insumos ➔</button>
               </div>
             </div>
 
-            <!-- PASO 4: INSUMOS OBLIGATORIOS Y ENVÍO -->
+            <!-- ======================================================== -->
+            <!-- PASO 4: 4. MATERIAL QUE DEBE ENTREGAR LA UNIDAD        -->
+            <!-- ======================================================== -->
             <div class="form-step-content" id="stepContent4">
-              <h4 class="step-title"><span>Sección 4</span> Texto Aprobado y Recursos Adjuntos</h4>
-              <p class="step-instructions">Suba el brief redactado y los archivos insumo (logos, fotos, QR). No se admiten textos simulados.</p>
+              <h4 class="step-title"><span>4.</span> MATERIAL QUE DEBE ENTREGAR LA UNIDAD SOLICITANTE</h4>
+              <p class="step-instructions">Verifique la entrega de los insumos obligatorios y cargue los archivos digitales para producción.</p>
+
+              <!-- CHECKLIST EXCLUSIVO DEL PDF -->
+              <div class="form-group">
+                <label class="d-block mb-2 font-semibold">Checklist de Materiales Entregados: <span class="req">*</span></label>
+                <div class="checklist-insumos-grid">
+                  <label class="checklist-label">
+                    <input type="checkbox" id="checkTextoAprobado" required checked>
+                    <span>☑️ Texto revisado y aprobado</span>
+                  </label>
+                  <label class="checklist-label">
+                    <input type="checkbox" id="checkLogosCalidad" required checked>
+                    <span>☑️ Logotipos en buena calidad</span>
+                  </label>
+                  <label class="checklist-label">
+                    <input type="checkbox" id="checkFotografias">
+                    <span>📷 Fotografías / imágenes</span>
+                  </label>
+                  <label class="checklist-label">
+                    <input type="checkbox" id="checkQrEnlaces">
+                    <span>🔗 Códigos QR / enlaces</span>
+                  </label>
+                  <label class="checklist-label">
+                    <input type="checkbox" id="checkOtrosElementos">
+                    <span>📦 Otros elementos necesarios</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- NOTA INSTITUCIONAL DEL PDF -->
+              <div class="nota-institucional-card">
+                <div class="nota-icon">📌</div>
+                <div class="nota-text">
+                  <strong>Nota Institucional Obligatoria:</strong> Los textos, nombres, fechas, horarios, cargos, teléfonos y demás información proporcionada deberán ser revisados y aprobados previamente por la unidad solicitante. El área de diseño realizará la composición y tratamiento gráfico de la información recibida.
+                </div>
+              </div>
 
               <div class="form-group">
                 <label for="campoTextoAprobado">Texto Oficial Aprobado para la Pieza <span class="req">*</span></label>
@@ -511,14 +590,14 @@
 
               <!-- ZONA DRAG AND DROP -->
               <div class="form-group">
-                <label class="d-block mb-1">Archivos Adjuntos (Logotipos, Fotografías, Códigos QR) <span class="req">*</span></label>
+                <label class="d-block mb-1">Adjuntar Logotipos, Fotografías, Enlaces y Recursos <span class="req">*</span></label>
                 <div class="drop-zone" id="dropZoneInsumos">
                   <div class="drop-icon">📁</div>
                   <div class="drop-text">
                     <strong>Arrastre los archivos aquí o haga clic para examinar</strong>
                     <span>Formatos admitidos: PNG (sin fondo), SVG, JPG, PDF, ZIP (Máx. 50 MB)</span>
                   </div>
-                  <input type="file" id="fileInputInsumos" class="file-hidden" multiple accept="image/*,.pdf,.zip">
+                  <input type="file" id="fileInputInsumos" class="file-hidden" multiple accept="image/*,.pdf,.zip,.doc,.docx">
                 </div>
                 <!-- LISTA DE ARCHIVOS CARGADOS -->
                 <div class="attached-files-list mt-2" id="attachedFilesContainer">
@@ -533,23 +612,90 @@
                 </div>
               </div>
 
+              <div class="form-actions d-flex justify-between gap-2 mt-4">
+                <button type="button" class="btn btn-outline" onclick="app.prevStep(4)">⬅ Anterior</button>
+                <button type="button" class="btn btn-primary" onclick="app.nextStep(4)">Siguiente: Solicitante y V.º B.º ➔</button>
+              </div>
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- PASO 5: 5. DATOS DEL SOLICITANTE Y 6. CONSIDERACIONES  -->
+            <!-- ======================================================== -->
+            <div class="form-step-content" id="stepContent5">
+              <h4 class="step-title"><span>5.</span> DATOS DEL SOLICITANTE (para coordinar)</h4>
+              <p class="step-instructions">Información del servidor público responsable de la coordinación directa con el diseñador de DICOM.</p>
+
+              <div class="form-grid-3 mb-4">
+                <div class="form-group">
+                  <label for="campoSolicitanteNombre">Nombre del Solicitante <span class="req">*</span></label>
+                  <input type="text" id="campoSolicitanteNombre" class="form-control" placeholder="Nombres y Apellidos" required>
+                </div>
+                <div class="form-group">
+                  <label for="campoSolicitanteCargo">Cargo del Solicitante <span class="req">*</span></label>
+                  <input type="text" id="campoSolicitanteCargo" class="form-control" placeholder="Ej: Directora / Jefe de Unidad / Técnico" required>
+                </div>
+                <div class="form-group">
+                  <label for="campoSolicitanteTelefono">Teléfono / WhatsApp <span class="req">*</span></label>
+                  <input type="text" id="campoSolicitanteTelefono" class="form-control" placeholder="Ej: 71523456 / 2831234" required>
+                </div>
+              </div>
+
+              <h4 class="step-title"><span>6.</span> CONSIDERACIONES PARA LA ATENCIÓN DE SOLICITUDES</h4>
+              
+              <!-- CAJA REGLAMENTARIA DE LOS 6 PUNTOS DEL PDF -->
+              <div class="consideraciones-card">
+                <div class="consideraciones-title">
+                  <span>📜</span> Disposiciones Normativas Institucionales (DICOM - GAM El Alto)
+                </div>
+                <ol class="consideraciones-list">
+                  <li>
+                    <strong>Plazo Referencial y Límite de Piezas:</strong> El tiempo referencial para la elaboración será de hasta siete (7) días, considerando un máximo de tres (3) piezas gráficas por dependencia. Este plazo corresponde exclusivamente al proceso de desarrollo, diseño y elaboración de las piezas gráficas, y será independiente de la fecha prevista para la publicación, difusión o realización del evento. Por ello, las solicitudes deberán ser presentadas con la debida anticipación, tomando en cuenta el tiempo establecido para su elaboración.
+                  </li>
+                  <li>
+                    <strong>Carga y Complejidad:</strong> Las solicitudes que superen las tres piezas gráficas, o que por su complejidad requieran mayor tiempo de producción, tendrán un plazo adicional de acuerdo con la carga de trabajo.
+                  </li>
+                  <li>
+                    <strong>Rondas de Modificación:</strong> Se contemplan hasta dos (2) rondas de cambios o ajustes por pieza gráfica. Los cambios deberán ser enviados de forma consolidada por el responsable de la solicitud.
+                  </li>
+                  <li>
+                    <strong>Cómputo de Plazos:</strong> El plazo de trabajo comenzará una vez recibida la ficha completa y todos los contenidos necesarios.
+                  </li>
+                  <li>
+                    <strong>Calidad y Respaldo Digital:</strong> La unidad solicitante deberá entregar textos e información revisados y aprobados, además de imágenes, logotipos y demás recursos en soporte digital. Se recomienda conservar una copia de respaldo en CD/DVD u otro medio físico.
+                  </li>
+                  <li>
+                    <strong>Finalidad Institucional:</strong> Estas disposiciones tienen como finalidad organizar y optimizar la atención de las diferentes dependencias del Jach’a Uta y otras dependencias desconcentradas.
+                  </li>
+                </ol>
+              </div>
+
               <!-- MOTOR DE AUTOMATIZACIÓN SLA PREVIEW -->
-              <div class="sla-alert-card mt-3">
+              <div class="sla-alert-card mb-4">
                 <div class="sla-icon">⏱️</div>
                 <div class="sla-info">
-                  <h5>Cálculo de Tiempos Automático (Regla Institucional GAMEA)</h5>
-                  <p>Al enviar hoy, su solicitud quedará en estado <span class="status-badge status-amarillo">🟡 Pendiente</span>.</p>
+                  <h5>Cálculo Automático de Tiempos (SLA 7 Días Hábiles)</h5>
+                  <p>Al remitir hoy, la solicitud entrará en estado <span class="status-badge status-amarillo">🟡 Pendiente</span> de asignación a diseñador.</p>
                   <p class="sla-dates">
                     <strong>Fecha de Recepción:</strong> <span id="previewFechaRecepcion">Cargando...</span> | 
-                    <strong>Fecha Límite (7 días hábiles):</strong> <span class="text-bold-green" id="previewFechaLimite">Cargando...</span>
+                    <strong>Fecha Límite Estimada:</strong> <span class="text-bold-green" id="previewFechaLimite">Cargando...</span>
                   </p>
                 </div>
               </div>
 
+              <!-- FIRMA / V.º B.º DEL RESPONSABLE SOLICITANTE -->
+              <div class="vobo-signature-box">
+                <label class="vobo-checkbox-label">
+                  <input type="checkbox" id="checkVoBo" required checked>
+                  <span>
+                    <strong>Firma / V.º B.º del Responsable Solicitante:</strong> Declaro la veracidad de la información, aprobación formal de los textos e insumos remitidos y acepto las condiciones de atención de la Dirección de Comunicación (DICOM) del Gobierno Autónomo Municipal de El Alto.
+                  </span>
+                </label>
+              </div>
+
               <div class="form-actions d-flex justify-between gap-2 mt-4">
-                <button type="button" class="btn btn-outline" onclick="app.prevStep(4)">⬅ Anterior</button>
+                <button type="button" class="btn btn-outline" onclick="app.prevStep(5)">⬅ Anterior</button>
                 <button type="submit" class="btn btn-gold btn-lg">
-                  <span>🚀</span> Enviar Solicitud a DICOM
+                  <span>🚀</span> Enviar Ficha Técnica a DICOM
                 </button>
               </div>
             </div>

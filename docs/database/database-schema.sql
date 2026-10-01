@@ -119,24 +119,42 @@ CREATE TABLE solicitudes (
     
     -- Sección 2: Características del Diseño
     tipo_diseno_id INT NOT NULL REFERENCES tipos_diseno(id) ON DELETE RESTRICT,
-    tipo_diseno_otro VARCHAR(100),
-    estilo_visual VARCHAR(50) NOT NULL, -- Institucional, Moderno, Juvenil, Colorido, Minimalista, etc.
-    estilo_otro VARCHAR(100),
+    tipo_diseno_otro VARCHAR(150),
+    estilo_visual VARCHAR(50) NOT NULL, -- Institucional, Moderno, Juvenil, Colorido, Minimalista, Educativo, Cultural, Otro
+    estilo_otro VARCHAR(150),
 
     -- Sección 3: Formato y Difusión
     material tipo_material NOT NULL DEFAULT 'DIGITAL',
+    tamano_impreso VARCHAR(100), -- Si es impreso, tamaño: Carta, Oficio, A3, etc.
     orientacion orientacion_diseno NOT NULL DEFAULT 'VERTICAL',
-    plataformas_difusion TEXT[] NOT NULL DEFAULT ARRAY['REDES_SOCIALES'], -- Facebook, Instagram, TikTok, WhatsApp, Web, etc.
-    dimensiones_especificas VARCHAR(100), -- Ej: 1080x1350px, 2x1 metros
+    plataformas_difusion TEXT[] NOT NULL DEFAULT ARRAY['REDES_SOCIALES'], -- Facebook, Instagram, TikTok, WhatsApp, Web, Pantallas, Otro
+    plataforma_otro VARCHAR(150),
+    formato_requerido VARCHAR(150), -- Formato requerido: PDF imprenta, JPG, PNG, etc.
 
-    -- SLA y Fechas de Control
+    -- Sección 4: Material que debe entregar la unidad solicitante (Checklist)
+    check_texto_aprobado BOOLEAN NOT NULL DEFAULT TRUE,
+    check_logos_calidad BOOLEAN NOT NULL DEFAULT TRUE,
+    check_fotografias BOOLEAN NOT NULL DEFAULT FALSE,
+    check_qr_enlaces BOOLEAN NOT NULL DEFAULT FALSE,
+    check_otros_elementos BOOLEAN NOT NULL DEFAULT FALSE,
+    texto_aprobado TEXT NOT NULL,
+
+    -- Sección 5: Datos del Solicitante (para coordinar)
+    solicitante_nombre VARCHAR(150) NOT NULL,
+    solicitante_cargo VARCHAR(150) NOT NULL,
+    solicitante_telefono VARCHAR(50) NOT NULL,
+
+    -- Sección 6: Consideraciones y Conformidad
+    vobo_aceptado BOOLEAN NOT NULL DEFAULT TRUE,
+
+    -- SLA y Fechas de Control (7 días hábiles normados)
     prioridad prioridad_solicitud NOT NULL DEFAULT 'MEDIA',
     fecha_recepcion TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     fecha_limite TIMESTAMP WITH TIME ZONE NOT NULL, -- Calculada: 7 días hábiles
     fecha_aprobacion TIMESTAMP WITH TIME ZONE,
     fecha_finalizado TIMESTAMP WITH TIME ZONE,
 
-    -- Control de Modificaciones
+    -- Control de Modificaciones (Máx 2 rondas normadas)
     rondas_cambios_usadas INT NOT NULL DEFAULT 0 CHECK (rondas_cambios_usadas BETWEEN 0 AND 2),
 
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

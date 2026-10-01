@@ -679,6 +679,16 @@ const app = {
         selectDir.disabled = false;
       }
     }
+
+    // Autocompletar datos del solicitante (Sección 5)
+    const nomInput = document.getElementById('campoSolicitanteNombre');
+    const cargoInput = document.getElementById('campoSolicitanteCargo');
+    if (nomInput && !nomInput.value) {
+      nomInput.value = `${state.currentUser.nombres} ${state.currentUser.apellidos}`;
+    }
+    if (cargoInput && !cargoInput.value) {
+      cargoInput.value = state.currentUser.cargo || 'Funcionario Municipal';
+    }
   },
 
   // ==============================================================================
@@ -711,7 +721,7 @@ const app = {
     }
 
     selectDir.disabled = false;
-    selectDir.innerHTML = `<option value="">-- Seleccione Dirección / Unidad Ejecutora --</option>` +
+    selectDir.innerHTML = `<option value="">-- Seleccione Dirección / Unidad Solicitante --</option>` +
       sec.direcciones.map(dir => `
         <option value="${dir.id}">${dir.nombre} (${dir.sigla})</option>
       `).join('');
@@ -748,8 +758,28 @@ const app = {
   },
 
   // ==============================================================================
-  // 7. STEPPER DEL FORMULARIO DIGITAL (FICHA TÉCNICA DICOM)
+  // 7. STEPPER DEL FORMULARIO DIGITAL (FICHA TÉCNICA DICOM - 5 PASOS / 6 SECCIONES)
   // ==============================================================================
+  toggleOtroTipoPieza(show) {
+    const wrap = document.getElementById('wrapperTipoPiezaOtro');
+    if (wrap) wrap.style.display = show ? 'block' : 'none';
+  },
+
+  toggleOtroEstiloVisual(show) {
+    const wrap = document.getElementById('wrapperEstiloVisualOtro');
+    if (wrap) wrap.style.display = show ? 'block' : 'none';
+  },
+
+  toggleMaterialImpreso(isImpreso) {
+    const wrap = document.getElementById('wrapperTamanoImpreso');
+    if (wrap) wrap.style.display = isImpreso ? 'block' : 'none';
+  },
+
+  toggleOtraPlataforma(checked) {
+    const wrap = document.getElementById('wrapperPlataformaOtro');
+    if (wrap) wrap.style.display = checked ? 'block' : 'none';
+  },
+
   nextStep(currentStep) {
     if (currentStep === 1) {
       const sec = document.getElementById('campoSecretaria').value;
@@ -764,6 +794,50 @@ const app = {
         this.showToast('Por favor complete todos los campos obligatorios (*) de la Sección 1.', 'error');
         return;
       }
+    } else if (currentStep === 2) {
+      const radioOtroTipo = document.getElementById('radioTipoOtro');
+      if (radioOtroTipo && radioOtroTipo.checked) {
+        const otroTipoVal = document.getElementById('campoTipoPiezaOtro').value.trim();
+        if (!otroTipoVal) {
+          this.showToast('Por favor especifique el tipo de diseño en el campo "Otro".', 'error');
+          return;
+        }
+      }
+      const radioOtroEstilo = document.getElementById('radioEstiloOtro');
+      if (radioOtroEstilo && radioOtroEstilo.checked) {
+        const otroEstiloVal = document.getElementById('campoEstiloVisualOtro').value.trim();
+        if (!otroEstiloVal) {
+          this.showToast('Por favor especifique el estilo visual en el campo "Otro".', 'error');
+          return;
+        }
+      }
+    } else if (currentStep === 3) {
+      const mat = document.querySelector('input[name="material"]:checked')?.value;
+      if (mat === 'Impreso' || mat === 'Ambos') {
+        const tam = document.getElementById('campoTamanoImpreso').value.trim();
+        if (!tam) {
+          this.showToast('Por favor indique el tamaño de impresión requerido (ej. Carta, A3, 2x1m).', 'error');
+          return;
+        }
+      }
+      const formatoReq = document.getElementById('campoFormatoRequerido').value.trim();
+      if (!formatoReq) {
+        this.showToast('Por favor indique el formato técnico requerido (ej. PDF imprenta, JPG alta calidad).', 'error');
+        return;
+      }
+    } else if (currentStep === 4) {
+      const chkTexto = document.getElementById('checkTextoAprobado').checked;
+      const chkLogos = document.getElementById('checkLogosCalidad').checked;
+      const brief = document.getElementById('campoTextoAprobado').value.trim();
+
+      if (!chkTexto || !chkLogos) {
+        this.showToast('Debe marcar las casillas obligatorias de Texto y Logotipos revisados en el checklist.', 'error');
+        return;
+      }
+      if (!brief) {
+        this.showToast('Por favor pegue el texto oficial revisado y aprobado para la pieza gráfica.', 'error');
+        return;
+      }
     }
 
     this.goToStep(currentStep + 1);
@@ -775,7 +849,7 @@ const app = {
 
   goToStep(stepNumber) {
     state.currentStep = stepNumber;
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 1; i <= 5; i++) {
       const content = document.getElementById(`stepContent${i}`);
       const indicator = document.getElementById(`stepIndicator${i}`);
       if (content && indicator) {
@@ -831,12 +905,36 @@ const app = {
     
     document.getElementById('campoHoraEvento').value = '09:00';
     document.getElementById('campoLugarEvento').value = 'Centro de Salud Villa Cooperativa, Distrito 4';
-    document.getElementById('campoPublicoObjetivo').value = 'Vecinas y vecinos del Distrito 4 con perros y gatos';
-    document.getElementById('campoObjetivoMensaje').value = 'Sensibilizar a la ciudadanía sobre la importancia de la vacunación antirrábica obligatoria anual para preservar la salud pública.';
-    document.getElementById('campoInfoAdicional').value = 'Participarán brigadas móviles en plazas y unidades educativas.';
-    document.getElementById('campoTextoAprobado').value = '¡POR UN EL ALTO SIN RABIA! El Gobierno Autónomo Municipal de El Alto y la Secretaría de Salud invitan a la Gran Jornada de Vacunación Antirrábica Gratuita. Trae a tu perrito o gatito a partir de los 3 meses de edad. Lugar: Centro de Salud Villa Cooperativa. ¡Vacunarlos es amarlos!';
+    document.getElementById('campoPublicoObjetivo').value = 'Vecinas y vecinos del Distrito 4 con mascotas (perros y gatos)';
+    document.getElementById('campoObjetivoMensaje').value = 'Sensibilizar a la ciudadanía sobre la importancia de la vacunación antirrábica anual obligatoria para preservar la salud pública.';
+    document.getElementById('campoInfoAdicional').value = 'Tel: 2834567, WhatsApp: 71512345, requisitos: llevar carnet de vacunas y animales con correa.';
+    
+    // Sección 3: Formato
+    const radioAmbos = document.querySelector('input[name="material"][value="Ambos"]');
+    if (radioAmbos) {
+      radioAmbos.checked = true;
+      this.toggleMaterialImpreso(true);
+    }
+    const tamInput = document.getElementById('campoTamanoImpreso');
+    if (tamInput) tamInput.value = 'Doble Carta (28x43 cm) y Afiche A3';
+    
+    const formatoInput = document.getElementById('campoFormatoRequerido');
+    if (formatoInput) formatoInput.value = 'PDF imprenta 300 DPI y JPG alta resolución para redes';
 
-    this.showToast('✅ Formulario autocompletado con caso oficial del GAMEA', 'success');
+    // Sección 4: Material
+    document.getElementById('checkTextoAprobado').checked = true;
+    document.getElementById('checkLogosCalidad').checked = true;
+    document.getElementById('checkFotografias').checked = true;
+    document.getElementById('checkQrEnlaces').checked = true;
+    document.getElementById('campoTextoAprobado').value = '¡POR UN EL ALTO SIN RABIA! El Gobierno Autónomo Municipal de El Alto y la Secretaría de Salud invitan a la Gran Jornada de Vacunación Antirrábica Gratuita. Trae a tu mascota a partir de los 3 meses de edad. Lugar: Centro de Salud Villa Cooperativa. Horario: 08:30 a 16:00. ¡Vacunarlos es cuidarnos!';
+
+    // Sección 5: Solicitante
+    document.getElementById('campoSolicitanteNombre').value = 'Dra. Patricia Mendoza Limachi';
+    document.getElementById('campoSolicitanteCargo').value = 'Directora de Gestión en Salud (SMS)';
+    document.getElementById('campoSolicitanteTelefono').value = '71544332';
+    document.getElementById('checkVoBo').checked = true;
+
+    this.showToast('✅ Ficha técnica autocompletada conforme a la normativa oficial', 'success');
   },
 
   handleFilesSelected(e) {
@@ -876,15 +974,44 @@ const app = {
     const lug = document.getElementById('campoLugarEvento').value;
     const pub = document.getElementById('campoPublicoObjetivo').value;
     const obj = document.getElementById('campoObjetivoMensaje').value;
-    const brief = document.getElementById('campoTextoAprobado').value;
+    const infoAdicional = document.getElementById('campoInfoAdicional').value;
 
-    const tipoPieza = document.querySelector('input[name="tipoPieza"]:checked')?.value || 'Afiche';
-    const estilo = document.querySelector('input[name="estiloVisual"]:checked')?.value || 'Institucional';
+    let tipoPieza = document.querySelector('input[name="tipoPieza"]:checked')?.value || 'Afiche informativo';
+    if (tipoPieza === 'Otro') {
+      tipoPieza = document.getElementById('campoTipoPiezaOtro').value || 'Otro diseño especificado';
+    }
+
+    let estilo = document.querySelector('input[name="estiloVisual"]:checked')?.value || 'Institucional / formal';
+    if (estilo === 'Otro') {
+      estilo = document.getElementById('campoEstiloVisualOtro').value || 'Otro estilo especificado';
+    }
+
     const material = document.querySelector('input[name="material"]:checked')?.value || 'Digital';
+    const tamanoImpreso = document.getElementById('campoTamanoImpreso')?.value || null;
     const orientacion = document.querySelector('input[name="orientacion"]:checked')?.value || 'Vertical';
     
     const plataformas = [];
-    document.querySelectorAll('input[name="plataformas"]:checked').forEach(c => plataformas.push(c.value));
+    document.querySelectorAll('input[name="plataformas"]:checked').forEach(c => {
+      if (c.value === 'Otro') {
+        const otraPlat = document.getElementById('campoPlataformaOtro')?.value;
+        if (otraPlat) plataformas.push(otraPlat);
+      } else {
+        plataformas.push(c.value);
+      }
+    });
+
+    const formatoRequerido = document.getElementById('campoFormatoRequerido').value;
+    const brief = document.getElementById('campoTextoAprobado').value;
+
+    const solicitanteNombre = document.getElementById('campoSolicitanteNombre').value;
+    const solicitanteCargo = document.getElementById('campoSolicitanteCargo').value;
+    const solicitanteTelefono = document.getElementById('campoSolicitanteTelefono').value;
+    const vobo = document.getElementById('checkVoBo').checked;
+
+    if (!vobo) {
+      this.showToast('Debe otorgar el V.º B.º y firma de conformidad para enviar la solicitud.', 'error');
+      return;
+    }
 
     const anio = new Date().getFullYear();
     const correlativo = `SOL-${anio}-00${state.solicitudes.length + 39}`;
@@ -900,18 +1027,27 @@ const app = {
       lugar_evento: lug,
       publico_objetivo: pub,
       objetivo_mensaje: obj,
+      datos_adicionales: infoAdicional,
       tipo_pieza: tipoPieza,
       estilo_visual: estilo,
       material: material,
+      tamano_impreso: tamanoImpreso,
       orientacion: orientacion,
       plataformas: plataformas.length ? plataformas : ['Facebook'],
+      formato_requerido: formatoRequerido,
+      texto_aprobado: brief,
+      solicitante: {
+        nombre: solicitanteNombre,
+        cargo: solicitanteCargo,
+        telefono: solicitanteTelefono
+      },
+      vobo_aprobado: true,
       estado: 'PENDIENTE',
       fecha_recepcion: new Date().toISOString().replace('T', ' ').substring(0, 16),
       fecha_limite: 'SLA: 7 días hábiles',
       disenador_asignado: null,
       rondas_cambios_usadas: 0,
       historial_cambios: [],
-      texto_aprobado: brief,
       archivos: ['brief_oficial_firmado.pdf', 'logo_institucional.png']
     };
 
@@ -922,7 +1058,7 @@ const app = {
     document.getElementById('formSolicitud').reset();
     this.goToStep(1);
     this.showTab('bandeja');
-    this.showToast(`🎉 ¡Solicitud ${correlativo} registrada exitosamente por ${dirText}!`, 'success');
+    this.showToast(`🎉 ¡Ficha Técnica Oficial ${correlativo} registrada exitosamente por ${dirText}!`, 'success');
   },
 
   // ==============================================================================
@@ -1062,19 +1198,24 @@ const app = {
           📋 Ficha Técnica Institucional (D.M. N° 200)
         </h4>
         <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:14px; font-size:0.88rem;">
-          <p><strong>Secretaría Solicitante:</strong> ${sol.secretaria}</p>
-          <p><strong>Dirección Ejecutora:</strong> ${sol.direccion}</p>
+          <p><strong>1. Dependencia:</strong> ${sol.secretaria} — ${sol.direccion}</p>
           <p><strong>Lugar y Fecha:</strong> 📍 ${sol.lugar_evento} | 📅 ${sol.fecha_evento} a las ${sol.hora_evento}</p>
           <p><strong>Público Objetivo:</strong> ${sol.publico_objetivo}</p>
           <p><strong>Objetivo del Mensaje:</strong> ${sol.objetivo_mensaje}</p>
-          <p><strong>Formato y Estilo:</strong> ${sol.tipo_pieza} • Estilo ${sol.estilo_visual} • Material ${sol.material}</p>
-          <p><strong>Plataformas:</strong> ${sol.plataformas.join(', ')}</p>
-          <hr style="margin:10px 0; border:0; border-top:1px solid #E2E8F0;">
-          <p><strong>Texto Aprobado (Brief Oficial):</strong></p>
+          ${sol.datos_adicionales ? `<p><strong>Datos Adicionales:</strong> ${sol.datos_adicionales}</p>` : ''}
+          <hr style="margin:8px 0; border:0; border-top:1px solid #E2E8F0;">
+          <p><strong>2. Características:</strong> ${sol.tipo_pieza} • Estilo: ${sol.estilo_visual}</p>
+          <p><strong>3. Formato y Difusión:</strong> Material: ${sol.material} ${sol.tamano_impreso ? `(Tamaño: ${sol.tamano_impreso})` : ''} • Orientación: ${sol.orientacion}</p>
+          <p><strong>Plataformas:</strong> ${sol.plataformas.join(', ')} • <strong>Formato Requerido:</strong> ${sol.formato_requerido || 'PDF / JPG'}</p>
+          <hr style="margin:8px 0; border:0; border-top:1px solid #E2E8F0;">
+          <p><strong>4. Texto Aprobado (Brief Oficial):</strong></p>
           <blockquote style="background:#FFFFFF; border-left:3px solid var(--gamea-red); padding:8px 12px; margin:6px 0; font-style:italic;">
             "${sol.texto_aprobado}"
           </blockquote>
           <p><strong>Recursos Insumo Adjuntos:</strong> ${sol.archivos.map(a => `📎 ${a}`).join('  |  ')}</p>
+          <hr style="margin:8px 0; border:0; border-top:1px solid #E2E8F0;">
+          <p><strong>5. Solicitante Responsable:</strong> ${sol.solicitante ? `${sol.solicitante.nombre} (${sol.solicitante.cargo}) — 📞 Tel/WhatsApp: ${sol.solicitante.telefono}` : 'Servidor Acreditado'}</p>
+          <p><strong>6. Conformidad:</strong> <span class="badge-count" style="background:#16A34A; color:#fff;">✓ V.º B.º Aprobado</span> — <em>Sujeto a normas DICOM</em></p>
         </div>
       </div>
 

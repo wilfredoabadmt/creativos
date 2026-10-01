@@ -114,7 +114,7 @@ El sistema modela fielmente la jerarquía municipal aprobada mediante Decreto Mu
 | ID | Módulo | Descripción | Rol(es) |
 |---|---|---|---|
 | **RF-01** | Autenticación | Inicio de sesión seguro con credenciales institucionales, tokens JWT y soporte para recuperación de contraseña. | Todos |
-| **RF-02** | Registro Solicitud | Formulario digital estandarizado de 4 secciones con datos de evento, tipo de diseño, formato/difusión y adjuntos. | Solicitante |
+| **RF-02** | Ficha Técnica Oficial (6 Secciones) | Formulario digital estandarizado idéntico al documento oficial del GAMEA: 1. Datos del Evento, 2. Características del Diseño, 3. Formato y Difusión, 4. Material a Entregar (Checklist), 5. Datos del Solicitante (Coordinación), 6. Consideraciones y V.º B.º. | Solicitante |
 | **RF-03** | Motor de Validación | Validación estricta en frontend y backend: no permite envío sin fecha de evento, objetivo, texto aprobado, contacto responsable y logos/insumos mínimos. | Sistema / Solicitante |
 | **RF-04** | Cálculo Automático de SLA | Generación de fecha de recepción y fecha límite de entrega respetando la regla institucional de 7 días hábiles. | Sistema |
 | **RF-05** | Flujo de Estados | Gestión del ciclo de vida con 6 estados normados: `🟡 Pendiente`, `🔵 En revisión`, `🟣 Diseño en proceso`, `🟠 Ajustes`, `🟢 Aprobado`, `⚫ Finalizado`. | Diseñador, Supervisor |
@@ -126,6 +126,49 @@ El sistema modela fielmente la jerarquía municipal aprobada mediante Decreto Mu
 | **RF-11** | Tablero de Control / Dashboard | Visualización de KPIs: total solicitudes, finalizadas, pendientes, tiempos promedio, dependencias con más demanda y gráficos mensuales. | Supervisor, Admin |
 | **RF-12** | Auditoría Completa | Registro inmutable de cada acción (quién, qué acción, IP, fecha, estado previo y posterior). | Admin, Auditoría |
 | **RF-13** | Gestión de Catálogos | CRUD de Secretarías, Direcciones, Unidades y Tipos de Pieza gráfica. | Admin |
+
+### 2.2 Especificación Detallada de la Ficha Técnica Oficial (6 Secciones)
+El diseño del formulario implementa con 100% de fidelidad la *Ficha Técnica de Solicitud de Diseño Gráfico - GAM El Alto Jach'a Uta*:
+
+1. **Sección 1: Datos del Evento o Actividad:**
+   - *Objetivo Institucional:* Recopilar la información indispensable para orientar correctamente la elaboración de piezas gráficas institucionales y optimizar los tiempos de atención a las diferentes dependencias municipales.
+   - *Organizadores / Logos:* Secretaría y Dirección solicitante seleccionadas y bloqueadas por la sesión autenticada (Organigrama D.M. N° 200).
+   - *Título del evento:* Denominación oficial de la actividad.
+   - *Fecha y hora:* Cronograma exacto del evento.
+   - *Lugar:* Ubicación, plaza, distrito o predio municipal.
+   - *Dirigido a:* Público objetivo (jóvenes, estudiantes, población en general, funcionarios, etc.).
+   - *Objetivo / mensaje principal:* Qué se quiere comunicar o lograr con la pieza.
+   - *Datos adicionales:* Teléfono, redes, página web, QR, requisitos, inscripción, etc.
+
+2. **Sección 2: Características del Diseño:**
+   - *Tipo de diseño:* Afiche informativo, Póster, Volante / Flyer, Tríptico / Díptico, Invitación, Banner, Infografía, Redes sociales, Otro (con campo libre de especificación).
+   - *Estilo visual:* Institucional / formal, Moderno, Juvenil, Colorido / dinámico, Minimalista / limpio, Educativo, Cultural, Otro (con campo libre de especificación).
+
+3. **Sección 3: Formato y Medio de Difusión:**
+   - *Material:* Impreso, Digital, Ambos.
+   - *Si es impreso, tamaño:* Campo específico (ej: Carta, Oficio, A3, 2x1 m).
+   - *Orientación:* Vertical, Horizontal.
+   - *Si es digital, indicar plataforma:* Facebook, Instagram, TikTok, WhatsApp, Web, Pantallas, Otro (con campo libre de especificación).
+   - *Formato requerido:* Campo específico (ej: PDF imprenta, JPG, PNG transparente, MP4).
+
+4. **Sección 4: Material que debe entregar la Unidad Solicitante:**
+   - *Checklist de Compromiso:*
+     - ☐ Texto revisado y aprobado
+     - ☐ Logotipos en buena calidad
+     - ☐ Fotografías / imágenes
+     - ☐ Códigos QR / enlaces
+     - ☐ Otros elementos necesarios
+   - *Caja de texto:* Brief oficial redactado.
+   - *Cargador de archivos:* Zona drag & drop para adjuntos.
+   - *Nota Institucional:* "Los textos, nombres, fechas, horarios, cargos, teléfonos y demás información proporcionada deberán ser revisados y aprobados previamente por la unidad solicitante. El área de diseño realizará la composición y tratamiento gráfico de la información recibida."
+
+5. **Sección 5: Datos del Solicitante (para coordinar):**
+   - *Nombre y cargo del solicitante:* Autocompletado desde la sesión institucional.
+   - *Teléfono / WhatsApp:* Número directo de contacto para consultas técnicas con el diseñador de DICOM.
+
+6. **Sección 6: Consideraciones para la Atención de Solicitudes y V.º B.º:**
+   - Despliegue explícito de los 6 puntos normativos (plazo de 7 días, límite de 3 piezas, 2 rondas de cambios consolidadas, etc.).
+   - Checkbox obligatorio: *Firma / V.º B.º del responsable solicitante* asumiendo conformidad con las disposiciones vigentes.
 
 ### 2.2 Requerimientos No Funcionales (RNF)
 - **RNF-01 Seguridad y Confidencialidad:** Cifrado TLS 1.3 en tránsito, hash de contraseñas con Argon2id/Bcrypt (factor 12), protección CORS, Helmet y Rate Limiting contra DoS.

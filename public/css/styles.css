@@ -894,6 +894,148 @@ body {
 .sla-info p { font-size: 0.85rem; color: #334155; margin-top: 2px; }
 .sla-dates { margin-top: 6px; font-size: 0.85rem; }
 
+/* ESTILOS DE FIDELIDAD AL PDF OFICIAL */
+.checklist-insumos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px;
+  background: #F8FAFC;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+
+.checklist-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 8px 12px;
+  background: #ffffff;
+  border-radius: var(--radius-sm);
+  border: 1px solid #E2E8F0;
+  transition: all 0.2s;
+}
+
+.checklist-label:hover {
+  border-color: var(--gamea-blue);
+  background: #EFF6FF;
+}
+
+.checklist-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--gamea-red);
+  cursor: pointer;
+}
+
+.nota-institucional-card {
+  background: #FFFBEB;
+  border-left: 4px solid var(--gamea-gold);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.nota-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.nota-text {
+  font-size: 0.82rem;
+  color: #78350F;
+  line-height: 1.45;
+}
+
+.nota-text strong {
+  color: #92400E;
+}
+
+.consideraciones-card {
+  background: #FAFBFD;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 22px;
+}
+
+.consideraciones-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--gamea-blue-dark);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.consideraciones-list {
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.consideraciones-list li {
+  font-size: 0.83rem;
+  color: #334155;
+  line-height: 1.45;
+}
+
+.consideraciones-list li strong {
+  color: var(--gamea-blue-dark);
+}
+
+.vobo-signature-box {
+  background: #F0FDF4;
+  border: 1.5px solid #BBF7D0;
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.vobo-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #14532D;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.vobo-checkbox-label input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  accent-color: #16A34A;
+  cursor: pointer;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.campo-otro-container {
+  margin-top: 10px;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* ==========================================================================
    BANDEJA DE TRÁMITES & TARJETAS
    ========================================================================== */
