@@ -66,12 +66,12 @@
 
 **Purpose**: Self-test de comportamiento completo
 
-- [ ] T024 Verificación: Crear un usuario nuevo via API, verificar que aparece en la tabla y puede loguearse.
-- [ ] T025 Verificación: Editar un usuario, verificar persistencia del cambio.
-- [ ] T026 Verificación: Desactivar un usuario, verificar que no puede loguearse, reactivarlo y verificar que puede.
-- [ ] T027 Verificación: Resetear contraseña, loguearse con la nueva.
-- [ ] T028 Verificación: Intentar desactivar al último admin → debe rechazar.
-- [ ] T029 Verificación: Responsividad — verificar que la tabla se transforma en cards en viewport < 768px.
+- [x] T024 Verificación: Crear un usuario nuevo via API, verificar que aparece en la tabla y puede loguearse.
+- [x] T025 Verificación: Editar un usuario, verificar persistencia del cambio.
+- [x] T026 Verificación: Desactivar un usuario, verificar que no puede loguearse, reactivarlo y verificar que puede.
+- [x] T027 Verificación: Resetear contraseña, loguearse con la nueva.
+- [x] T028 Verificación: Intentar desactivar al último admin → debe rechazar.
+- [x] T029 Verificación: Responsividad — verificar que la tabla se transforma en cards en viewport < 768px.
 
 ---
 

@@ -11,6 +11,7 @@ const path = require('path');
 const fs = require('fs');
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -728,25 +729,63 @@ function generarPasswordTemporal(longitud = 12) {
   return pass;
 }
 
+// Catálogo y almacén en memoria para usuarios y roles (modo contingencia / offline)
+const rolesEnMemoria = [
+  { id: 1, codigo: 'ADMIN', nombre: 'Administrador General', descripcion: 'Control total del sistema institucional', activo: true },
+  { id: 2, codigo: 'SUPERVISOR', nombre: 'Supervisor / Director DICOM', descripcion: 'Priorización y asignación de requerimientos', activo: true },
+  { id: 3, codigo: 'DISENADOR', nombre: 'Diseñador Gráfico', descripcion: 'Ejecución y producción creativa institucional', activo: true },
+  { id: 4, codigo: 'SOLICITANTE', nombre: 'Solicitante Municipal', descripcion: 'Secretarías y Direcciones solicitantes GAM El Alto', activo: true }
+];
+
+let usuariosEnMemoria = [
+  { id: 'a0000001-0000-0000-0000-000000000003', nombres: 'Ing. Wilfredo', apellidos: 'Abad Mancilla', cargo: 'Administrador General de Sistemas', email: 'admin@elalto.gob.bo', telefono_contacto: '77210000', activo: true, rol_id: 1, rol_codigo: 'ADMIN', rol_nombre: 'Administrador General', secretaria_id: 1, secretaria_nombre: 'Despacho de la Alcaldesa', secretaria_sigla: 'DESPACHO', direccion_id: 1, direccion_nombre: 'Dirección General de Asesoría Legal / Sistemas', direccion_sigla: 'DGS', unidad_id: null, created_at: '2026-01-01', ultimo_acceso: '2026-03-30 08:30' },
+  { id: 'a0000001-0000-0000-0000-000000000001', nombres: 'Lic. Roxana', apellidos: 'Vargas Quispe', cargo: 'Directora de Comunicación DICOM', email: 'director.dicom@elalto.gob.bo', telefono_contacto: '77210001', activo: true, rol_id: 2, rol_codigo: 'SUPERVISOR', rol_nombre: 'Supervisor / Directora DICOM', secretaria_id: 2, secretaria_nombre: 'Secretaría Municipal de Gestión Institucional', secretaria_sigla: 'SMGI', direccion_id: 2, direccion_nombre: 'Dirección de Comunicación', direccion_sigla: 'DICOM', unidad_id: null, created_at: '2026-01-02', ultimo_acceso: '2026-03-30 09:15' },
+  { id: 'a0000001-0000-0000-0000-000000000002', nombres: 'Lic. Marco Antonio', apellidos: 'Choque Callisaya', cargo: 'Diseñador Gráfico Senior', email: 'disenador.marco@elalto.gob.bo', telefono_contacto: '77210002', activo: true, rol_id: 3, rol_codigo: 'DISENADOR', rol_nombre: 'Diseñador Gráfico Institucional', secretaria_id: 2, secretaria_nombre: 'Secretaría Municipal de Gestión Institucional', secretaria_sigla: 'SMGI', direccion_id: 2, direccion_nombre: 'Dirección de Comunicación', direccion_sigla: 'DICOM', unidad_id: null, created_at: '2026-01-03', ultimo_acceso: '2026-03-30 10:00' },
+  { id: 'b0000001-0000-0000-0000-000000000001', nombres: 'Dra. Patricia', apellidos: 'Mendoza Limachi', cargo: 'Directora de Gestión en Salud', email: 'dir.salud@elalto.gob.bo', telefono_contacto: '78900001', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_id: 3, secretaria_nombre: 'Secretaría Municipal de Salud', secretaria_sigla: 'SMS', direccion_id: 3, direccion_nombre: 'Dirección de Gestión en Salud', direccion_sigla: 'DGSAL', unidad_id: null, created_at: '2026-01-10', ultimo_acceso: '2026-03-29 14:20' },
+  { id: 'b0000001-0000-0000-0000-000000000002', nombres: 'Ing. Roberto', apellidos: 'Mamani Condori', cargo: 'Director de Obras Municipales', email: 'dir.obras@elalto.gob.bo', telefono_contacto: '78900002', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_id: 4, secretaria_nombre: 'Secretaría Municipal de Infraestructura Pública', secretaria_sigla: 'SMIP', direccion_id: 4, direccion_nombre: 'Dirección de Obras Municipales', direccion_sigla: 'DOM', unidad_id: null, created_at: '2026-01-12', ultimo_acceso: '2026-03-28 11:45' },
+  { id: 'b0000001-0000-0000-0000-000000000003', nombres: 'Lic. Marcelo', apellidos: 'Paredes Choque', cargo: 'Director de Cultura', email: 'dir.cultura@elalto.gob.bo', telefono_contacto: '78900003', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_id: 5, secretaria_nombre: 'Secretaría Municipal de Educación y Cultura', secretaria_sigla: 'SMEC', direccion_id: 5, direccion_nombre: 'Dirección de Culturas', direccion_sigla: 'DCULT', unidad_id: null, created_at: '2026-01-15', ultimo_acceso: '2026-03-29 16:10' },
+  { id: 'b0000001-0000-0000-0000-000000000004', nombres: 'Cap. Edwin', apellidos: 'Huanca Laura', cargo: 'Director de Seguridad Pública', email: 'dir.seguridad@elalto.gob.bo', telefono_contacto: '78900004', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_id: 6, secretaria_nombre: 'Secretaría Municipal de Seguridad Ciudadana', secretaria_sigla: 'SMSC', direccion_id: 6, direccion_nombre: 'Dirección de Seguridad Pública', direccion_sigla: 'DSP', unidad_id: null, created_at: '2026-01-18', ultimo_acceso: '2026-03-25 09:00' },
+  { id: 'b0000001-0000-0000-0000-000000000005', nombres: 'Lic. Verónica', apellidos: 'Quisbert Alanoca', cargo: 'Directora de Género y Generacional', email: 'dir.genero@elalto.gob.bo', telefono_contacto: '78900005', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_id: 7, secretaria_nombre: 'Secretaría Municipal de Desarrollo Humano', secretaria_sigla: 'SMDH', direccion_id: 7, direccion_nombre: 'Dirección de Niñez, Género y Atención Social', direccion_sigla: 'DNGAS', unidad_id: null, created_at: '2026-01-20', ultimo_acceso: '2026-03-27 15:30' },
+  { id: 'b0000001-0000-0000-0000-000000000006', nombres: 'Ing. Carlos', apellidos: 'Condori Ramos', cargo: 'Director de Gestión Integral de Residuos', email: 'dir.residuos@elalto.gob.bo', telefono_contacto: '78900006', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_id: 8, secretaria_nombre: 'Secretaría Municipal de Agua y Saneamiento', secretaria_sigla: 'SMAS', direccion_id: 8, direccion_nombre: 'Dirección de Gestión Integral de Residuos', direccion_sigla: 'DGIR', unidad_id: null, created_at: '2026-01-22', ultimo_acceso: '2026-03-26 17:15' }
+];
+
 // T001: GET /api/usuarios — Listar usuarios con filtros y paginación
 app.get('/api/usuarios', async (req, res) => {
+  const { rol, secretaria_id, activo, buscar, page = 1, limit = 20 } = req.query;
+
   if (!pool || !dbConnected) {
-    const usuariosContingencia = [
-      { id: 'a0000001-0000-0000-0000-000000000003', nombres: 'Ing. Wilfredo', apellidos: 'Abad Mancilla', cargo: 'Administrador General de Sistemas', email: 'admin@elalto.gob.bo', telefono_contacto: '77210000', activo: true, rol_id: 1, rol_codigo: 'ADMIN', rol_nombre: 'Administrador General', secretaria_nombre: 'Despacho de la Alcaldesa', direccion_nombre: 'Dirección General de Asesoría Legal / Sistemas' },
-      { id: 'a0000001-0000-0000-0000-000000000001', nombres: 'Lic. Roxana', apellidos: 'Vargas Quispe', cargo: 'Directora de Comunicación DICOM', email: 'director.dicom@elalto.gob.bo', telefono_contacto: '77210001', activo: true, rol_id: 2, rol_codigo: 'SUPERVISOR', rol_nombre: 'Supervisor / Directora DICOM', secretaria_nombre: 'Secretaría Municipal de Gestión Institucional', direccion_nombre: 'Dirección de Comunicación' },
-      { id: 'a0000001-0000-0000-0000-000000000002', nombres: 'Lic. Marco Antonio', apellidos: 'Choque Callisaya', cargo: 'Diseñador Gráfico Senior', email: 'disenador.marco@elalto.gob.bo', telefono_contacto: '77210002', activo: true, rol_id: 3, rol_codigo: 'DISENADOR', rol_nombre: 'Diseñador Gráfico Institucional', secretaria_nombre: 'Secretaría Municipal de Gestión Institucional', direccion_nombre: 'Dirección de Comunicación' },
-      { id: 'b0000001-0000-0000-0000-000000000001', nombres: 'Dra. Patricia', apellidos: 'Mendoza Limachi', cargo: 'Directora de Gestión en Salud', email: 'dir.salud@elalto.gob.bo', telefono_contacto: '78900001', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_nombre: 'Secretaría Municipal de Salud', direccion_nombre: 'Dirección de Gestión en Salud' },
-      { id: 'b0000001-0000-0000-0000-000000000002', nombres: 'Ing. Roberto', apellidos: 'Mamani Condori', cargo: 'Director de Obras Municipales', email: 'dir.obras@elalto.gob.bo', telefono_contacto: '78900002', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_nombre: 'Secretaría Municipal de Infraestructura Pública', direccion_nombre: 'Dirección de Obras Municipales' },
-      { id: 'b0000001-0000-0000-0000-000000000003', nombres: 'Lic. Marcelo', apellidos: 'Paredes Choque', cargo: 'Director de Cultura', email: 'dir.cultura@elalto.gob.bo', telefono_contacto: '78900003', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_nombre: 'Secretaría Municipal de Educación y Cultura', direccion_nombre: 'Dirección de Culturas' },
-      { id: 'b0000001-0000-0000-0000-000000000004', nombres: 'Cap. Edwin', apellidos: 'Huanca Laura', cargo: 'Director de Seguridad Pública', email: 'dir.seguridad@elalto.gob.bo', telefono_contacto: '78900004', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_nombre: 'Secretaría Municipal de Seguridad Ciudadana', direccion_nombre: 'Dirección de Seguridad Pública' },
-      { id: 'b0000001-0000-0000-0000-000000000005', nombres: 'Lic. Verónica', apellidos: 'Quisbert Alanoca', cargo: 'Directora de Género y Generacional', email: 'dir.genero@elalto.gob.bo', telefono_contacto: '78900005', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_nombre: 'Secretaría Municipal de Desarrollo Humano', direccion_nombre: 'Dirección de Niñez, Género y Atención Social' },
-      { id: 'b0000001-0000-0000-0000-000000000006', nombres: 'Ing. Carlos', apellidos: 'Condori Ramos', cargo: 'Director de Gestión Integral de Residuos', email: 'dir.residuos@elalto.gob.bo', telefono_contacto: '78900006', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_nombre: 'Secretaría Municipal de Agua y Saneamiento', direccion_nombre: 'Dirección de Gestión Integral de Residuos' }
-    ];
-    return res.json({ exito: true, fuente: 'Memoria Institucional', total: usuariosContingencia.length, totalPages: 1, page: 1, data: usuariosContingencia });
+    let filtrados = [...usuariosEnMemoria];
+    if (rol) {
+      filtrados = filtrados.filter(u => u.rol_codigo === rol);
+    }
+    if (secretaria_id) {
+      filtrados = filtrados.filter(u => String(u.secretaria_id) === String(secretaria_id));
+    }
+    if (activo !== undefined && activo !== '' && activo !== 'todos') {
+      filtrados = filtrados.filter(u => u.activo === (activo === 'true' || activo === true));
+    }
+    if (buscar) {
+      const q = buscar.toLowerCase();
+      filtrados = filtrados.filter(u =>
+        (u.nombres && u.nombres.toLowerCase().includes(q)) ||
+        (u.apellidos && u.apellidos.toLowerCase().includes(q)) ||
+        (u.email && u.email.toLowerCase().includes(q)) ||
+        (u.cargo && u.cargo.toLowerCase().includes(q))
+      );
+    }
+    const offset = (Math.max(1, parseInt(page)) - 1) * parseInt(limit);
+    const paginados = filtrados.slice(offset, offset + parseInt(limit));
+    return res.json({
+      exito: true,
+      fuente: 'Memoria Institucional',
+      total: filtrados.length,
+      totalPages: Math.ceil(filtrados.length / parseInt(limit)) || 1,
+      page: parseInt(page),
+      data: paginados
+    });
   }
 
   try {
-    const { rol, secretaria_id, activo, buscar, page = 1, limit = 20 } = req.query;
     const offset = (Math.max(1, parseInt(page)) - 1) * parseInt(limit);
     const conditions = [];
     const params = [];
@@ -828,7 +867,11 @@ app.get('/api/usuarios', async (req, res) => {
 // T008: GET /api/usuarios/:id — Detalle de un usuario
 app.get('/api/usuarios/:id', async (req, res) => {
   if (!pool || !dbConnected) {
-    return res.status(503).json({ exito: false, mensaje: 'Base de datos no disponible' });
+    const user = usuariosEnMemoria.find(u => u.id === req.params.id);
+    if (!user) {
+      return res.status(404).json({ exito: false, mensaje: 'Usuario no encontrado' });
+    }
+    return res.json({ exito: true, data: user });
   }
 
   try {
@@ -860,10 +903,6 @@ app.get('/api/usuarios/:id', async (req, res) => {
 
 // T002: POST /api/usuarios — Crear nuevo usuario
 app.post('/api/usuarios', async (req, res) => {
-  if (!pool || !dbConnected) {
-    return res.status(503).json({ exito: false, mensaje: 'Base de datos no disponible' });
-  }
-
   const { nombres, apellidos, cargo, email, telefono_contacto, password, rol_id, secretaria_id, direccion_id, unidad_id } = req.body;
 
   // Validaciones
@@ -884,6 +923,45 @@ app.post('/api/usuarios', async (req, res) => {
   }
   if (!rol_id) {
     return res.status(400).json({ exito: false, mensaje: 'Debe seleccionar un rol' });
+  }
+
+  if (!pool || !dbConnected) {
+    const emailNorm = email.toLowerCase().trim();
+    if (usuariosEnMemoria.some(u => u.email.toLowerCase() === emailNorm)) {
+      return res.status(409).json({ exito: false, mensaje: 'Este email ya está registrado en el sistema' });
+    }
+    const rolObj = rolesEnMemoria.find(r => r.id === parseInt(rol_id));
+    if (!rolObj) {
+      return res.status(400).json({ exito: false, mensaje: 'Rol no válido' });
+    }
+    const nuevoUsuario = {
+      id: crypto.randomUUID(),
+      nombres: nombres.trim(),
+      apellidos: apellidos.trim(),
+      cargo: cargo ? cargo.trim() : 'Funcionario GAM El Alto',
+      email: emailNorm,
+      telefono_contacto: telefono_contacto ? telefono_contacto.trim() : null,
+      activo: true,
+      rol_id: rolObj.id,
+      rol_codigo: rolObj.codigo,
+      rol_nombre: rolObj.nombre,
+      secretaria_id: secretaria_id ? parseInt(secretaria_id) : 1,
+      secretaria_nombre: 'Secretaría Municipal',
+      secretaria_sigla: 'SM',
+      direccion_id: direccion_id ? parseInt(direccion_id) : 1,
+      direccion_nombre: 'Dirección Municipal',
+      direccion_sigla: 'DM',
+      unidad_id: unidad_id || null,
+      created_at: new Date().toISOString().split('T')[0],
+      ultimo_acceso: null
+    };
+    usuariosEnMemoria.unshift(nuevoUsuario);
+    console.log(`✅ [Usuarios Memoria] Nuevo usuario creado: ${nuevoUsuario.email} (ID: ${nuevoUsuario.id})`);
+    return res.status(201).json({
+      exito: true,
+      mensaje: 'Usuario creado exitosamente',
+      data: nuevoUsuario
+    });
   }
 
   const client = await pool.connect();
@@ -976,12 +1054,38 @@ app.post('/api/usuarios', async (req, res) => {
 
 // T003: PUT /api/usuarios/:id — Editar usuario (sin email ni password)
 app.put('/api/usuarios/:id', async (req, res) => {
-  if (!pool || !dbConnected) {
-    return res.status(503).json({ exito: false, mensaje: 'Base de datos no disponible' });
-  }
-
   const { id } = req.params;
   const { nombres, apellidos, cargo, telefono_contacto, rol_id, secretaria_id, direccion_id, unidad_id } = req.body;
+
+  if (!pool || !dbConnected) {
+    const user = usuariosEnMemoria.find(u => u.id === id);
+    if (!user) {
+      return res.status(404).json({ exito: false, mensaje: 'Usuario no encontrado' });
+    }
+    // Protección: no degradar al último admin
+    if (rol_id && parseInt(rol_id) !== user.rol_id && user.rol_codigo === 'ADMIN') {
+      const otherAdmins = usuariosEnMemoria.filter(u => u.rol_codigo === 'ADMIN' && u.activo && u.id !== id).length;
+      if (otherAdmins === 0) {
+        return res.status(400).json({ exito: false, mensaje: 'No se puede cambiar el rol del último administrador activo del sistema' });
+      }
+    }
+    if (nombres) user.nombres = nombres.trim();
+    if (apellidos) user.apellidos = apellidos.trim();
+    if (cargo !== undefined) user.cargo = cargo;
+    if (telefono_contacto !== undefined) user.telefono_contacto = telefono_contacto;
+    if (rol_id) {
+      const r = rolesEnMemoria.find(r => r.id === parseInt(rol_id));
+      if (r) {
+        user.rol_id = r.id;
+        user.rol_codigo = r.codigo;
+        user.rol_nombre = r.nombre;
+      }
+    }
+    if (secretaria_id !== undefined) user.secretaria_id = parseInt(secretaria_id) || 0;
+    if (direccion_id !== undefined) user.direccion_id = parseInt(direccion_id) || 0;
+    if (unidad_id !== undefined) user.unidad_id = unidad_id;
+    return res.json({ exito: true, mensaje: 'Usuario actualizado exitosamente', data: user });
+  }
 
   const client = await pool.connect();
   try {
@@ -1074,12 +1178,33 @@ app.put('/api/usuarios/:id', async (req, res) => {
 
 // T004: PATCH /api/usuarios/:id/estado — Activar/Desactivar usuario
 app.patch('/api/usuarios/:id/estado', async (req, res) => {
-  if (!pool || !dbConnected) {
-    return res.status(503).json({ exito: false, mensaje: 'Base de datos no disponible' });
-  }
-
   const { id } = req.params;
   const { activo } = req.body;
+
+  if (!pool || !dbConnected) {
+    const user = usuariosEnMemoria.find(u => u.id === id);
+    if (!user) {
+      return res.status(404).json({ exito: false, mensaje: 'Usuario no encontrado' });
+    }
+    // No auto-desactivar
+    if (req.body.requesting_user_id && req.body.requesting_user_id === id && activo === false) {
+      return res.status(400).json({ exito: false, mensaje: 'No puede desactivar su propia cuenta de administrador' });
+    }
+    // No desactivar al último admin
+    if (!activo && user.rol_codigo === 'ADMIN') {
+      const otherAdmins = usuariosEnMemoria.filter(u => u.rol_codigo === 'ADMIN' && u.activo && u.id !== id).length;
+      if (otherAdmins === 0) {
+        return res.status(400).json({ exito: false, mensaje: 'No se puede desactivar al último administrador activo del sistema' });
+      }
+    }
+    user.activo = !!activo;
+    return res.json({
+      exito: true,
+      mensaje: activo ? 'Usuario reactivado exitosamente' : 'Usuario desactivado exitosamente',
+      advertencia: null,
+      data: { id, activo: user.activo }
+    });
+  }
 
   const client = await pool.connect();
   try {
@@ -1163,11 +1288,22 @@ app.patch('/api/usuarios/:id/estado', async (req, res) => {
 
 // T005: POST /api/usuarios/:id/reset-password — Resetear contraseña
 app.post('/api/usuarios/:id/reset-password', async (req, res) => {
-  if (!pool || !dbConnected) {
-    return res.status(503).json({ exito: false, mensaje: 'Base de datos no disponible' });
-  }
-
   const { id } = req.params;
+
+  if (!pool || !dbConnected) {
+    const user = usuariosEnMemoria.find(u => u.id === id);
+    if (!user) {
+      return res.status(404).json({ exito: false, mensaje: 'Usuario no encontrado' });
+    }
+    const passwordTemporal = generarPasswordTemporal(12);
+    console.log(`🔑 [Usuarios Memoria] Contraseña reseteada para: ${user.email} -> ${passwordTemporal}`);
+    return res.json({
+      exito: true,
+      mensaje: 'Contraseña reseteada exitosamente',
+      password_temporal: passwordTemporal,
+      data: { id, email: user.email }
+    });
+  }
 
   try {
     const userRes = await pool.query(`SELECT id, email FROM comunica.usuarios WHERE id = $1`, [id]);
@@ -1208,14 +1344,13 @@ app.post('/api/usuarios/:id/reset-password', async (req, res) => {
 // T006: GET /api/roles — Listar roles con conteo de usuarios
 app.get('/api/roles', async (req, res) => {
   if (!pool || !dbConnected) {
+    const rolesConConteo = rolesEnMemoria.map(r => ({
+      ...r,
+      total_usuarios: usuariosEnMemoria.filter(u => u.rol_id === r.id && u.activo).length
+    }));
     return res.json({
       exito: true,
-      data: [
-        { id: 1, codigo: 'ADMIN', nombre: 'Administrador General', descripcion: 'Control total', activo: true, total_usuarios: 1 },
-        { id: 2, codigo: 'SUPERVISOR', nombre: 'Supervisor / Director DICOM', descripcion: 'Priorización y asignación', activo: true, total_usuarios: 1 },
-        { id: 3, codigo: 'DISENADOR', nombre: 'Diseñador Gráfico', descripcion: 'Ejecución creativa', activo: true, total_usuarios: 1 },
-        { id: 4, codigo: 'SOLICITANTE', nombre: 'Solicitante Municipal', descripcion: 'Secretarías y Direcciones', activo: true, total_usuarios: 6 }
-      ]
+      data: rolesConConteo
     });
   }
 
@@ -1238,12 +1373,17 @@ app.get('/api/roles', async (req, res) => {
 
 // T007: PUT /api/roles/:id — Editar descripción del rol
 app.put('/api/roles/:id', async (req, res) => {
-  if (!pool || !dbConnected) {
-    return res.status(503).json({ exito: false, mensaje: 'Base de datos no disponible' });
-  }
-
   const { id } = req.params;
   const { descripcion } = req.body;
+
+  if (!pool || !dbConnected) {
+    const rol = rolesEnMemoria.find(r => r.id === parseInt(id));
+    if (!rol) {
+      return res.status(404).json({ exito: false, mensaje: 'Rol no encontrado' });
+    }
+    rol.descripcion = descripcion;
+    return res.json({ exito: true, mensaje: 'Descripción del rol actualizada exitosamente' });
+  }
 
   try {
     const prevRes = await pool.query(`SELECT id, descripcion FROM comunica.roles WHERE id = $1`, [id]);
