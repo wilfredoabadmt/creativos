@@ -852,17 +852,31 @@ const app = {
     for (let i = 1; i <= 5; i++) {
       const content = document.getElementById(`stepContent${i}`);
       const indicator = document.getElementById(`stepIndicator${i}`);
+      const dot = indicator ? indicator.querySelector('.step-dot') : null;
+      const line = document.getElementById(`stepLine${i}`);
+      
       if (content && indicator) {
         content.classList.toggle('active', i === stepNumber);
         indicator.classList.toggle('active', i === stepNumber);
+        
         if (i < stepNumber) {
           indicator.classList.add('completed');
+          if (dot) dot.innerHTML = '✓';
         } else {
           indicator.classList.remove('completed');
+          if (dot) dot.textContent = i;
         }
       }
+      
+      if (line) {
+        line.classList.toggle('completed', i < stepNumber);
+      }
     }
-    window.scrollTo({ top: 180, behavior: 'smooth' });
+    const formBox = document.querySelector('.card-box');
+    if (formBox) {
+      const topOffset = formBox.getBoundingClientRect().top + window.pageYOffset - 80;
+      window.scrollTo({ top: topOffset, behavior: 'smooth' });
+    }
   },
 
   calculateSlaPreview() {

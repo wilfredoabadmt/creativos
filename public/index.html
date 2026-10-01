@@ -233,43 +233,60 @@
 
         <div class="card-box shadow-lg">
           <div class="card-header bg-gamea-gradient text-white d-flex justify-between align-center">
-            <div>
-              <span class="badge-form-header">FICHA TÉCNICA DE SOLICITUD DE DISEÑO GRÁFICO</span>
+            <div class="card-header-info">
+              <span class="badge-form-header">
+                <span>📋</span> FICHA TÉCNICA DE SOLICITUD DE DISEÑO GRÁFICO
+              </span>
               <h2 class="card-title-lg">Gobierno Autónomo Municipal de El Alto – Jach’a Uta</h2>
               <p class="card-subtitle mt-1">
-                <strong>Objetivo Oficial:</strong> Recopilar la información indispensable para orientar correctamente la elaboración de piezas gráficas institucionales y optimizar los tiempos de atención a las diferentes dependencias municipales.
+                <strong class="sub-highlight">Objetivo Oficial:</strong> Recopilar la información indispensable para orientar correctamente la elaboración de piezas gráficas institucionales y optimizar los tiempos de atención a las diferentes dependencias municipales.
               </p>
             </div>
-            <button class="btn btn-sm btn-outline-white" id="btnFillDemo" title="Rellenar con datos de prueba real">
-              ⚡ Autocompletar Caso Demo
+            <button type="button" class="btn-fill-demo" id="btnFillDemo" title="Rellenar con datos de prueba real">
+              <span>⚡</span> Autocompletar Caso Demo
             </button>
           </div>
 
           <!-- STEPPER INDICATOR (5 PASOS QUE CUBREN LAS 6 SECCIONES DEL PDF) -->
           <div class="stepper-bar">
-            <div class="step-item active" id="stepIndicator1">
+            <div class="step-item active" id="stepIndicator1" onclick="app.goToStep(1)">
               <span class="step-dot">1</span>
-              <span class="step-label">1. Datos Evento</span>
+              <div class="step-text">
+                <span class="step-num-tag">Paso 01</span>
+                <span class="step-label">Datos del Evento</span>
+              </div>
             </div>
-            <div class="step-line"></div>
-            <div class="step-item" id="stepIndicator2">
+            <div class="step-line" id="stepLine1"></div>
+            <div class="step-item" id="stepIndicator2" onclick="app.goToStep(2)">
               <span class="step-dot">2</span>
-              <span class="step-label">2. Características</span>
+              <div class="step-text">
+                <span class="step-num-tag">Paso 02</span>
+                <span class="step-label">Características</span>
+              </div>
             </div>
-            <div class="step-line"></div>
-            <div class="step-item" id="stepIndicator3">
+            <div class="step-line" id="stepLine2"></div>
+            <div class="step-item" id="stepIndicator3" onclick="app.goToStep(3)">
               <span class="step-dot">3</span>
-              <span class="step-label">3. Formato y Difusión</span>
+              <div class="step-text">
+                <span class="step-num-tag">Paso 03</span>
+                <span class="step-label">Formato y Difusión</span>
+              </div>
             </div>
-            <div class="step-line"></div>
-            <div class="step-item" id="stepIndicator4">
+            <div class="step-line" id="stepLine3"></div>
+            <div class="step-item" id="stepIndicator4" onclick="app.goToStep(4)">
               <span class="step-dot">4</span>
-              <span class="step-label">4. Material / Insumos</span>
+              <div class="step-text">
+                <span class="step-num-tag">Paso 04</span>
+                <span class="step-label">Material e Insumos</span>
+              </div>
             </div>
-            <div class="step-line"></div>
-            <div class="step-item" id="stepIndicator5">
+            <div class="step-line" id="stepLine4"></div>
+            <div class="step-item" id="stepIndicator5" onclick="app.goToStep(5)">
               <span class="step-dot">5</span>
-              <span class="step-label">5-6. Solicitante y V.º B.º</span>
+              <div class="step-text">
+                <span class="step-num-tag">Paso 05</span>
+                <span class="step-label">Solicitante y V.º B.º</span>
+              </div>
             </div>
           </div>
 
