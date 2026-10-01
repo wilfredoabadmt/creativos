@@ -313,13 +313,13 @@ comunica-digital-gamea/
 
 ## FASE 8: IMPLEMENTACIÓN, INFRAESTRUCTURA Y DEVOPS
 
-- **Sistema Operativo Base:** Ubuntu Server 24.04 LTS con endurecimiento de kernel (UFW habilitado, Fail2Ban, puertos 80 y 443 expuestos exclusivamente).
-- **Orquestación:** Docker Compose gestionando 4 contenedores:
-  1. `gamea-nginx`: Proxy inverso y gestión de certificados Let's Encrypt.
-  2. `gamea-app`: Aplicación Node.js/Next.js optimizada en multi-stage build.
-  3. `gamea-postgres`: Motor PostgreSQL 16 con volumen persistente cifrado.
-  4. `gamea-minio`: Servidor de almacenamiento de archivos y piezas gráficas.
-- **Plan de Respaldo (Backup):** Script `cron` diario ejecutando `pg_dump` con compresión gzip, cifrado GPG y sincronización a almacenamiento secundario seguro fuera del sitio.
+- **Sistema Operativo y Servidor:** Ubuntu Server 24.04 LTS (Host: `localhost` / `host.docker.internal` en Coolify).
+- **Plataforma de Despliegue (PaaS Institucional):** Coolify v4.x con proxy Traefik v3.6, SSL automático Let's Encrypt y red interna Docker `coolify`.
+- **Servicios Desplegados en Producción (Proyecto: `Creativos GAMEA`):**
+  1. `creativos-app` (`qa1udxjicxskny3hkask9yat`): Aplicación Web en Nginx Alpine, accesible en `https://creativos.elalto.gob.bo`.
+  2. `creativos-postgres` (`0gmfrh8ddb9co6u0nvmbx4ci`): Base de datos PostgreSQL 16 Alpine standalone con healthcheck activo (`running:healthy`), red aislada `coolify`, base de datos `creativos_db` y usuario `creativos_user`.
+- **Variables de Entorno Inyectadas:** `DATABASE_URL`, `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`.
+- **Plan de Respaldo (Backup):** Respaldo automatizado de base de datos mediante tareas programadas de Coolify y retención de snapshots de volumen.
 
 ---
 
