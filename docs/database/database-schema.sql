@@ -265,7 +265,7 @@ WHEN (NEW.codigo_tramite IS NULL OR NEW.codigo_tramite = '')
 EXECUTE FUNCTION generar_codigo_tramite();
 
 -- ==============================================================================
--- 17. CARGA DE DATOS SEMILLA (SEEDS OFICIALES GAMEA)
+-- 17. CARGA DE DATOS SEMILLA (ORGANIGRAMA D.M. N° 200 - GESTIÓN 2026)
 -- ==============================================================================
 
 -- Roles
@@ -275,7 +275,7 @@ INSERT INTO roles (codigo, nombre, descripcion) VALUES
 ('DISENADOR', 'Diseñador Gráfico Institucional', 'Ejecución creativa, carga de propuestas y artes finales'),
 ('SOLICITANTE', 'Solicitante Municipal', 'Secretarías, Direcciones y Unidades del GAM El Alto');
 
--- Estados
+-- Estados Oficiales
 INSERT INTO estados (codigo, nombre, color_hex, orden, descripcion) VALUES
 ('PENDIENTE', '🟡 Pendiente', '#EAB308', 1, 'Solicitud recepcionada por el sistema en espera de revisión'),
 ('EN_REVISION', '🔵 En revisión', '#3B82F6', 2, 'Insumos validados y asignado a equipo de diseño'),
@@ -297,22 +297,107 @@ INSERT INTO tipos_diseno (nombre, descripcion, icono) VALUES
 ('Gigantografía', 'Vallas publicitarias exteriores de grandes dimensiones', 'billboard'),
 ('Otro', 'Pieza gráfica con requerimientos específicos personalizados', 'more');
 
--- Secretarías del GAM El Alto
-INSERT INTO secretarias (codigo, nombre, sigla) VALUES
-('SMGI', 'Secretaría Municipal de Gestión Institucional', 'SMGI'),
-('SMS', 'Secretaría Municipal de Salud', 'SMS'),
-('SMIP', 'Secretaría Municipal de Infraestructura Pública', 'SMIP'),
-('SMEC', 'Secretaría Municipal de Educación y Cultura', 'SMEC'),
-('SMSC', 'Secretaría Municipal de Seguridad Ciudadana', 'SMSC'),
-('SMDE', 'Secretaría Municipal de Desarrollo Económico', 'SMDE'),
-('SMAMA', 'Secretaría Municipal de Agua, Saneamiento, Gestión Ambiental y Riesgos', 'SMAMA'),
-('SMAP', 'Secretaría Municipal de Administración y Finanzas', 'SMAF');
+-- Secretarías Municipales y Órganos (D.M. N° 200 - GESTIÓN 2026)
+INSERT INTO secretarias (id, codigo, nombre, sigla) VALUES
+(1, 'DESPACHO', 'Despacho de la Alcaldesa', 'DESPACHO'),
+(2, 'SMGI', 'Secretaría Municipal de Gestión Institucional', 'SMGI'),
+(3, 'SMAF', 'Secretaría Municipal de Administración y Finanzas', 'SMAF'),
+(4, 'SMP', 'Secretaría Municipal de Planificación', 'SMP'),
+(5, 'SMMU', 'Secretaría Municipal de Movilidad Urbana', 'SMMU'),
+(6, 'SMEC', 'Secretaría Municipal de Educación y Cultura', 'SMEC'),
+(7, 'SMDHSI', 'Secretaría Municipal de Desarrollo Humano y Social Integral', 'SMDHSI'),
+(8, 'SMSC', 'Secretaría Municipal de Seguridad Ciudadana', 'SMSC'),
+(9, 'SMS', 'Secretaría Municipal de Salud', 'SMS'),
+(10, 'SMIP', 'Secretaría Municipal de Infraestructura Pública', 'SMIP'),
+(11, 'SMASGAR', 'Secretaría Municipal de Agua, Saneamiento, Gestión Ambiental y Riesgos', 'SMASGAR'),
+(12, 'SMDE', 'Secretaría Municipal de Desarrollo Económico', 'SMDE'),
+(13, 'SUBALCALDIAS', 'Subalcaldías Municipales (Distritos 1 al 14)', 'SUB-D1-14'),
+(14, 'DESCENTRALIZADO', 'Nivel Descentralizado y Empresas Municipales', 'DESCENTRALIZADO');
 
--- Direcciones Representativas
+-- Direcciones Oficiales Aprobadas por D.M. N° 200
 INSERT INTO direcciones (secretaria_id, codigo, nombre, sigla) VALUES
-(1, 'DICOM', 'Dirección de Comunicación', 'DICOM'),
-(1, 'DIR-PROT', 'Dirección de Protocolo y Ceremonial', 'DIR-PROT'),
-(2, 'DIR-SALUD', 'Dirección de Redes de Salud', 'DRS'),
-(3, 'DIR-OBRAS', 'Dirección de Supervisión de Obras Municipales', 'DSOM'),
-(4, 'DIR-CULT', 'Dirección de Culturas y Turismo', 'DCT'),
-(5, 'DIR-SEG', 'Dirección de Prevención y Seguridad Vecinal', 'DPSV');
+-- Despacho Alcaldesa (Asesoramiento y Control)
+(1, 'DGAL', 'Dirección General de Asesoría Legal', 'DGAL'),
+(1, 'DRI', 'Dirección de Relaciones Internacionales', 'DRI'),
+(1, 'URPP', 'Unidad de Relaciones Públicas y Protocolo', 'URPP'),
+
+-- Secretaría Municipal de Gestión Institucional (SMGI)
+(2, 'DICOM', 'Dirección de Comunicación', 'DICOM'),
+(2, 'DAC', 'Dirección de Atención Ciudadana', 'DAC'),
+
+-- Secretaría Municipal de Administración y Finanzas (SMAF)
+(3, 'DIR-ADM', 'Dirección Administrativa', 'DIR-ADM'),
+(3, 'DIR-CONT', 'Dirección de Contrataciones', 'DIR-CONT'),
+(3, 'DIR-TES', 'Dirección del Tesoro Municipal', 'DIR-TES'),
+(3, 'DIR-ATM', 'Dirección de Administración Tributaria Municipal', 'DATM'),
+(3, 'DIR-TH', 'Dirección de Talento Humano', 'DTH'),
+
+-- Secretaría Municipal de Planificación (SMP)
+(4, 'DIR-PLAN', 'Dirección de Planificación', 'DIPLAN'),
+(4, 'DIR-ATC', 'Dirección de Administración Territorial y Catastro', 'DATC'),
+
+-- Secretaría Municipal de Movilidad Urbana (SMMU)
+(5, 'DIR-RMU', 'Dirección de Regulación de la Movilidad Urbana', 'DRMU'),
+(5, 'DIR-BUS', 'Dirección Municipal de Transporte Público – Bus Municipal', 'DMTP-BUS'),
+
+-- Secretaría Municipal de Educación y Cultura (SMEC)
+(6, 'DIR-CULT', 'Dirección de Cultura', 'DICCULT'),
+(6, 'DIR-DEP', 'Dirección de Deportes', 'DIR-DEP'),
+(6, 'DIR-ASE', 'Dirección de Atención y Servicios de Educación', 'DASE'),
+
+-- Secretaría Municipal de Desarrollo Humano y Social Integral (SMDHSI)
+(7, 'DIR-NGAS', 'Dirección de Niñez, Género y Atención Social', 'DNGAS'),
+(7, 'DIR-DI', 'Dirección de Desarrollo Integral', 'DDI'),
+
+-- Secretaría Municipal de Seguridad Ciudadana (SMSC)
+(8, 'DIR-SP', 'Dirección de Seguridad Pública, Programas y Soluciones Tecnológicas', 'DSPPST'),
+(8, 'INT-GUARD', 'Intendencia, Guardia y Banda Municipal', 'IGBM'),
+(8, 'DIR-FM', 'Dirección de Ferias y Mercados', 'DFM'),
+
+-- Secretaría Municipal de Salud (SMS)
+(9, 'DIR-GS', 'Dirección de Gestión en Salud', 'DGS'),
+(9, 'DIR-GSSND', 'Dirección de Gestión Servicios de Salud Nivel Desconcentrado', 'DGSSND'),
+(9, 'DIR-ESPN', 'Dirección de Establecimientos de Salud de Primer Nivel', 'DESPN'),
+(9, 'HOSP-MUN', 'Red de Hospitales Municipales (Holandés, Los Andes, Corea, Qullañ Uta, Japonés)', 'HOSP-MUN'),
+
+-- Secretaría Municipal de Infraestructura Pública (SMIP)
+(10, 'DIR-PM', 'Dirección de Proyectos Municipales', 'DPM'),
+(10, 'DIR-SO', 'Dirección de Supervisión de Obras', 'DSO'),
+(10, 'DIR-FO', 'Dirección de Fiscalización de Obras', 'DFO'),
+(10, 'DIR-OM', 'Dirección de Obras Municipales', 'DOM'),
+(10, 'DIR-AP', 'Dirección de Alumbrado Público', 'DAP'),
+
+-- Secretaría Municipal de Agua, Saneamiento, Gestión Ambiental y Riesgos (SMASGAR)
+(11, 'DIR-GIR', 'Dirección de Gestión Integral de Residuos', 'DGIR'),
+(11, 'DIR-SBRHCA', 'Dirección de Saneamiento Básico, Recursos Hídricos y Control Ambiental', 'DSBRHCA'),
+(11, 'DIR-GR', 'Dirección de Gestión de Riesgos', 'DGR'),
+(11, 'DIR-FAP', 'Dirección de Forestación y Áreas Protegidas', 'DFAP'),
+
+-- Secretaría Municipal de Desarrollo Económico (SMDE)
+(12, 'DIR-DPA', 'Dirección de Desarrollo Productivo Artesanal', 'DDPA'),
+(12, 'DIR-ASA', 'Dirección de Agropecuaria y Seguridad Alimentaria', 'DASA'),
+(12, 'DIR-DPPYME', 'Dirección de Desarrollo Productivo de Pequeñas y Medianas Empresas', 'DDPPYME'),
+(12, 'DIR-SMEI', 'Dirección de Servicios Municipales e Iniciativas Económicas', 'DSMEI'),
+
+-- Subalcaldías (Distritos 1 al 14)
+(13, 'SUB-D1-7', 'Subalcaldías Distritos Urbanos (D-1 al D-7)', 'SUB-URB1'),
+(13, 'SUB-D8-14', 'Subalcaldías Distritos Urbanos y Rurales (D-8 al D-14)', 'SUB-URB2'),
+
+-- Nivel Descentralizado
+(14, 'TERM-MET', 'Terminal Metropolitana El Alto', 'TMEA'),
+(14, 'LAB-OXIG', 'Laboratorio Industrial de Oxígeno Medicinal – G.A.M.E.A.', 'LIOM-GAMEA');
+
+-- Usuarios Institucionales Preconfigurados por Dirección (Credenciales de Acceso Seguro)
+INSERT INTO usuarios (id, rol_id, secretaria_id, direccion_id, nombres, apellidos, cargo, email, telefono_contacto, password_hash) VALUES
+-- DICOM
+('a0000001-0000-0000-0000-000000000001', 2, 2, 4, 'Lic. Roxana', 'Vargas Quispe', 'Directora de Comunicación', 'director.dicom@elalto.gob.bo', '77210001', crypt('DicomElAlto2026!', gen_salt('bf'))),
+('a0000001-0000-0000-0000-000000000002', 3, 2, 4, 'Lic. Marco Antonio', 'Choque Callisaya', 'Diseñador Gráfico Senior', 'disenador.marco@elalto.gob.bo', '77210002', crypt('DicomElAlto2026!', gen_salt('bf'))),
+('a0000001-0000-0000-0000-000000000003', 1, 2, 4, 'Ing. Wilfredo', 'Abad Mancilla', 'Administrador General de Sistemas', 'admin@elalto.gob.bo', '77210000', crypt('AdminElAlto2026!', gen_salt('bf'))),
+
+-- Usuarios Solicitantes Oficiales por Dirección
+('b0000001-0000-0000-0000-000000000001', 4, 9, 21, 'Dra. Patricia', 'Mendoza Limachi', 'Directora de Gestión en Salud', 'dir.salud@elalto.gob.bo', '78900001', crypt('Salud2026!', gen_salt('bf'))),
+('b0000001-0000-0000-0000-000000000002', 4, 10, 27, 'Ing. Roberto', 'Mamani Condori', 'Director de Obras Municipales', 'dir.obras@elalto.gob.bo', '78900002', crypt('Obras2026!', gen_salt('bf'))),
+('b0000001-0000-0000-0000-000000000003', 4, 6, 15, 'Lic. Marcelo', 'Paredes Choque', 'Director de Cultura', 'dir.cultura@elalto.gob.bo', '78900003', crypt('Cultura2026!', gen_salt('bf'))),
+('b0000001-0000-0000-0000-000000000004', 4, 8, 19, 'Cap. Edwin', 'Huanca Laura', 'Director de Seguridad Pública', 'dir.seguridad@elalto.gob.bo', '78900004', crypt('Seguridad2026!', gen_salt('bf'))),
+('b0000001-0000-0000-0000-000000000005', 4, 3, 6, 'Lic. Carmen', 'Villavicencio', 'Directora Administrativa', 'dir.finanzas@elalto.gob.bo', '78900005', crypt('Finanzas2026!', gen_salt('bf'))),
+('b0000001-0000-0000-0000-000000000006', 4, 12, 33, 'Lic. René', 'Condori Huallpa', 'Director de Promoción Artesanal', 'dir.artesanias@elalto.gob.bo', '78900006', crypt('Economia2026!', gen_salt('bf')));

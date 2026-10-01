@@ -143,18 +143,45 @@ body {
   padding: 12px 0;
 }
 
+.header-color-strip {
+  height: 6px;
+  width: 100%;
+  background: url('../img/lineas-color.png') repeat-x center / auto 100%;
+  background-color: var(--gamea-red);
+}
+
+.brand-logo-escudo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+}
+
+.brand-logo-gestion {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.brand-divider {
+  width: 1px;
+  height: 38px;
+  background: var(--border-color);
+  margin: 0 10px;
+}
+
+@media (max-width: 900px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+.w-100 {
+  width: 100%;
+}
+
 .logo-shield {
-  width: 44px;
-  height: 44px;
-  background: linear-gradient(135deg, var(--gamea-red), var(--gamea-red-dark));
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 1.4rem;
-  box-shadow: 0 4px 8px rgba(122, 19, 21, 0.25);
-  margin-right: 14px;
+  display: none;
 }
 
 .brand-sub {
@@ -1206,6 +1233,14 @@ body {
   animation: modalScale 0.25s ease;
 }
 
+.modal-dialog.modal-md {
+  max-width: 600px;
+}
+
+.modal-dialog.modal-lg {
+  max-width: 860px;
+}
+
 @keyframes modalScale {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
@@ -1353,3 +1388,173 @@ body {
   .step-line { display: none; }
   .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
 }
+
+/* ==========================================================================
+   ELEMENTOS DE IDENTIDAD INSTITUCIONAL Y PRIVACIDAD (D.M. 200)
+   ========================================================================== */
+.brand-logo-img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  margin-right: 12px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.header-gestion-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  margin-left: 12px;
+}
+
+.header-color-strip {
+  height: 5px;
+  width: 100%;
+  background-image: url('../img/lineas-color.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.bg-pattern-rombos {
+  background-image: radial-gradient(rgba(212, 175, 55, 0.15) 1px, transparent 1px);
+}
+
+.user-auth-pill {
+  background: #F1F5F9;
+  border: 1px solid var(--border-color);
+  border-radius: 30px;
+  padding: 4px 12px 4px 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-avatar-mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--gamea-blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.user-info-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  text-align: left;
+}
+
+.user-name-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--gamea-blue-dark);
+}
+
+.user-dir-label {
+  font-size: 0.7rem;
+  color: var(--gamea-red);
+  font-weight: 600;
+}
+
+.btn-logout {
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  color: var(--gamea-red);
+  background: #FEE2E2;
+}
+
+.auth-lock-card {
+  background: #FEF3C7;
+  border: 1px solid #FDE68A;
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.auth-lock-card h5 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #92400E;
+  margin-bottom: 2px;
+}
+
+.auth-lock-card p {
+  font-size: 0.82rem;
+  color: #78350F;
+}
+
+.quick-login-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.quick-login-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: #FAFBFD;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.quick-login-btn:hover {
+  border-color: var(--gamea-red);
+  background: rgba(122, 19, 21, 0.05);
+  color: var(--gamea-red);
+  transform: translateY(-1px);
+}
+
+.quick-login-icon {
+  font-size: 1.3rem;
+}
+
+.quick-login-btn strong {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--gamea-blue-dark);
+}
+
+.quick-login-btn span {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.organigrama-badge-tag {
+  display: inline-block;
+  background: #EFF6FF;
+  color: #1E40AF;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid #BFDBFE;
+}
+

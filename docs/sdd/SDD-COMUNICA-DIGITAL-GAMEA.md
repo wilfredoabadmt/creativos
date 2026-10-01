@@ -38,13 +38,74 @@ Hasta el presente ciclo, el flujo de requerimientos hacia la Dirección de Comun
 - **Ausencia de Trazabilidad e Historial:** No existía un repositorio centralizado de piezas gráficas entregadas, provocando duplicidad de esfuerzos y pérdida de memoria gráfica institucional.
 
 ### 1.3 Objetivos de Transformación Digital ("To-Be")
-- **Centralización Digital Unificada:** Canalizar el 100% de las solicitudes a través de un portal web institucional autenticado.
+- **Centralización Digital Unificada y Privada:** El formulario de solicitudes y el seguimiento de trámites se restringen exclusivamente a servidores públicos autenticados mediante cuentas institucionales asignadas a cada Secretaría y Dirección Municipal. No se permite el acceso público ni el envío indiscriminado de solicitudes.
+- **Alineación con el Organigrama Oficial (D.M. N° 200 - Gestión 2026):** Estructuración de las 14 Secretarías/Entidades de Nivel Ejecutivo y sus 43 Direcciones y Hospitales Municipales, garantizando que cada solicitud se vincule de forma inmutable a la unidad solicitante acreditada.
 - **Validación Sintáctica y Semántica Previa:** Impedir el ingreso de solicitudes incompletas o sin insumos aprobados.
 - **Trazabilidad Integral y SLA:** Asignar automáticamente un número de trámite único (código correlativo `SOL-YYYY-XXXX`), fecha de recepción y fecha límite fijada normativamente (hasta 7 días hábiles de producción estándar).
 - **Racionalización de Cambios:** Limitar formalmente las observaciones a un máximo de **2 rondas de cambios estructuradas**.
-- **Panel de Inteligencia Institucional:** Dotar al Director de Comunicación y al Alcalde/Alcaldesa de métricas de carga operativa, dependencias con mayor demanda y rendimiento de producción.
+- **Panel de Inteligencia Institucional:** Dotar al Director de Comunicación y al Despacho de la Alcaldesa de métricas de carga operativa, dependencias con mayor demanda y rendimiento de producción.
 
----
+### 1.4 Estructura Orgánica Oficial Homologada (D.M. N° 200)
+El sistema modela fielmente la jerarquía municipal aprobada mediante Decreto Municipal N° 200 para la Gestión 2026:
+
+1. **Despacho Alcaldesa:**
+   - Dirección General de Asesoría Legal (DGAL)
+   - Dirección de Relaciones Internacionales (DRI)
+   - Unidad de Relaciones Públicas y Protocolo (URPP)
+   - Unidades Asesoras: Auditoría Interna, Transparencia y Lucha Contra la Corrupción, Sumariante.
+2. **Secretaría Municipal de Gestión Institucional (SMGI):**
+   - **Dirección de Comunicación (DICOM)** *(Unidad Rectora del Sistema Creativo)*
+   - Dirección de Atención Ciudadana (DAC)
+3. **Secretaría Municipal de Administración y Finanzas (SMAF):**
+   - Dirección Administrativa (DIR-ADM)
+   - Dirección de Contrataciones (DIR-CONT)
+   - Dirección del Tesoro Municipal (DIR-TES)
+   - Dirección de Administración Tributaria Municipal (DATM)
+   - Dirección de Talento Humano (DTH)
+4. **Secretaría Municipal de Planificación (SMP):**
+   - Dirección de Planificación (DIPLAN)
+   - Dirección de Administración Territorial y Catastro (DATC)
+5. **Secretaría Municipal de Movilidad Urbana (SMMU):**
+   - Dirección de Regulación de la Movilidad Urbana (DRMU)
+   - Dirección Municipal de Transporte Público – Bus Municipal (DMTP-BUS)
+6. **Secretaría Municipal de Educación y Cultura (SMEC):**
+   - Dirección de Cultura (DICCULT)
+   - Dirección de Deportes (DIR-DEP)
+   - Dirección de Atención y Servicios de Educación (DASE)
+7. **Secretaría Municipal de Desarrollo Humano y Social Integral (SMDHSI):**
+   - Dirección de Niñez, Género y Atención Social (DNGAS)
+   - Dirección de Desarrollo Integral (DDI)
+8. **Secretaría Municipal de Seguridad Ciudadana (SMSC):**
+   - Dirección de Seguridad Pública, Programas y Soluciones Tecnológicas (DSPPST)
+   - Intendencia, Guardia y Banda Municipal (IGBM)
+   - Dirección de Ferias y Mercados (DFM)
+9. **Secretaría Municipal de Salud (SMS):**
+   - Dirección de Gestión en Salud (DGS)
+   - Dirección de Gestión Servicios de Salud Nivel Desconcentrado (DGSSND)
+   - Dirección de Establecimientos de Salud de Primer Nivel (DESPN)
+   - Red de Hospitales Municipales (Boliviano Holandés, Los Andes, Modelo Corea, Qullañ Uta, Modelo Japonés)
+10. **Secretaría Municipal de Infraestructura Pública (SMIP):**
+    - Dirección de Proyectos Municipales (DPM)
+    - Dirección de Supervisión de Obras (DSO)
+    - Dirección de Fiscalización de Obras (DFO)
+    - Dirección de Obras Municipales (DOM)
+    - Dirección de Alumbrado Público (DAP)
+11. **Secretaría Municipal de Agua, Saneamiento, Gestión Ambiental y Riesgos (SMASGAR):**
+    - Dirección de Gestión Integral de Residuos (DGIR)
+    - Dirección de Saneamiento Básico, Recursos Hídricos y Control Ambiental (DSBRHCA)
+    - Dirección de Gestión de Riesgos (DGR)
+    - Dirección de Forestación y Áreas Protegidas (DFAP)
+12. **Secretaría Municipal de Desarrollo Económico (SMDE):**
+    - Dirección de Desarrollo Productivo Artesanal (DDPA)
+    - Dirección de Agropecuaria y Seguridad Alimentaria (DASA)
+    - Dirección de Desarrollo Productivo de Pequeñas y Medianas Empresas (DDPPYME)
+    - Dirección de Servicios Municipales e Iniciativas Económicas (DSMEI)
+13. **Subalcaldías Municipales (Distritos 1 al 14):**
+    - Distritos Urbanos (D-1 al D-7)
+    - Distritos Urbanos y Rurales (D-8 al D-14)
+14. **Nivel Descentralizado y Empresas:**
+    - Terminal Metropolitana El Alto (TMEA)
+    - Laboratorio Industrial de Oxígeno Medicinal – G.A.M.E.A. (LIOM)
 
 ## FASE 2: DEFINICIÓN DE REQUERIMIENTOS
 

@@ -1,20 +1,288 @@
 /**
  * COMUNICA DIGITAL - GOBIERNO AUTÓNOMO MUNICIPAL DE EL ALTO
- * Controlador Principal del Prototipo Funcional Interactivo
+ * Controlador Principal del Sistema Adaptado al Organigrama D.M. N° 200
  * Dirección de Comunicación (DICOM)
  */
 
-// ESTADO GLOBAL DE LA APLICACIÓN
+// ==============================================================================
+// 1. ESTRUCTURA ORGANIZACIONAL OFICIAL GAMEA (D.M. N° 200 - GESTIÓN 2026)
+// ==============================================================================
+const ORGANIGRAMA_GAMEA = [
+  {
+    id: 1,
+    codigo: 'DESPACHO',
+    nombre: 'Despacho de la Alcaldesa',
+    sigla: 'DESPACHO',
+    direcciones: [
+      { id: 1, codigo: 'DGAL', nombre: 'Dirección General de Asesoría Legal', sigla: 'DGAL' },
+      { id: 2, codigo: 'DRI', nombre: 'Dirección de Relaciones Internacionales', sigla: 'DRI' },
+      { id: 3, codigo: 'URPP', nombre: 'Unidad de Relaciones Públicas y Protocolo', sigla: 'URPP' }
+    ]
+  },
+  {
+    id: 2,
+    codigo: 'SMGI',
+    nombre: 'Secretaría Municipal de Gestión Institucional',
+    sigla: 'SMGI',
+    direcciones: [
+      { id: 4, codigo: 'DICOM', nombre: 'Dirección de Comunicación', sigla: 'DICOM' },
+      { id: 5, codigo: 'DAC', nombre: 'Dirección de Atención Ciudadana', sigla: 'DAC' }
+    ]
+  },
+  {
+    id: 3,
+    codigo: 'SMAF',
+    nombre: 'Secretaría Municipal de Administración y Finanzas',
+    sigla: 'SMAF',
+    direcciones: [
+      { id: 6, codigo: 'DIR-ADM', nombre: 'Dirección Administrativa', sigla: 'DIR-ADM' },
+      { id: 7, codigo: 'DIR-CONT', nombre: 'Dirección de Contrataciones', sigla: 'DIR-CONT' },
+      { id: 8, codigo: 'DIR-TES', nombre: 'Dirección del Tesoro Municipal', sigla: 'DIR-TES' },
+      { id: 9, codigo: 'DIR-ATM', nombre: 'Dirección de Administración Tributaria Municipal', sigla: 'DATM' },
+      { id: 10, codigo: 'DIR-TH', nombre: 'Dirección de Talento Humano', sigla: 'DTH' }
+    ]
+  },
+  {
+    id: 4,
+    codigo: 'SMP',
+    nombre: 'Secretaría Municipal de Planificación',
+    sigla: 'SMP',
+    direcciones: [
+      { id: 11, codigo: 'DIR-PLAN', nombre: 'Dirección de Planificación', sigla: 'DIPLAN' },
+      { id: 12, codigo: 'DIR-ATC', nombre: 'Dirección de Administración Territorial y Catastro', sigla: 'DATC' }
+    ]
+  },
+  {
+    id: 5,
+    codigo: 'SMMU',
+    nombre: 'Secretaría Municipal de Movilidad Urbana',
+    sigla: 'SMMU',
+    direcciones: [
+      { id: 13, codigo: 'DIR-RMU', nombre: 'Dirección de Regulación de la Movilidad Urbana', sigla: 'DRMU' },
+      { id: 14, codigo: 'DIR-BUS', nombre: 'Dirección Municipal de Transporte Público – Bus Municipal', sigla: 'DMTP-BUS' }
+    ]
+  },
+  {
+    id: 6,
+    codigo: 'SMEC',
+    nombre: 'Secretaría Municipal de Educación y Cultura',
+    sigla: 'SMEC',
+    direcciones: [
+      { id: 15, codigo: 'DIR-CULT', nombre: 'Dirección de Cultura', sigla: 'DICCULT' },
+      { id: 16, codigo: 'DIR-DEP', nombre: 'Dirección de Deportes', sigla: 'DIR-DEP' },
+      { id: 17, codigo: 'DIR-ASE', nombre: 'Dirección de Atención y Servicios de Educación', sigla: 'DASE' }
+    ]
+  },
+  {
+    id: 7,
+    codigo: 'SMDHSI',
+    nombre: 'Secretaría Municipal de Desarrollo Humano y Social Integral',
+    sigla: 'SMDHSI',
+    direcciones: [
+      { id: 18, codigo: 'DIR-NGAS', nombre: 'Dirección de Niñez, Género y Atención Social', sigla: 'DNGAS' },
+      { id: 19, codigo: 'DIR-DI', nombre: 'Dirección de Desarrollo Integral', sigla: 'DDI' }
+    ]
+  },
+  {
+    id: 8,
+    codigo: 'SMSC',
+    nombre: 'Secretaría Municipal de Seguridad Ciudadana',
+    sigla: 'SMSC',
+    direcciones: [
+      { id: 20, codigo: 'DIR-SP', nombre: 'Dirección de Seguridad Pública, Programas y Soluciones Tecnológicas', sigla: 'DSPPST' },
+      { id: 21, codigo: 'INT-GUARD', nombre: 'Intendencia, Guardia y Banda Municipal', sigla: 'IGBM' },
+      { id: 22, codigo: 'DIR-FM', nombre: 'Dirección de Ferias y Mercados', sigla: 'DFM' }
+    ]
+  },
+  {
+    id: 9,
+    codigo: 'SMS',
+    nombre: 'Secretaría Municipal de Salud',
+    sigla: 'SMS',
+    direcciones: [
+      { id: 23, codigo: 'DIR-GS', nombre: 'Dirección de Gestión en Salud', sigla: 'DGS' },
+      { id: 24, codigo: 'DIR-GSSND', nombre: 'Dirección de Gestión Servicios de Salud Nivel Desconcentrado', sigla: 'DGSSND' },
+      { id: 25, codigo: 'DIR-ESPN', nombre: 'Dirección de Establecimientos de Salud de Primer Nivel', sigla: 'DESPN' },
+      { id: 26, codigo: 'HOSP-MUN', nombre: 'Red de Hospitales Municipales (Holandés, Los Andes, Corea, Qullañ Uta, Japonés)', sigla: 'HOSP-MUN' }
+    ]
+  },
+  {
+    id: 10,
+    codigo: 'SMIP',
+    nombre: 'Secretaría Municipal de Infraestructura Pública',
+    sigla: 'SMIP',
+    direcciones: [
+      { id: 27, codigo: 'DIR-PM', nombre: 'Dirección de Proyectos Municipales', sigla: 'DPM' },
+      { id: 28, codigo: 'DIR-SO', nombre: 'Dirección de Supervisión de Obras', sigla: 'DSO' },
+      { id: 29, codigo: 'DIR-FO', nombre: 'Dirección de Fiscalización de Obras', sigla: 'DFO' },
+      { id: 30, codigo: 'DIR-OM', nombre: 'Dirección de Obras Municipales', sigla: 'DOM' },
+      { id: 31, codigo: 'DIR-AP', nombre: 'Dirección de Alumbrado Público', sigla: 'DAP' }
+    ]
+  },
+  {
+    id: 11,
+    codigo: 'SMASGAR',
+    nombre: 'Secretaría Municipal de Agua, Saneamiento, Gestión Ambiental y Riesgos',
+    sigla: 'SMASGAR',
+    direcciones: [
+      { id: 32, codigo: 'DIR-GIR', nombre: 'Dirección de Gestión Integral de Residuos', sigla: 'DGIR' },
+      { id: 33, codigo: 'DIR-SBRHCA', nombre: 'Dirección de Saneamiento Básico, Recursos Hídricos y Control Ambiental', sigla: 'DSBRHCA' },
+      { id: 34, codigo: 'DIR-GR', nombre: 'Dirección de Gestión de Riesgos', sigla: 'DGR' },
+      { id: 35, codigo: 'DIR-FAP', nombre: 'Dirección de Forestación y Áreas Protegidas', sigla: 'DFAP' }
+    ]
+  },
+  {
+    id: 12,
+    codigo: 'SMDE',
+    nombre: 'Secretaría Municipal de Desarrollo Económico',
+    sigla: 'SMDE',
+    direcciones: [
+      { id: 36, codigo: 'DIR-DPA', nombre: 'Dirección de Desarrollo Productivo Artesanal', sigla: 'DDPA' },
+      { id: 37, codigo: 'DIR-ASA', nombre: 'Dirección de Agropecuaria y Seguridad Alimentaria', sigla: 'DASA' },
+      { id: 38, codigo: 'DIR-DPPYME', nombre: 'Dirección de Desarrollo Productivo de Pequeñas y Medianas Empresas', sigla: 'DDPPYME' },
+      { id: 39, codigo: 'DIR-SMEI', nombre: 'Dirección de Servicios Municipales e Iniciativas Económicas', sigla: 'DSMEI' }
+    ]
+  },
+  {
+    id: 13,
+    codigo: 'SUBALCALDIAS',
+    nombre: 'Subalcaldías Municipales (Distritos 1 al 14)',
+    sigla: 'SUB-D1-14',
+    direcciones: [
+      { id: 40, codigo: 'SUB-D1-7', nombre: 'Subalcaldías Distritos Urbanos (D-1 al D-7)', sigla: 'SUB-URB1' },
+      { id: 41, codigo: 'SUB-D8-14', nombre: 'Subalcaldías Distritos Urbanos y Rurales (D-8 al D-14)', sigla: 'SUB-URB2' }
+    ]
+  },
+  {
+    id: 14,
+    codigo: 'DESCENTRALIZADO',
+    nombre: 'Nivel Descentralizado y Empresas Municipales',
+    sigla: 'DESCENTRALIZADO',
+    direcciones: [
+      { id: 42, codigo: 'TERM-MET', nombre: 'Terminal Metropolitana El Alto', sigla: 'TMEA' },
+      { id: 43, codigo: 'LAB-OXIG', nombre: 'Laboratorio Industrial de Oxígeno Medicinal – G.A.M.E.A.', sigla: 'LIOM-GAMEA' }
+    ]
+  }
+];
+
+// ==============================================================================
+// 2. USUARIOS OFICIALES POR DIRECCIÓN (SISTEMA DE AUTENTICACIÓN Y ROLES)
+// ==============================================================================
+const USUARIOS_DIRECCIONES = {
+  'dir.salud@elalto.gob.bo': {
+    nombres: 'Dra. Patricia',
+    apellidos: 'Mendoza Limachi',
+    cargo: 'Directora de Gestión en Salud',
+    secretaria: 'Secretaría Municipal de Salud',
+    secretaria_id: 9,
+    direccion: 'Dirección de Gestión en Salud',
+    direccion_id: 23,
+    rol: 'SOLICITANTE',
+    badge: '🩺 Salud (SMS)'
+  },
+  'dir.obras@elalto.gob.bo': {
+    nombres: 'Ing. Roberto',
+    apellidos: 'Mamani Condori',
+    cargo: 'Director de Obras Municipales',
+    secretaria: 'Secretaría Municipal de Infraestructura Pública',
+    secretaria_id: 10,
+    direccion: 'Dirección de Obras Municipales',
+    direccion_id: 30,
+    rol: 'SOLICITANTE',
+    badge: '🏗️ Obras (SMIP)'
+  },
+  'dir.cultura@elalto.gob.bo': {
+    nombres: 'Lic. Marcelo',
+    apellidos: 'Paredes Choque',
+    cargo: 'Director de Cultura',
+    secretaria: 'Secretaría Municipal de Educación y Cultura',
+    secretaria_id: 6,
+    direccion: 'Dirección de Cultura',
+    direccion_id: 15,
+    rol: 'SOLICITANTE',
+    badge: '🎭 Cultura (SMEC)'
+  },
+  'dir.seguridad@elalto.gob.bo': {
+    nombres: 'Cap. Edwin',
+    apellidos: 'Huanca Laura',
+    cargo: 'Director de Seguridad Pública',
+    secretaria: 'Secretaría Municipal de Seguridad Ciudadana',
+    secretaria_id: 8,
+    direccion: 'Dirección de Seguridad Pública, Programas y Soluciones Tecnológicas',
+    direccion_id: 20,
+    rol: 'SOLICITANTE',
+    badge: '🛡️ Seguridad (SMSC)'
+  },
+  'dir.finanzas@elalto.gob.bo': {
+    nombres: 'Lic. Carmen',
+    apellidos: 'Villavicencio',
+    cargo: 'Directora Administrativa',
+    secretaria: 'Secretaría Municipal de Administración y Finanzas',
+    secretaria_id: 3,
+    direccion: 'Dirección Administrativa',
+    direccion_id: 6,
+    rol: 'SOLICITANTE',
+    badge: '🏢 Finanzas (SMAF)'
+  },
+  'dir.artesanias@elalto.gob.bo': {
+    nombres: 'Lic. René',
+    apellidos: 'Condori Huallpa',
+    cargo: 'Director de Promoción Artesanal',
+    secretaria: 'Secretaría Municipal de Desarrollo Económico',
+    secretaria_id: 12,
+    direccion: 'Dirección de Desarrollo Productivo Artesanal',
+    direccion_id: 36,
+    rol: 'SOLICITANTE',
+    badge: '💼 Desarrollo Económico'
+  },
+  'disenador.marco@elalto.gob.bo': {
+    nombres: 'Lic. Marco Antonio',
+    apellidos: 'Choque Callisaya',
+    cargo: 'Diseñador Creativo Senior',
+    secretaria: 'Secretaría Municipal de Gestión Institucional',
+    secretaria_id: 2,
+    direccion: 'Dirección de Comunicación',
+    direccion_id: 4,
+    rol: 'DISENADOR',
+    badge: '🎨 Diseñador DICOM'
+  },
+  'director.dicom@elalto.gob.bo': {
+    nombres: 'Lic. Roxana',
+    apellidos: 'Vargas Quispe',
+    cargo: 'Directora de Comunicación',
+    secretaria: 'Secretaría Municipal de Gestión Institucional',
+    secretaria_id: 2,
+    direccion: 'Dirección de Comunicación',
+    direccion_id: 4,
+    rol: 'SUPERVISOR',
+    badge: '⭐ Directora DICOM'
+  },
+  'admin@elalto.gob.bo': {
+    nombres: 'Ing. Wilfredo',
+    apellidos: 'Abad Mancilla',
+    cargo: 'Administrador General de Sistemas',
+    secretaria: 'Despacho de la Alcaldesa',
+    secretaria_id: 1,
+    direccion: 'Dirección General de Asesoría Legal / Sistemas',
+    direccion_id: 1,
+    rol: 'ADMIN',
+    badge: '🛡️ Administrador Sistemas'
+  }
+};
+
+// ==============================================================================
+// 3. ESTADO GLOBAL DE LA APLICACIÓN
+// ==============================================================================
 const state = {
-  currentRole: 'SUPERVISOR', // 'SOLICITANTE' | 'DISENADOR' | 'SUPERVISOR' | 'ADMIN'
+  currentUser: null, // Si es null, está en modo PÚBLICO (formulario y bandeja protegidos)
   currentStep: 1,
   activeFilter: 'TODOS',
   solicitudes: [
     {
       id: 'sol-01',
       codigo_tramite: 'SOL-2026-0038',
-      secretaria: 'Secretaría Municipal de Salud (SMS)',
-      direccion: 'Dirección de Redes de Salud - Distrito 8',
+      secretaria: 'Secretaría Municipal de Salud',
+      direccion: 'Dirección de Gestión en Salud',
       nombre_evento: 'Gran Campaña de Vacunación Canina y Felina El Alto',
       fecha_evento: '2026-10-24',
       hora_evento: '08:30',
@@ -38,7 +306,7 @@ const state = {
     {
       id: 'sol-02',
       codigo_tramite: 'SOL-2026-0039',
-      secretaria: 'Secretaría Municipal de Infraestructura Pública (SMIP)',
+      secretaria: 'Secretaría Municipal de Infraestructura Pública',
       direccion: 'Dirección de Obras Municipales',
       nombre_evento: 'Entrega del Paso a Desnivel Río Seco',
       fecha_evento: '2026-10-18',
@@ -54,7 +322,7 @@ const state = {
       estado: 'EN_REVISION',
       fecha_recepcion: '2026-09-28 11:30',
       fecha_limite: '2026-10-07 18:00',
-      disenador_asignado: 'Lic. Marco A. Choque (Senior)',
+      disenador_asignado: 'Lic. Marco Antonio Choque',
       rondas_cambios_usadas: 0,
       historial_cambios: [],
       texto_aprobado: 'EL ALTO DE PIE: Entregamos el moderno Paso a Desnivel Río Seco. Más fluidez, seguridad y progreso para nuestra gran ciudad.',
@@ -63,8 +331,8 @@ const state = {
     {
       id: 'sol-03',
       codigo_tramite: 'SOL-2026-0040',
-      secretaria: 'Secretaría Municipal de Educación y Cultura (SMEC)',
-      direccion: 'Dirección de Culturas y Turismo',
+      secretaria: 'Secretaría Municipal de Educación y Cultura',
+      direccion: 'Dirección de Cultura',
       nombre_evento: 'Festival de la Morenada Alteña 2026',
       fecha_evento: '2026-10-30',
       hora_evento: '14:00',
@@ -79,7 +347,7 @@ const state = {
       estado: 'DISENO_PROCESO',
       fecha_recepcion: '2026-09-25 15:40',
       fecha_limite: '2026-10-06 18:00',
-      disenador_asignado: 'Diseñadora Jimena Quispe',
+      disenador_asignado: 'Lic. Marco Antonio Choque',
       rondas_cambios_usadas: 0,
       historial_cambios: [],
       texto_aprobado: 'VIVE NUESTRA IDENTIDAD. Festival y entrada autóctona de la Morenada Alteña. Música en vivo y fraternidades invitadas.',
@@ -88,8 +356,8 @@ const state = {
     {
       id: 'sol-04',
       codigo_tramite: 'SOL-2026-0041',
-      secretaria: 'Secretaría Municipal de Desarrollo Económico (SMDE)',
-      direccion: 'Dirección de Promoción de Artesanos y PYMES',
+      secretaria: 'Secretaría Municipal de Desarrollo Económico',
+      direccion: 'Dirección de Desarrollo Productivo Artesanal',
       nombre_evento: 'Feria Huayna Fex 2026: Producción Alteña',
       fecha_evento: '2026-11-05',
       hora_evento: '09:00',
@@ -104,13 +372,13 @@ const state = {
       estado: 'AJUSTES',
       fecha_recepcion: '2026-09-22 10:00',
       fecha_limite: '2026-10-02 18:00',
-      disenador_asignado: 'Lic. Carlos Mamani',
-      rondas_cambios_usadas: 1, // 1 Ronda Usada
+      disenador_asignado: 'Lic. Marco Antonio Choque',
+      rondas_cambios_usadas: 1,
       historial_cambios: [
         {
           ronda: 1,
           fecha: '2026-09-26 14:20',
-          usuario: 'Lic. René Condori (Solicitante SMDE)',
+          usuario: 'Lic. René Condori (SMDE)',
           motivo: 'Corregir fecha de inicio al jueves 5 de noviembre y agregar logotipo de la Asociación de Productores en Cuero.'
         }
       ],
@@ -120,8 +388,8 @@ const state = {
     {
       id: 'sol-05',
       codigo_tramite: 'SOL-2026-0042',
-      secretaria: 'Secretaría Municipal de Seguridad Ciudadana (SMSC)',
-      direccion: 'Dirección de Prevención Vecinal',
+      secretaria: 'Secretaría Municipal de Seguridad Ciudadana',
+      direccion: 'Dirección de Seguridad Pública, Programas y Soluciones Tecnológicas',
       nombre_evento: 'Talleres de Alarmas Vecinales Inteligentes',
       fecha_evento: '2026-10-15',
       hora_evento: '18:30',
@@ -136,19 +404,19 @@ const state = {
       estado: 'APROBADO',
       fecha_recepcion: '2026-09-18 09:00',
       fecha_limite: '2026-09-27 18:00',
-      disenador_asignado: 'Lic. Marco A. Choque',
-      rondas_cambios_usadas: 2, // 2 Rondas usadas (Agotadas)
+      disenador_asignado: 'Lic. Marco Antonio Choque',
+      rondas_cambios_usadas: 2,
       historial_cambios: [
         {
           ronda: 1,
           fecha: '2026-09-21 11:15',
-          usuario: 'Dr. Edwin Huanca (SMSC)',
+          usuario: 'Cap. Edwin Huanca (SMSC)',
           motivo: 'Aclarar paso 3 sobre el código QR para descarga de la app vecinal.'
         },
         {
           ronda: 2,
           fecha: '2026-09-24 16:40',
-          usuario: 'Dr. Edwin Huanca (SMSC)',
+          usuario: 'Cap. Edwin Huanca (SMSC)',
           motivo: 'Reemplazar número de teléfono de emergencia por el 110 municipal unificado.'
         }
       ],
@@ -158,8 +426,8 @@ const state = {
     {
       id: 'sol-06',
       codigo_tramite: 'SOL-2026-0043',
-      secretaria: 'Secretaría Municipal de Gestión Institucional (SMGI)',
-      direccion: 'Dirección de Protocolo',
+      secretaria: 'Secretaría Municipal de Gestión Institucional',
+      direccion: 'Dirección de Comunicación',
       nombre_evento: 'Sesión de Honor Aniversario de La Paz',
       fecha_evento: '2026-07-16',
       hora_evento: '08:00',
@@ -174,7 +442,7 @@ const state = {
       estado: 'FINALIZADO',
       fecha_recepcion: '2026-07-01 10:00',
       fecha_limite: '2026-07-10 18:00',
-      disenador_asignado: 'Diseñadora Jimena Quispe',
+      disenador_asignado: 'Lic. Marco Antonio Choque',
       rondas_cambios_usadas: 0,
       historial_cambios: [],
       texto_aprobado: 'La Alcaldesa de El Alto se complace en invitar a usted a la Solemne Sesión de Honor.',
@@ -183,34 +451,28 @@ const state = {
   ]
 };
 
-// OBJETO PRINCIPAL DE LA APLICACIÓN
+// ==============================================================================
+// 4. OBJETO PRINCIPAL DE LA APLICACIÓN
+// ==============================================================================
 const app = {
   init() {
     this.bindEvents();
     this.updateCurrentDate();
+    this.populateSecretariasSelect();
     this.renderRequests();
     this.calculateSlaPreview();
     this.updateCounts();
+    this.updateAuthUI();
   },
 
   bindEvents() {
-    // Selector de navegación por pestañas
+    // Selector de navegación por pestañas con GUARDIA DE AUTENTICACIÓN
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const tab = e.currentTarget.getAttribute('data-tab');
-        this.showTab(tab);
+        this.navigateWithAuthGuard(tab);
       });
     });
-
-    // Selector de roles
-    const roleSelect = document.getElementById('roleSelect');
-    if (roleSelect) {
-      roleSelect.addEventListener('change', (e) => {
-        state.currentRole = e.target.value;
-        this.showToast(`Modo cambiado a: ${this.getRoleName(state.currentRole)}`, 'info');
-        this.renderRequests();
-      });
-    }
 
     // Botones de filtro de estado
     document.querySelectorAll('.filter-pill').forEach(pill => {
@@ -221,6 +483,14 @@ const app = {
         this.renderRequests();
       });
     });
+
+    // Cambio en el selector de Secretaría (cascada de Direcciones)
+    const selectSec = document.getElementById('campoSecretaria');
+    if (selectSec) {
+      selectSec.addEventListener('change', (e) => {
+        this.onSecretariaChange(parseInt(e.target.value, 10));
+      });
+    }
 
     // Botón de autocompletar demo
     const btnFillDemo = document.getElementById('btnFillDemo');
@@ -242,9 +512,22 @@ const app = {
       fileInput.addEventListener('change', (e) => this.handleFilesSelected(e));
     }
 
-    // ESC para cerrar modal
+    // Formulario de Login
+    const formLogin = document.getElementById('formLoginInstitucional');
+    if (formLogin) {
+      formLogin.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        this.login(email);
+      });
+    }
+
+    // ESC para cerrar modales
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') this.closeModal();
+      if (e.key === 'Escape') {
+        this.closeModal();
+        this.closeLoginModal();
+      }
     });
   },
 
@@ -257,7 +540,191 @@ const app = {
     }
   },
 
+  // ==============================================================================
+  // 5. CONTROL DE AUTENTICACIÓN Y PRIVACIDAD DEL SISTEMA
+  // ==============================================================================
+  navigateWithAuthGuard(tabName) {
+    // Si intenta acceder a pestañas privadas sin sesión
+    if (!state.currentUser && (tabName === 'solicitud' || tabName === 'bandeja' || tabName === 'dashboard')) {
+      this.openLoginModal(
+        '⚠️ Acceso Restringido: Inicie sesión con la cuenta de su Dirección Municipal para acceder a las solicitudes y seguimiento.'
+      );
+      return;
+    }
+    this.showTab(tabName);
+  },
+
+  openLoginModal(noticeMessage = null) {
+    const modal = document.getElementById('modalLoginBackdrop');
+    const noticeEl = document.getElementById('loginNoticeText');
+    if (noticeEl) {
+      noticeEl.textContent = noticeMessage || 'Identifíquese con las credenciales de su Dirección para continuar.';
+      noticeEl.style.display = noticeMessage ? 'block' : 'none';
+    }
+    if (modal) modal.classList.add('active');
+  },
+
+  closeLoginModal() {
+    const modal = document.getElementById('modalLoginBackdrop');
+    if (modal) modal.classList.remove('active');
+  },
+
+  login(email) {
+    const user = USUARIOS_DIRECCIONES[email.toLowerCase()];
+    if (!user) {
+      this.showToast('Credenciales incorrectas o correo institucional no registrado.', 'error');
+      return;
+    }
+
+    state.currentUser = user;
+    this.closeLoginModal();
+    this.updateAuthUI();
+    this.applyUserConstraintsToForm();
+    this.renderRequests();
+    this.updateCounts();
+
+    this.showToast(`✅ Bienvenido, ${user.nombres} ${user.apellidos} (${user.direccion})`, 'success');
+    this.showTab('bandeja');
+  },
+
+  logout() {
+    const prevUser = state.currentUser;
+    state.currentUser = null;
+    this.updateAuthUI();
+    this.showTab('landing');
+    this.showToast('Sesión institucional cerrada exitosamente.', 'info');
+  },
+
+  quickLogin(email) {
+    this.login(email);
+  },
+
+  updateAuthUI() {
+    const authControls = document.getElementById('authNavControls');
+    const protectedBtns = document.querySelectorAll('.nav-btn-protected');
+    const authNoticeBanner = document.getElementById('authNoticeBanner');
+
+    if (state.currentUser) {
+      // Usuario autenticado
+      if (authControls) {
+        authControls.innerHTML = `
+          <div class="user-auth-pill">
+            <div class="user-avatar-mini">${state.currentUser.nombres.charAt(0)}</div>
+            <div class="user-info-text">
+              <span class="user-name-label">${state.currentUser.nombres} ${state.currentUser.apellidos}</span>
+              <span class="user-dir-label">${state.currentUser.direccion}</span>
+            </div>
+            <button type="button" class="btn-logout" onclick="app.logout()" title="Cerrar Sesión">✕ Salir</button>
+          </div>
+        `;
+      }
+
+      protectedBtns.forEach(btn => btn.style.display = 'inline-flex');
+
+      if (authNoticeBanner) {
+        authNoticeBanner.innerHTML = `
+          <div class="auth-lock-card">
+            <div>
+              <h5>🔐 Solicitud Oficial Registrada por: ${state.currentUser.nombres} ${state.currentUser.apellidos}</h5>
+              <p>Dependencia Orgánica: <strong>${state.currentUser.direccion}</strong> (${state.currentUser.secretaria})</p>
+            </div>
+            <span class="organigrama-badge-tag">D.M. N° 200 Aprobado</span>
+          </div>
+        `;
+      }
+    } else {
+      // Visitante anónimo / Modo público
+      if (authControls) {
+        authControls.innerHTML = `
+          <button class="btn btn-sm btn-gold font-semibold" onclick="app.openLoginModal()">
+            🔐 Ingresar al Sistema
+          </button>
+        `;
+      }
+
+      protectedBtns.forEach(btn => btn.style.display = 'none');
+
+      if (authNoticeBanner) {
+        authNoticeBanner.innerHTML = `
+          <div class="auth-lock-card" style="background:#EFF6FF; border-color:#BFDBFE;">
+            <div>
+              <h5 style="color:#1E40AF;">🔒 Acceso Restringido a Servidores Públicos del GAMEA</h5>
+              <p style="color:#1E3A8A;">Debe iniciar sesión con el usuario oficial de su Dirección para enviar solicitudes a DICOM.</p>
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="app.openLoginModal()">Ingresar Ahora</button>
+          </div>
+        `;
+      }
+    }
+  },
+
+  applyUserConstraintsToForm() {
+    if (!state.currentUser) return;
+
+    const selectSec = document.getElementById('campoSecretaria');
+    const selectDir = document.getElementById('campoDireccionSelect');
+
+    if (selectSec && selectDir) {
+      if (state.currentUser.rol === 'SOLICITANTE') {
+        // Bloquear al Solicitante en su propia Secretaría y Dirección
+        selectSec.value = state.currentUser.secretaria_id;
+        this.onSecretariaChange(state.currentUser.secretaria_id);
+        selectDir.value = state.currentUser.direccion_id;
+
+        selectSec.disabled = true;
+        selectDir.disabled = true;
+      } else {
+        // Directores, Supervisores o Admins pueden seleccionar cualquiera
+        selectSec.disabled = false;
+        selectDir.disabled = false;
+      }
+    }
+  },
+
+  // ==============================================================================
+  // 6. CASCADA DINÁMICA DE SECRETARÍAS Y DIRECCIONES (ORGANIGRAMA D.M. N° 200)
+  // ==============================================================================
+  populateSecretariasSelect() {
+    const selectSec = document.getElementById('campoSecretaria');
+    if (!selectSec) return;
+
+    selectSec.innerHTML = `<option value="">-- Seleccione Secretaría Municipal u Órgano --</option>` +
+      ORGANIGRAMA_GAMEA.map(sec => `
+        <option value="${sec.id}">${sec.nombre} (${sec.sigla})</option>
+      `).join('');
+  },
+
+  onSecretariaChange(secretariaId) {
+    const selectDir = document.getElementById('campoDireccionSelect');
+    if (!selectDir) return;
+
+    if (!secretariaId) {
+      selectDir.innerHTML = `<option value="">-- Primero seleccione una Secretaría --</option>`;
+      selectDir.disabled = true;
+      return;
+    }
+
+    const sec = ORGANIGRAMA_GAMEA.find(s => s.id === secretariaId);
+    if (!sec || !sec.direcciones || sec.direcciones.length === 0) {
+      selectDir.innerHTML = `<option value="">-- Sin direcciones disponibles --</option>`;
+      return;
+    }
+
+    selectDir.disabled = false;
+    selectDir.innerHTML = `<option value="">-- Seleccione Dirección / Unidad Ejecutora --</option>` +
+      sec.direcciones.map(dir => `
+        <option value="${dir.id}">${dir.nombre} (${dir.sigla})</option>
+      `).join('');
+  },
+
   showTab(tabName) {
+    if (!state.currentUser && (tabName === 'solicitud' || tabName === 'bandeja' || tabName === 'dashboard')) {
+      this.openLoginModal(
+        '⚠️ Acceso Restringido: Inicie sesión con la cuenta de su Dirección Municipal para acceder a las solicitudes y seguimiento.'
+      );
+      return;
+    }
+
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
     });
@@ -280,22 +747,13 @@ const app = {
     }
   },
 
-  getRoleName(role) {
-    const roles = {
-      'SOLICITANTE': '👤 Solicitante Municipal',
-      'DISENADOR': '🎨 Diseñador Gráfico DICOM',
-      'SUPERVISOR': '⭐ Supervisor / Director DICOM',
-      'ADMIN': '🛡️ Administrador General'
-    };
-    return roles[role] || role;
-  },
-
-  // CONTROL DEL STEPPER DEL FORMULARIO
+  // ==============================================================================
+  // 7. STEPPER DEL FORMULARIO DIGITAL (FICHA TÉCNICA DICOM)
+  // ==============================================================================
   nextStep(currentStep) {
-    // Validaciones por paso
     if (currentStep === 1) {
       const sec = document.getElementById('campoSecretaria').value;
-      const dir = document.getElementById('campoDireccion').value.trim();
+      const dir = document.getElementById('campoDireccionSelect').value;
       const nom = document.getElementById('campoNombreEvento').value.trim();
       const fec = document.getElementById('campoFechaEvento').value;
       const lug = document.getElementById('campoLugarEvento').value.trim();
@@ -333,23 +791,20 @@ const app = {
     window.scrollTo({ top: 180, behavior: 'smooth' });
   },
 
-  // CÁLCULO DE FECHAS SLA EN VIVO (7 DÍAS HÁBILES)
   calculateSlaPreview() {
     const now = new Date();
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
     
-    // Fecha recepción
     const recStr = now.toLocaleDateString('es-ES', options);
     const recEl = document.getElementById('previewFechaRecepcion');
     if (recEl) recEl.textContent = `${recStr} (Hoy)`;
 
-    // Cálculo de 7 días hábiles
     let businessDays = 7;
     let deadline = new Date(now);
     while (businessDays > 0) {
       deadline.setDate(deadline.getDate() + 1);
       const day = deadline.getDay();
-      if (day !== 0 && day !== 6) { // Ignora sábado y domingo
+      if (day !== 0 && day !== 6) {
         businessDays--;
       }
     }
@@ -360,11 +815,16 @@ const app = {
   },
 
   fillDemoData() {
-    document.getElementById('campoSecretaria').value = '1';
-    document.getElementById('campoDireccion').value = 'Dirección de Redes de Salud - Unidad de Zoonosis';
+    // Autocompletar con caso real de la Secretaría de Salud
+    const secSelect = document.getElementById('campoSecretaria');
+    secSelect.value = '9'; // SMS
+    this.onSecretariaChange(9);
+
+    const dirSelect = document.getElementById('campoDireccionSelect');
+    dirSelect.value = '23'; // Dirección de Gestión en Salud
+
     document.getElementById('campoNombreEvento').value = 'Campaña Masiva de Vacunación Canina Distrito 4';
     
-    // Fecha a 15 días adelante
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + 15);
     document.getElementById('campoFechaEvento').value = futureDate.toISOString().split('T')[0];
@@ -399,9 +859,17 @@ const app = {
   handleFormSubmit(e) {
     e.preventDefault();
 
+    if (!state.currentUser) {
+      this.openLoginModal('Debe autenticarse antes de enviar su solicitud.');
+      return;
+    }
+
     const secSelect = document.getElementById('campoSecretaria');
     const secText = secSelect.options[secSelect.selectedIndex].text;
-    const dir = document.getElementById('campoDireccion').value;
+
+    const dirSelect = document.getElementById('campoDireccionSelect');
+    const dirText = dirSelect.options[dirSelect.selectedIndex].text;
+
     const nom = document.getElementById('campoNombreEvento').value;
     const fec = document.getElementById('campoFechaEvento').value;
     const hor = document.getElementById('campoHoraEvento').value;
@@ -418,7 +886,6 @@ const app = {
     const plataformas = [];
     document.querySelectorAll('input[name="plataformas"]:checked').forEach(c => plataformas.push(c.value));
 
-    // Generar correlativo
     const anio = new Date().getFullYear();
     const correlativo = `SOL-${anio}-00${state.solicitudes.length + 39}`;
 
@@ -426,7 +893,7 @@ const app = {
       id: `sol-${Date.now()}`,
       codigo_tramite: correlativo,
       secretaria: secText,
-      direccion: dir,
+      direccion: dirText,
       nombre_evento: nom,
       fecha_evento: fec,
       hora_evento: hor || '09:00',
@@ -452,19 +919,26 @@ const app = {
     this.renderRequests();
     this.updateCounts();
 
-    // Reset y switch a bandeja
     document.getElementById('formSolicitud').reset();
     this.goToStep(1);
     this.showTab('bandeja');
-    this.showToast(`🎉 ¡Solicitud ${correlativo} registrada exitosamente en DICOM!`, 'success');
+    this.showToast(`🎉 ¡Solicitud ${correlativo} registrada exitosamente por ${dirText}!`, 'success');
   },
 
-  // RENDERIZADO DE BANDEJA DE TRÁMITES
+  // ==============================================================================
+  // 8. BANDEJA DE TRÁMITES Y CONTROL DE ACCESO
+  // ==============================================================================
   renderRequests() {
     const container = document.getElementById('solicitudesContainer');
     if (!container) return;
 
     let items = state.solicitudes;
+
+    // Si el usuario es SOLICITANTE, filtrar por su Dirección para privacidad
+    if (state.currentUser && state.currentUser.rol === 'SOLICITANTE') {
+      items = items.filter(s => s.direccion.includes(state.currentUser.direccion) || s.secretaria.includes(state.currentUser.secretaria));
+    }
+
     if (state.activeFilter !== 'TODOS') {
       items = items.filter(s => s.estado === state.activeFilter);
     }
@@ -472,14 +946,13 @@ const app = {
     if (items.length === 0) {
       container.innerHTML = `
         <div class="card-box p-4 text-center" style="grid-column: 1 / -1;">
-          <p class="text-muted">No se encontraron solicitudes con el filtro seleccionado.</p>
+          <p class="text-muted">No se encontraron solicitudes registradas para este filtro o dependencia.</p>
         </div>`;
       return;
     }
 
     container.innerHTML = items.map(sol => {
       const badgeInfo = this.getStatusBadge(sol.estado);
-      const isUrgent = sol.estado === 'AJUSTES' || sol.estado === 'PENDIENTE';
       
       return `
         <div class="request-card">
@@ -491,6 +964,9 @@ const app = {
 
             <h3 class="tramite-title">${sol.nombre_evento}</h3>
             <p class="tramite-secretaria">${sol.secretaria}</p>
+            <p style="font-size:0.75rem; color:var(--gamea-blue); margin-bottom:10px; font-weight:600;">
+              🏛️ ${sol.direccion}
+            </p>
 
             <div class="tramite-meta-grid">
               <div class="tramite-meta-item">
@@ -502,7 +978,7 @@ const app = {
                 <span>📅 ${sol.fecha_evento}</span>
               </div>
               <div class="tramite-meta-item">
-                <strong>Diseñador</strong>
+                <strong>Diseñador DICOM</strong>
                 <span>${sol.disenador_asignado ? '🎨 ' + sol.disenador_asignado : '<em class="text-muted">Sin Asignar</em>'}</span>
               </div>
               <div class="tramite-meta-item">
@@ -538,13 +1014,18 @@ const app = {
   },
 
   updateCounts() {
-    const total = state.solicitudes.length;
-    const pen = state.solicitudes.filter(s => s.estado === 'PENDIENTE').length;
-    const rev = state.solicitudes.filter(s => s.estado === 'EN_REVISION').length;
-    const pro = state.solicitudes.filter(s => s.estado === 'DISENO_PROCESO').length;
-    const aju = state.solicitudes.filter(s => s.estado === 'AJUSTES').length;
-    const apr = state.solicitudes.filter(s => s.estado === 'APROBADO').length;
-    const fin = state.solicitudes.filter(s => s.estado === 'FINALIZADO').length;
+    let items = state.solicitudes;
+    if (state.currentUser && state.currentUser.rol === 'SOLICITANTE') {
+      items = items.filter(s => s.direccion.includes(state.currentUser.direccion) || s.secretaria.includes(state.currentUser.secretaria));
+    }
+
+    const total = items.length;
+    const pen = items.filter(s => s.estado === 'PENDIENTE').length;
+    const rev = items.filter(s => s.estado === 'EN_REVISION').length;
+    const pro = items.filter(s => s.estado === 'DISENO_PROCESO').length;
+    const aju = items.filter(s => s.estado === 'AJUSTES').length;
+    const apr = items.filter(s => s.estado === 'APROBADO').length;
+    const fin = items.filter(s => s.estado === 'FINALIZADO').length;
 
     const el = (id) => document.getElementById(id);
     if (el('tramitesCount')) el('tramitesCount').textContent = total;
@@ -557,7 +1038,9 @@ const app = {
     if (el('countFinalizado')) el('countFinalizado').textContent = fin;
   },
 
-  // MODAL DE DETALLE Y CONTROL DE MODIFICACIONES
+  // ==============================================================================
+  // 9. MODAL DE DETALLE Y CONTROL DE MODIFICACIONES (CAMBIOS)
+  // ==============================================================================
   openDetailModal(solicitudId) {
     const sol = state.solicitudes.find(s => s.id === solicitudId);
     if (!sol) return;
@@ -570,18 +1053,17 @@ const app = {
     codEl.textContent = `${sol.codigo_tramite} • ${this.getStatusBadge(sol.estado).label}`;
     titEl.textContent = sol.nombre_evento;
 
-    // Construcción del contenido del modal con ficha y sistema de cambios
     const rondasDisponibles = 2 - sol.rondas_cambios_usadas;
     const puedeSolicitarCambio = rondasDisponibles > 0;
 
     bodyEl.innerHTML = `
       <div class="modal-info-section mb-3">
         <h4 style="font-size:1.05rem; font-weight:700; color:var(--gamea-blue-dark); margin-bottom:8px;">
-          📋 Ficha Técnica Institucional
+          📋 Ficha Técnica Institucional (D.M. N° 200)
         </h4>
         <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:14px; font-size:0.88rem;">
           <p><strong>Secretaría Solicitante:</strong> ${sol.secretaria}</p>
-          <p><strong>Dirección / Unidad:</strong> ${sol.direccion}</p>
+          <p><strong>Dirección Ejecutora:</strong> ${sol.direccion}</p>
           <p><strong>Lugar y Fecha:</strong> 📍 ${sol.lugar_evento} | 📅 ${sol.fecha_evento} a las ${sol.hora_evento}</p>
           <p><strong>Público Objetivo:</strong> ${sol.publico_objetivo}</p>
           <p><strong>Objetivo del Mensaje:</strong> ${sol.objetivo_mensaje}</p>
@@ -596,7 +1078,7 @@ const app = {
         </div>
       </div>
 
-      <!-- MÓDULO DE CONTROL DE MODIFICACIONES / CAMBIOS -->
+      <!-- MÓDULO DE CONTROL DE MODIFICACIONES -->
       <div class="cambios-box">
         <div class="cambios-header-info">
           <div>
@@ -627,7 +1109,7 @@ const app = {
           }
         </div>
 
-        <!-- FORMULARIO DE NUEVA OBSERVACIÓN (SI TIENE RONDAS DISPONIBLES) -->
+        <!-- FORMULARIO DE NUEVA OBSERVACIÓN -->
         ${puedeSolicitarCambio ? `
           <div style="background:#FFFFFF; padding:14px; border-radius:8px; border:1px solid #FDE68A;">
             <label style="font-size:0.85rem; font-weight:700; display:block; margin-bottom:6px; color:#92400E;">
@@ -643,12 +1125,12 @@ const app = {
           </div>
         ` : `
           <div style="background:#FEE2E2; padding:12px; border-radius:8px; border:1px solid #FCA5A5; color:#991B1B; font-size:0.85rem;">
-            🛑 <strong>LÍMITE ALCANZADO:</strong> Se han agotado las 2 rondas de cambios permitidas. Para cualquier ajuste adicional se requiere autorización expresa y resolución de la Dirección de Comunicación.
+            🛑 <strong>LÍMITE ALCANZADO:</strong> Se han agotado las 2 rondas de cambios permitidas. Para cualquier ajuste adicional se requiere autorización expresa de la Dirección de Comunicación.
           </div>
         `}
       </div>
 
-      <!-- ACCIONES OPERATIVAS POR ROL -->
+      <!-- ACCIONES OPERATIVAS SEGÚN ROL -->
       <div class="mt-4 pt-3 d-flex justify-between align-center flex-wrap gap-2" style="border-top:1px solid #E2E8F0;">
         <div class="d-flex gap-2">
           ${sol.estado !== 'APROBADO' && sol.estado !== 'FINALIZADO' ? `
@@ -663,13 +1145,13 @@ const app = {
             </button>
           ` : ''}
 
-          ${sol.estado === 'PENDIENTE' && (state.currentRole === 'SUPERVISOR' || state.currentRole === 'ADMIN') ? `
+          ${sol.estado === 'PENDIENTE' && (state.currentUser?.rol === 'SUPERVISOR' || state.currentUser?.rol === 'ADMIN') ? `
             <button class="btn btn-sm btn-outline" onclick="app.asignarDisenadorPrompt('${sol.id}')">
               👤 Asignar Diseñador
             </button>
           ` : ''}
 
-          ${(sol.estado === 'EN_REVISION' || sol.estado === 'AJUSTES') && (state.currentRole === 'DISENADOR' || state.currentRole === 'SUPERVISOR') ? `
+          ${(sol.estado === 'EN_REVISION' || sol.estado === 'AJUSTES') && (state.currentUser?.rol === 'DISENADOR' || state.currentUser?.rol === 'SUPERVISOR') ? `
             <button class="btn btn-sm btn-outline" onclick="app.cambiarEstado('${sol.id}', 'DISENO_PROCESO')">
               🎨 Marcar 'En Proceso Creativo'
             </button>
@@ -708,13 +1190,13 @@ const app = {
     sol.historial_cambios.push({
       ronda: sol.rondas_cambios_usadas,
       fecha: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      usuario: `${this.getRoleName(state.currentRole)}`,
+      usuario: `${state.currentUser ? state.currentUser.nombres + ' ' + state.currentUser.apellidos : 'Solicitante'}`,
       motivo: txt
     });
 
     this.renderRequests();
     this.updateCounts();
-    this.openDetailModal(solicitudId); // Actualizar modal
+    this.openDetailModal(solicitudId);
     this.showToast(`✅ Ronda de cambios ${sol.rondas_cambios_usadas} de 2 registrada. Solicitud enviada a Ajustes.`, 'success');
   },
 
@@ -730,7 +1212,7 @@ const app = {
   },
 
   asignarDisenadorPrompt(solicitudId) {
-    const dis = prompt('Ingrese el nombre del Diseñador Gráfico asignado:', 'Lic. Carlos Mamani');
+    const dis = prompt('Ingrese el nombre del Diseñador Gráfico asignado:', 'Lic. Marco Antonio Choque');
     if (dis) {
       const sol = state.solicitudes.find(s => s.id === solicitudId);
       if (sol) {
@@ -763,7 +1245,7 @@ const app = {
   }
 };
 
-// INICIALIZAR CUANDO CARGUE EL DOM
+// INICIALIZACIÓN
 document.addEventListener('DOMContentLoaded', () => {
   app.init();
 });

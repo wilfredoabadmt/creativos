@@ -23,36 +23,42 @@
         </div>
       </div>
     </div>
+    <div class="header-color-strip"></div>
     
     <div class="header-main-nav">
       <div class="container d-flex justify-between align-center">
-        <div class="brand-group d-flex align-center">
-          <div class="logo-shield">
-            <div class="shield-icon">🏛️</div>
-          </div>
+        <div class="brand-group d-flex align-center gap-2">
+          <img src="img/escudo-el-alto.png" alt="Escudo de El Alto" class="brand-logo-escudo" height="48">
+          <div class="brand-divider"></div>
           <div class="brand-text">
             <span class="brand-sub">GOBIERNO AUTÓNOMO MUNICIPAL DE EL ALTO</span>
             <h1 class="brand-title">COMUNICA DIGITAL <span>DICOM</span></h1>
           </div>
+          <div class="brand-divider hide-mobile"></div>
+          <img src="img/logo-gestion.png" alt="Gestión 2026-2031" class="brand-logo-gestion hide-mobile" height="40">
         </div>
 
         <!-- ROLE SWITCHER & NAVIGATION -->
         <div class="nav-controls d-flex align-center gap-3">
           <nav class="main-menu d-flex gap-2">
             <button class="nav-btn active" data-tab="landing" id="btnTabLanding">Inicio</button>
-            <button class="nav-btn" data-tab="solicitud" id="btnTabSolicitud">Nueva Solicitud</button>
-            <button class="nav-btn" data-tab="bandeja" id="btnTabBandeja">Bandeja de Trámites <span class="badge-count" id="tramitesCount">6</span></button>
-            <button class="nav-btn" data-tab="dashboard" id="btnTabDashboard">Dashboard DICOM</button>
+            <button class="nav-btn nav-btn-protected" data-tab="solicitud" id="btnTabSolicitud">Nueva Solicitud</button>
+            <button class="nav-btn nav-btn-protected" data-tab="bandeja" id="btnTabBandeja">Bandeja de Trámites <span class="badge-count" id="tramitesCount">6</span></button>
+            <button class="nav-btn nav-btn-protected" data-tab="dashboard" id="btnTabDashboard">Dashboard DICOM</button>
           </nav>
 
-          <div class="role-selector-wrapper">
-            <label for="roleSelect" class="role-label">Modo / Rol:</label>
+          <div class="role-selector-wrapper hide-mobile">
+            <label for="roleSelect" class="role-label">Modo:</label>
             <select id="roleSelect" class="role-select">
-              <option value="SOLICITANTE">👤 Solicitante Municipal</option>
-              <option value="DISENADOR">🎨 Diseñador Gráfico</option>
-              <option value="SUPERVISOR" selected>⭐ Supervisor / Director</option>
-              <option value="ADMIN">🛡️ Administrador General</option>
+              <option value="SOLICITANTE">👤 Solicitante</option>
+              <option value="DISENADOR">🎨 Diseñador</option>
+              <option value="SUPERVISOR" selected>⭐ Supervisor</option>
+              <option value="ADMIN">🛡️ Admin</option>
             </select>
+          </div>
+
+          <div id="authNavControls">
+            <!-- Cargado dinámicamente por app.js -->
           </div>
         </div>
       </div>
@@ -78,10 +84,10 @@
             Plataforma oficial del Gobierno Autónomo Municipal de El Alto para la gestión, validación, asignación creativa y seguimiento en tiempo real de todas las piezas comunicacionales del municipio.
           </p>
           <div class="hero-actions d-flex justify-center gap-3">
-            <button class="btn btn-gold btn-lg" onclick="app.showTab('solicitud')">
+            <button class="btn btn-gold btn-lg" onclick="app.navigateWithAuthGuard('solicitud')">
               <span>✍️</span> Iniciar Solicitud de Diseño
             </button>
-            <button class="btn btn-outline-white btn-lg" onclick="app.showTab('bandeja')">
+            <button class="btn btn-outline-white btn-lg" onclick="app.navigateWithAuthGuard('bandeja')">
               <span>🔍</span> Consultar Trámites en Curso
             </button>
           </div>
@@ -227,6 +233,8 @@
     <!-- ========================================== -->
     <section id="viewSolicitud" class="view-section">
       <div class="container form-wrapper">
+        <div id="authNoticeBanner"></div>
+
         <div class="card-box shadow-lg">
           <div class="card-header bg-gamea-gradient text-white d-flex justify-between align-center">
             <div>
@@ -272,22 +280,19 @@
               
               <div class="form-grid-2">
                 <div class="form-group">
-                  <label for="campoSecretaria">Secretaría Solicitante <span class="req">*</span></label>
+                  <label for="campoSecretaria">Secretaría Municipal Solicitante <span class="req">*</span></label>
                   <select id="campoSecretaria" class="form-control" required>
-                    <option value="">-- Seleccione Secretaría Municipal --</option>
-                    <option value="1">Secretaría Municipal de Salud (SMS)</option>
-                    <option value="2">Secretaría Municipal de Infraestructura Pública (SMIP)</option>
-                    <option value="3">Secretaría Municipal de Educación y Cultura (SMEC)</option>
-                    <option value="4">Secretaría Municipal de Seguridad Ciudadana (SMSC)</option>
-                    <option value="5">Secretaría Municipal de Desarrollo Económico (SMDE)</option>
-                    <option value="6">Secretaría Municipal de Gestión Institucional (SMGI)</option>
-                    <option value="7">Secretaría Municipal de Agua y Gestión Ambiental (SMAMA)</option>
+                    <option value="">-- Seleccione Secretaría Municipal u Órgano --</option>
                   </select>
+                  <small class="helper-text">Estructura Orgánica D.M. N° 200 Gestión 2026</small>
                 </div>
 
                 <div class="form-group">
-                  <label for="campoDireccion">Dirección / Unidad Solicitante <span class="req">*</span></label>
-                  <input type="text" id="campoDireccion" class="form-control" placeholder="Ej: Dirección de Redes de Salud / Unidad de Epidemiología" required>
+                  <label for="campoDireccionSelect">Dirección / Unidad Ejecutora <span class="req">*</span></label>
+                  <select id="campoDireccionSelect" class="form-control" required disabled>
+                    <option value="">-- Primero seleccione una Secretaría --</option>
+                  </select>
+                  <small class="helper-text">Dependencia oficial acreditada para solicitar</small>
                 </div>
               </div>
 
@@ -771,6 +776,121 @@
 
       <div class="modal-body" id="modalContentBody">
         <!-- RENDERIZADO DINÁMICAMENTE POR app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================= -->
+  <!-- MODAL: INICIO DE SESIÓN INSTITUCIONAL POR DIRECCIÓN     -->
+  <!-- ======================================================= -->
+  <div class="modal-backdrop" id="modalLoginBackdrop">
+    <div class="modal-dialog modal-md">
+      <div class="modal-header bg-gamea-gradient text-white">
+        <div class="d-flex align-center gap-2">
+          <img src="img/escudo-el-alto.png" alt="Escudo El Alto" height="34">
+          <div>
+            <span class="badge-form-header">ACCESO RESTRINGIDO DICOM</span>
+            <h3 class="modal-title text-white">Identificación Institucional</h3>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal text-white" onclick="app.closeLoginModal()">✕</button>
+      </div>
+
+      <div class="modal-body p-4">
+        <div class="alert alert-info mb-3" id="loginNoticeText" style="display:none; background:#EFF6FF; border:1px solid #BFDBFE; color:#1E40AF; padding:10px 14px; border-radius:8px; font-size:0.85rem;"></div>
+        
+        <p class="text-sm text-muted mb-3">
+          Para garantizar la confidencialidad y el orden institucional según el <strong>Organigrama D.M. N° 200 (Gestión 2026)</strong>, cada Dirección Municipal cuenta con credenciales exclusivas validadas para ingresar y emitir requerimientos.
+        </p>
+
+        <form id="formLoginInstitucional" class="mb-4">
+          <div class="form-group mb-3">
+            <label for="loginEmail" class="font-semibold text-sm">Correo Institucional Oficial (@elalto.gob.bo) <span class="req">*</span></label>
+            <input type="email" id="loginEmail" class="form-control" placeholder="ejemplo: dir.salud@elalto.gob.bo" required>
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="loginPassword" class="font-semibold text-sm">Contraseña de Dirección <span class="req">*</span></label>
+            <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" value="Gamea2026*" required>
+            <small class="helper-text">Clave institucional asignada por la Dirección de Comunicación.</small>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100 justify-center">
+            🔐 Iniciar Sesión Institucional
+          </button>
+        </form>
+
+        <div class="login-divider text-center my-3" style="border-top:1px solid #E2E8F0; margin:18px 0; position:relative;">
+          <span style="position:relative; top:-10px; background:#FFFFFF; padding:0 10px; font-size:0.75rem; color:#64748B; font-weight:700; text-transform:uppercase;">
+            O seleccione acceso directo por Dirección:
+          </span>
+        </div>
+
+        <div class="quick-login-grid">
+          <button type="button" class="quick-login-btn" onclick="app.quickLogin('dir.salud@elalto.gob.bo')">
+            <span class="quick-login-icon">🩺</span>
+            <div>
+              <strong>Dir. Gestión en Salud</strong>
+              <span>Secretaría de Salud (SMS)</span>
+            </div>
+          </button>
+
+          <button type="button" class="quick-login-btn" onclick="app.quickLogin('dir.obras@elalto.gob.bo')">
+            <span class="quick-login-icon">🏗️</span>
+            <div>
+              <strong>Dir. Obras Municipales</strong>
+              <span>Infraestructura Pública (SMIP)</span>
+            </div>
+          </button>
+
+          <button type="button" class="quick-login-btn" onclick="app.quickLogin('dir.cultura@elalto.gob.bo')">
+            <span class="quick-login-icon">🎭</span>
+            <div>
+              <strong>Dirección de Cultura</strong>
+              <span>Educación y Cultura (SMEC)</span>
+            </div>
+          </button>
+
+          <button type="button" class="quick-login-btn" onclick="app.quickLogin('dir.seguridad@elalto.gob.bo')">
+            <span class="quick-login-icon">🛡️</span>
+            <div>
+              <strong>Dir. Seguridad Pública</strong>
+              <span>Seguridad Ciudadana (SMSC)</span>
+            </div>
+          </button>
+
+          <button type="button" class="quick-login-btn" onclick="app.quickLogin('dir.artesanias@elalto.gob.bo')">
+            <span class="quick-login-icon">💼</span>
+            <div>
+              <strong>Dir. Promoción Artesanal</strong>
+              <span>Desarrollo Económico (SMDE)</span>
+            </div>
+          </button>
+
+          <button type="button" class="quick-login-btn" onclick="app.quickLogin('dir.finanzas@elalto.gob.bo')">
+            <span class="quick-login-icon">🏢</span>
+            <div>
+              <strong>Dirección Administrativa</strong>
+              <span>Admin. y Finanzas (SMAF)</span>
+            </div>
+          </button>
+
+          <button type="button" class="quick-login-btn" onclick="app.quickLogin('disenador.marco@elalto.gob.bo')">
+            <span class="quick-login-icon">🎨</span>
+            <div>
+              <strong>Marco Choque (Diseñador)</strong>
+              <span>Área Creativa DICOM</span>
+            </div>
+          </button>
+
+          <button type="button" class="quick-login-btn" onclick="app.quickLogin('director.dicom@elalto.gob.bo')">
+            <span class="quick-login-icon">⭐</span>
+            <div>
+              <strong>Roxana Vargas (Directora)</strong>
+              <span>Dirección de Comunicación</span>
+            </div>
+          </button>
+        </div>
       </div>
     </div>
   </div>
