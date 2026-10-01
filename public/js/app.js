@@ -1273,132 +1273,169 @@ const app = {
   // 9. MODAL DE DETALLE Y CONTROL DE MODIFICACIONES (CAMBIOS)
   // ==============================================================================
   openDetailModal(solicitudId) {
-    const sol = state.solicitudes.find(s => s.id === solicitudId);
-    if (!sol) return;
+    try {
+      const sol = state.solicitudes.find(s => String(s.id) === String(solicitudId) || s.codigo_tramite === solicitudId);
+      if (!sol) {
+        console.warn('Solicitud no encontrada con ID:', solicitudId);
+        this.showToast('No se encontró el detalle del trámite seleccionado.', 'warning');
+        return;
+      }
 
-    const modalBackdrop = document.getElementById('modalDetalleBackdrop');
-    const codEl = document.getElementById('modalCodigoTramite');
-    const titEl = document.getElementById('modalTituloEvento');
-    const bodyEl = document.getElementById('modalContentBody');
+      const modalBackdrop = document.getElementById('modalDetalleBackdrop');
+      const codEl = document.getElementById('modalCodigoTramite');
+      const titEl = document.getElementById('modalTituloEvento');
+      const bodyEl = document.getElementById('modalContentBody');
 
-    codEl.textContent = `${sol.codigo_tramite} • ${this.getStatusBadge(sol.estado).label}`;
-    titEl.textContent = sol.nombre_evento;
+      if (!modalBackdrop || !bodyEl) {
+        console.error('Elementos del modal no encontrados en el DOM');
+        return;
+      }
 
-    const rondasDisponibles = 2 - sol.rondas_cambios_usadas;
-    const puedeSolicitarCambio = rondasDisponibles > 0;
+      const estadoObj = this.getStatusBadge(sol.estado || sol.estado_codigo);
+      if (codEl) codEl.textContent = `${sol.codigo_tramite || 'SOL-2026'} • ${estadoObj.label}`;
+      if (titEl) titEl.textContent = sol.nombre_evento || 'Detalle del Requerimiento';
 
-    bodyEl.innerHTML = `
-      <div class="modal-info-section mb-3">
-        <h4 style="font-size:1.05rem; font-weight:700; color:var(--gamea-blue-dark); margin-bottom:8px;">
-          📋 Ficha Técnica Institucional (D.M. N° 200)
-        </h4>
-        <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:14px; font-size:0.88rem;">
-          <p><strong>1. Dependencia:</strong> ${sol.secretaria} — ${sol.direccion}</p>
-          <p><strong>Lugar y Fecha:</strong> 📍 ${sol.lugar_evento} | 📅 ${sol.fecha_evento} a las ${sol.hora_evento}</p>
-          <p><strong>Público Objetivo:</strong> ${sol.publico_objetivo}</p>
-          <p><strong>Objetivo del Mensaje:</strong> ${sol.objetivo_mensaje}</p>
-          ${sol.datos_adicionales ? `<p><strong>Datos Adicionales:</strong> ${sol.datos_adicionales}</p>` : ''}
-          <hr style="margin:8px 0; border:0; border-top:1px solid #E2E8F0;">
-          <p><strong>2. Características:</strong> ${sol.tipo_pieza} • Estilo: ${sol.estilo_visual}</p>
-          <p><strong>3. Formato y Difusión:</strong> Material: ${sol.material} ${sol.tamano_impreso ? `(Tamaño: ${sol.tamano_impreso})` : ''} • Orientación: ${sol.orientacion}</p>
-          <p><strong>Plataformas:</strong> ${sol.plataformas.join(', ')} • <strong>Formato Requerido:</strong> ${sol.formato_requerido || 'PDF / JPG'}</p>
-          <hr style="margin:8px 0; border:0; border-top:1px solid #E2E8F0;">
-          <p><strong>4. Texto Aprobado (Brief Oficial):</strong></p>
-          <blockquote style="background:#FFFFFF; border-left:3px solid var(--gamea-red); padding:8px 12px; margin:6px 0; font-style:italic;">
-            "${sol.texto_aprobado}"
-          </blockquote>
-          <p><strong>Recursos Insumo Adjuntos:</strong> ${sol.archivos.map(a => `📎 ${a}`).join('  |  ')}</p>
-          <hr style="margin:8px 0; border:0; border-top:1px solid #E2E8F0;">
-          <p><strong>5. Solicitante Responsable:</strong> ${sol.solicitante ? `${sol.solicitante.nombre} (${sol.solicitante.cargo}) — 📞 Tel/WhatsApp: ${sol.solicitante.telefono}` : 'Servidor Acreditado'}</p>
-          <p><strong>6. Conformidad:</strong> <span class="badge-count" style="background:#16A34A; color:#fff;">✓ V.º B.º Aprobado</span> — <em>Sujeto a normas DICOM</em></p>
-        </div>
-      </div>
+      const rondasUsadas = Number(sol.rondas_cambios_usadas) || 0;
+      const rondasDisponibles = Math.max(0, 2 - rondasUsadas);
+      const puedeSolicitarCambio = rondasDisponibles > 0;
 
-      <!-- MÓDULO DE CONTROL DE MODIFICACIONES -->
-      <div class="cambios-box">
-        <div class="cambios-header-info">
-          <div>
-            <h4 style="font-size:1rem; font-weight:700; color:#92400E;">
-              🔄 Módulo Oficial de Control de Modificaciones
-            </h4>
-            <p style="font-size:0.8rem; color:#78350F;">Regla Institucional GAMEA: Máximo 2 rondas de cambios por solicitud.</p>
+      const plataformasText = Array.isArray(sol.plataformas)
+        ? sol.plataformas.join(', ')
+        : (sol.plataformas || 'Redes Sociales Institucionales (Facebook, Instagram, TikTok)');
+
+      const archivosList = Array.isArray(sol.archivos) && sol.archivos.length > 0
+        ? sol.archivos
+        : ['logo_gamea_oficial.png', 'brief_aprobado_sms.pdf'];
+
+      const historialCambios = Array.isArray(sol.historial_cambios)
+        ? sol.historial_cambios
+        : [];
+
+      const solicitanteInfo = typeof sol.solicitante === 'object' && sol.solicitante !== null
+        ? `${sol.solicitante.nombre || 'Servidor Público'} (${sol.solicitante.cargo || 'Responsable'}) — 📞 Tel/WhatsApp: ${sol.solicitante.telefono || 'S/N'}`
+        : `${sol.solicitante_nombre || 'Servidor Público'} (${sol.solicitante_cargo || 'Responsable'}) — 📞 Tel/WhatsApp: ${sol.solicitante_telefono || 'S/N'}`;
+
+      const datosAdicionales = sol.informacion_adicional || sol.datos_adicionales || '';
+      const orientacionText = sol.orientacion ? String(sol.orientacion).toUpperCase() : 'VERTICAL';
+      const materialText = sol.material ? String(sol.material).toUpperCase() : 'DIGITAL';
+      const tamanoText = sol.tamano_impreso ? `(Tamaño: ${sol.tamano_impreso})` : '';
+
+      bodyEl.innerHTML = `
+        <div class="modal-info-section mb-3">
+          <h4 style="font-size:1.05rem; font-weight:700; color:var(--gamea-blue-dark); margin-bottom:8px;">
+            📋 Ficha Técnica Institucional (D.M. N° 200)
+          </h4>
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:14px; font-size:0.88rem;">
+            <p><strong>1. Dependencia:</strong> ${sol.secretaria || 'GAM El Alto'} — ${sol.direccion || 'Dirección Solicitante'}</p>
+            <p><strong>Lugar y Fecha:</strong> 📍 ${sol.lugar_evento || 'Ciudad de El Alto'} | 📅 ${sol.fecha_evento || 'Fecha por confirmar'} a las ${sol.hora_evento || '09:00'}</p>
+            <p><strong>Público Objetivo:</strong> ${sol.publico_objetivo || 'Población en general'}</p>
+            <p><strong>Objetivo del Mensaje:</strong> ${sol.objetivo_mensaje || 'Difusión institucional'}</p>
+            ${datosAdicionales ? `<p><strong>Datos Adicionales:</strong> ${datosAdicionales}</p>` : ''}
+            <hr style="margin:8px 0; border:0; border-top:1px solid #E2E8F0;">
+            <p><strong>2. Características:</strong> ${sol.tipo_pieza || 'Pieza Gráfica'} • Estilo: ${sol.estilo_visual || 'Institucional'}</p>
+            <p><strong>3. Formato y Difusión:</strong> Material: ${materialText} ${tamanoText} • Orientación: ${orientacionText}</p>
+            <p><strong>Plataformas:</strong> ${plataformasText} • <strong>Formato Requerido:</strong> ${sol.formato_requerido || 'PDF imprenta / JPG alta'}</p>
+            <hr style="margin:8px 0; border:0; border-top:1px solid #E2E8F0;">
+            <p><strong>4. Texto Aprobado (Brief Oficial):</strong></p>
+            <blockquote style="background:#FFFFFF; border-left:3px solid var(--gamea-red); padding:8px 12px; margin:6px 0; font-style:italic;">
+              "${sol.texto_aprobado || 'Brief institucional sin observaciones.'}"
+            </blockquote>
+            <p><strong>Recursos Insumo Adjuntos:</strong> ${archivosList.map(a => `📎 ${a}`).join('  |  ')}</p>
+            <hr style="margin:8px 0; border:0; border-top:1px solid #E2E8F0;">
+            <p><strong>5. Solicitante Responsable:</strong> ${solicitanteInfo}</p>
+            <p><strong>6. Conformidad:</strong> <span class="badge-count" style="background:#16A34A; color:#fff;">✓ V.º B.º Aprobado</span> — <em>Sujeto a normas DICOM</em></p>
           </div>
-          <span class="rondas-indicator ${rondasDisponibles === 0 ? 'agotadas' : ''}">
-            ${sol.rondas_cambios_usadas} de 2 Rondas Usadas (${rondasDisponibles} disponible${rondasDisponibles === 1 ? '' : 's'})
-          </span>
         </div>
 
-        <!-- HISTORIAL DE OBSERVACIONES -->
-        <div class="mb-3">
-          <strong style="font-size:0.82rem; color:#78350F; text-transform:uppercase;">Historial de Observaciones Previas:</strong>
-          ${sol.historial_cambios.length === 0 ? 
-            `<p class="text-sm text-muted mt-1" style="font-style:italic;">No se han emitido observaciones hasta el momento.</p>` :
-            sol.historial_cambios.map(c => `
-              <div class="historial-cambios-item mt-1">
-                <div class="d-flex justify-between text-sm">
-                  <strong>Ronda ${c.ronda} • Solicitado por: ${c.usuario}</strong>
-                  <span class="text-muted">${c.fecha}</span>
-                </div>
-                <p class="mt-1" style="color:#334155;">"${c.motivo}"</p>
-              </div>
-            `).join('')
-          }
-        </div>
-
-        <!-- FORMULARIO DE NUEVA OBSERVACIÓN -->
-        ${puedeSolicitarCambio ? `
-          <div style="background:#FFFFFF; padding:14px; border-radius:8px; border:1px solid #FDE68A;">
-            <label style="font-size:0.85rem; font-weight:700; display:block; margin-bottom:6px; color:#92400E;">
-              Emitir Observación de Cambio (Ronda ${sol.rondas_cambios_usadas + 1} de 2):
-            </label>
-            <textarea id="txtObservacionCambio" rows="2" class="form-control" placeholder="Describa con precisión los ajustes solicitados (agrupe todas las observaciones en una sola solicitud)..."></textarea>
-            <div class="d-flex justify-between align-center mt-2">
-              <span class="text-sm text-muted">⚠️ Esta acción consumirá la Ronda ${sol.rondas_cambios_usadas + 1}.</span>
-              <button class="btn btn-sm btn-primary" onclick="app.submitCambio('${sol.id}')">
-                Enviar Observaciones (Ronda ${sol.rondas_cambios_usadas + 1})
-              </button>
+        <!-- MÓDULO DE CONTROL DE MODIFICACIONES -->
+        <div class="cambios-box">
+          <div class="cambios-header-info">
+            <div>
+              <h4 style="font-size:1rem; font-weight:700; color:#92400E;">
+                🔄 Módulo Oficial de Control de Modificaciones
+              </h4>
+              <p style="font-size:0.8rem; color:#78350F;">Regla Institucional GAMEA: Máximo 2 rondas de cambios por solicitud.</p>
             </div>
+            <span class="rondas-indicator ${rondasDisponibles === 0 ? 'agotadas' : ''}">
+              ${rondasUsadas} de 2 Rondas Usadas (${rondasDisponibles} disponible${rondasDisponibles === 1 ? '' : 's'})
+            </span>
           </div>
-        ` : `
-          <div style="background:#FEE2E2; padding:12px; border-radius:8px; border:1px solid #FCA5A5; color:#991B1B; font-size:0.85rem;">
-            🛑 <strong>LÍMITE ALCANZADO:</strong> Se han agotado las 2 rondas de cambios permitidas. Para cualquier ajuste adicional se requiere autorización expresa de la Dirección de Comunicación.
+
+          <!-- HISTORIAL DE OBSERVACIONES -->
+          <div class="mb-3">
+            <strong style="font-size:0.82rem; color:#78350F; text-transform:uppercase;">Historial de Observaciones Previas:</strong>
+            ${historialCambios.length === 0 ? 
+              `<p class="text-sm text-muted mt-1" style="font-style:italic;">No se han emitido observaciones hasta el momento.</p>` :
+              historialCambios.map(c => `
+                <div class="historial-cambios-item mt-1">
+                  <div class="d-flex justify-between text-sm">
+                    <strong>Ronda ${c.ronda} • Solicitado por: ${c.usuario}</strong>
+                    <span class="text-muted">${c.fecha}</span>
+                  </div>
+                  <p class="mt-1" style="color:#334155;">"${c.motivo}"</p>
+                </div>
+              `).join('')
+            }
           </div>
-        `}
-      </div>
 
-      <!-- ACCIONES OPERATIVAS SEGÚN ROL -->
-      <div class="mt-4 pt-3 d-flex justify-between align-center flex-wrap gap-2" style="border-top:1px solid #E2E8F0;">
-        <div class="d-flex gap-2">
-          ${sol.estado !== 'APROBADO' && sol.estado !== 'FINALIZADO' ? `
-            <button class="btn btn-sm btn-gold" onclick="app.cambiarEstado('${sol.id}', 'APROBADO')">
-              ✅ Aprobar Propuesta (Visto Bueno)
-            </button>
-          ` : ''}
-
-          ${sol.estado === 'APROBADO' ? `
-            <button class="btn btn-sm btn-primary" onclick="app.cambiarEstado('${sol.id}', 'FINALIZADO')">
-              📦 Entregar y Finalizar Trámite
-            </button>
-          ` : ''}
-
-          ${sol.estado === 'PENDIENTE' && (state.currentUser?.rol === 'SUPERVISOR' || state.currentUser?.rol === 'ADMIN') ? `
-            <button class="btn btn-sm btn-outline" onclick="app.asignarDisenadorPrompt('${sol.id}')">
-              👤 Asignar Diseñador
-            </button>
-          ` : ''}
-
-          ${(sol.estado === 'EN_REVISION' || sol.estado === 'AJUSTES') && (state.currentUser?.rol === 'DISENADOR' || state.currentUser?.rol === 'SUPERVISOR') ? `
-            <button class="btn btn-sm btn-outline" onclick="app.cambiarEstado('${sol.id}', 'DISENO_PROCESO')">
-              🎨 Marcar 'En Proceso Creativo'
-            </button>
-          ` : ''}
+          <!-- FORMULARIO DE NUEVA OBSERVACIÓN -->
+          ${puedeSolicitarCambio ? `
+            <div style="background:#FFFFFF; padding:14px; border-radius:8px; border:1px solid #FDE68A;">
+              <label style="font-size:0.85rem; font-weight:700; display:block; margin-bottom:6px; color:#92400E;">
+                Emitir Observación de Cambio (Ronda ${rondasUsadas + 1} de 2):
+              </label>
+              <textarea id="txtObservacionCambio" rows="2" class="form-control" placeholder="Describa con precisión los ajustes solicitados (agrupe todas las observaciones en una sola solicitud)..."></textarea>
+              <div class="d-flex justify-between align-center mt-2 flex-wrap gap-2">
+                <span class="text-sm text-muted">⚠️ Esta acción consumirá la Ronda ${rondasUsadas + 1}.</span>
+                <button class="btn btn-sm btn-primary" onclick="app.submitCambio('${sol.id}')">
+                  Enviar Observaciones (Ronda ${rondasUsadas + 1})
+                </button>
+              </div>
+            </div>
+          ` : `
+            <div style="background:#FEE2E2; padding:12px; border-radius:8px; border:1px solid #FCA5A5; color:#991B1B; font-size:0.85rem;">
+              🛑 <strong>LÍMITE ALCANZADO:</strong> Se han agotado las 2 rondas de cambios permitidas. Para cualquier ajuste adicional se requiere autorización expresa de la Dirección de Comunicación.
+            </div>
+          `}
         </div>
 
-        <button class="btn btn-sm btn-outline" onclick="app.closeModal()">Cerrar Ventana</button>
-      </div>
-    `;
+        <!-- ACCIONES OPERATIVAS SEGÚN ROL -->
+        <div class="mt-4 pt-3 d-flex justify-between align-center flex-wrap gap-2" style="border-top:1px solid #E2E8F0;">
+          <div class="d-flex gap-2 flex-wrap">
+            ${sol.estado_codigo !== 'APROBADO' && sol.estado_codigo !== 'FINALIZADO' && !String(sol.estado).includes('Aprobado') && !String(sol.estado).includes('Finalizado') ? `
+              <button class="btn btn-sm btn-gold" onclick="app.cambiarEstado('${sol.id}', 'APROBADO')">
+                ✅ Aprobar Propuesta (Visto Bueno)
+              </button>
+            ` : ''}
 
-    modalBackdrop.classList.add('active');
+            ${sol.estado_codigo === 'APROBADO' || String(sol.estado).includes('Aprobado') ? `
+              <button class="btn btn-sm btn-primary" onclick="app.cambiarEstado('${sol.id}', 'FINALIZADO')">
+                📦 Entregar y Finalizar Trámite
+              </button>
+            ` : ''}
+
+            ${(sol.estado_codigo === 'PENDIENTE' || String(sol.estado).includes('Pendiente')) && (state.currentUser?.rol === 'SUPERVISOR' || state.currentUser?.rol === 'ADMIN') ? `
+              <button class="btn btn-sm btn-outline" onclick="app.asignarDisenadorPrompt('${sol.id}')">
+                👤 Asignar Diseñador
+              </button>
+            ` : ''}
+
+            ${(sol.estado_codigo === 'EN_REVISION' || sol.estado_codigo === 'AJUSTES' || String(sol.estado).includes('revisión') || String(sol.estado).includes('Ajustes')) && (state.currentUser?.rol === 'DISENADOR' || state.currentUser?.rol === 'SUPERVISOR') ? `
+              <button class="btn btn-sm btn-outline" onclick="app.cambiarEstado('${sol.id}', 'DISENO_PROCESO')">
+                🎨 Marcar 'En Proceso Creativo'
+              </button>
+            ` : ''}
+          </div>
+
+          <button class="btn btn-sm btn-outline" onclick="app.closeModal()">Cerrar Ventana</button>
+        </div>
+      `;
+
+      modalBackdrop.classList.add('active');
+    } catch (err) {
+      console.error('Error abriendo modal de detalle:', err);
+      this.showToast('Error al visualizar los detalles del trámite: ' + err.message, 'error');
+    }
   },
 
   closeModal() {
@@ -1407,7 +1444,7 @@ const app = {
   },
 
   async submitCambio(solicitudId) {
-    const sol = state.solicitudes.find(s => s.id === solicitudId);
+    const sol = state.solicitudes.find(s => String(s.id) === String(solicitudId));
     if (!sol) return;
 
     if (sol.rondas_cambios_usadas >= 2) {
@@ -1470,7 +1507,7 @@ const app = {
       await this.loadSolicitudesFromApi();
     } catch (err) {
       console.warn('Error conectando a API para cambio de estado:', err);
-      const sol = state.solicitudes.find(s => s.id === solicitudId);
+      const sol = state.solicitudes.find(s => String(s.id) === String(solicitudId));
       if (sol) sol.estado = nuevoEstado;
       this.renderRequests();
       this.updateCounts();
@@ -1482,7 +1519,7 @@ const app = {
   asignarDisenadorPrompt(solicitudId) {
     const dis = prompt('Ingrese el nombre del Diseñador Gráfico asignado:', 'Lic. Marco Antonio Choque');
     if (dis) {
-      const sol = state.solicitudes.find(s => s.id === solicitudId);
+      const sol = state.solicitudes.find(s => String(s.id) === String(solicitudId));
       if (sol) {
         sol.disenador_asignado = dis;
         sol.estado = 'EN_REVISION';

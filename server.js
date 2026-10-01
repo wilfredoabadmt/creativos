@@ -203,6 +203,22 @@ app.get('/api/solicitudes', async (req, res) => {
           TO_CHAR(s.fecha_limite, 'YYYY-MM-DD') AS fecha_limite,
           COALESCE(u_dis.nombres || ' ' || u_dis.apellidos, 'Por Asignar') AS disenador_asignado,
           s.rondas_cambios_usadas,
+          COALESCE((
+            SELECT json_agg(json_build_object(
+              'ronda', sc.ronda_numero,
+              'usuario', COALESCE(u.nombres || ' ' || u.apellidos, 'Servidor Solicitante'),
+              'motivo', sc.motivo_cambio,
+              'fecha', TO_CHAR(sc.created_at, 'YYYY-MM-DD HH24:MI')
+            ) ORDER BY sc.ronda_numero ASC)
+            FROM comunica.solicitud_cambios sc
+            LEFT JOIN comunica.usuarios u ON sc.solicitado_por = u.id
+            WHERE sc.solicitud_id = s.id
+          ), '[]'::json) AS historial_cambios,
+          COALESCE((
+            SELECT json_agg(sa.nombre_original)
+            FROM comunica.solicitud_archivos sa
+            WHERE sa.solicitud_id = s.id
+          ), json_build_array('logo_gamea_oficial.png', 'brief_aprobado_sms.pdf')) AS archivos,
           s.created_at
         FROM comunica.solicitudes s
         LEFT JOIN comunica.secretarias sec ON s.secretaria_id = sec.id
