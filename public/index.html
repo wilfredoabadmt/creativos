@@ -26,8 +26,8 @@
     <div class="header-color-strip"></div>
     
     <div class="header-main-nav">
-      <div class="header-container d-flex justify-between align-center">
-        <div class="brand-group d-flex align-center gap-2">
+      <div class="header-container">
+        <div class="brand-group">
           <img src="img/escudo-el-alto.png" alt="Escudo de El Alto" class="brand-logo-escudo">
           <div class="brand-divider"></div>
           <div class="brand-text">
@@ -37,7 +37,7 @@
         </div>
 
         <!-- NAVEGACIÓN PRINCIPAL Y CONTROL DE SESIÓN -->
-        <div class="nav-controls d-flex align-center gap-3">
+        <div class="nav-controls">
           <nav class="main-menu">
             <button class="nav-btn active" data-tab="landing" id="btnTabLanding">
               <span>🏛️</span> Inicio
@@ -948,7 +948,7 @@
         <div id="panelUsuarios" class="usuarios-panel">
           <!-- Toolbar -->
           <div class="usuarios-toolbar">
-            <button class="btn btn-gold" id="btnNuevoUsuario">
+            <button class="btn btn-gold" id="btnNuevoUsuario" onclick="app.openModalUsuario()">
               <span>➕</span> Nuevo Usuario
             </button>
             <div class="usuarios-filters">
@@ -1019,94 +1019,102 @@
   <!-- ======================================================= -->
   <!-- MODAL: CREAR / EDITAR USUARIO                           -->
   <!-- ======================================================= -->
-  <div class="modal-backdrop" id="modalUsuarioBackdrop" style="display:none;">
+  <div class="modal-backdrop" id="modalUsuarioBackdrop">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 id="modalUsuarioTitulo">Nuevo Usuario</h3>
-          <button class="modal-close" id="btnCerrarModalUsuario">&times;</button>
+      <div class="modal-header bg-gamea-gradient text-white">
+        <div class="modal-header-brand">
+          <img src="img/escudo-el-alto.png" alt="Escudo El Alto" class="modal-logo-img">
+          <div>
+            <span class="badge-form-header">ADMINISTRACIÓN DICOM</span>
+            <h3 class="modal-title text-white" id="modalUsuarioTitulo">Nuevo Usuario Institucional</h3>
+          </div>
         </div>
-        <div class="modal-body">
-          <form id="formUsuario" novalidate>
-            <input type="hidden" id="usuarioEditId">
-            <div class="form-grid-2">
-              <div class="form-group">
-                <label for="usuarioNombres">Nombres *</label>
-                <input type="text" id="usuarioNombres" class="form-control" required minlength="2" placeholder="Ej: Lic. Juan">
-              </div>
-              <div class="form-group">
-                <label for="usuarioApellidos">Apellidos *</label>
-                <input type="text" id="usuarioApellidos" class="form-control" required minlength="2" placeholder="Ej: Pérez Mamani">
-              </div>
-              <div class="form-group">
-                <label for="usuarioCargo">Cargo Institucional</label>
-                <input type="text" id="usuarioCargo" class="form-control" placeholder="Ej: Director de Deportes">
-              </div>
-              <div class="form-group">
-                <label for="usuarioEmail">Email Institucional *</label>
-                <input type="email" id="usuarioEmail" class="form-control" required placeholder="nombre@elalto.gob.bo">
-              </div>
-              <div class="form-group">
-                <label for="usuarioTelefono">Teléfono / WhatsApp</label>
-                <input type="text" id="usuarioTelefono" class="form-control" placeholder="77200000">
-              </div>
-              <div class="form-group">
-                <label for="usuarioRol">Rol del Sistema *</label>
-                <select id="usuarioRol" class="form-control" required>
-                  <option value="">Seleccione un rol...</option>
-                  <option value="1">Administrador General</option>
-                  <option value="2">Supervisor / Director DICOM</option>
-                  <option value="3">Diseñador Gráfico Institucional</option>
-                  <option value="4">Solicitante Municipal</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="usuarioSecretaria">Secretaría Municipal</label>
-                <select id="usuarioSecretaria" class="form-control">
-                  <option value="">Seleccione secretaría...</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="usuarioDireccion">Dirección</label>
-                <select id="usuarioDireccion" class="form-control">
-                  <option value="">Seleccione dirección...</option>
-                </select>
-              </div>
-              <div class="form-group" id="grupoPassword">
-                <label for="usuarioPassword">Contraseña *</label>
-                <input type="password" id="usuarioPassword" class="form-control" minlength="8" placeholder="Mín. 8 caracteres, 1 mayúscula, 1 número">
-              </div>
-              <div class="form-group" id="grupoPasswordConfirm">
-                <label for="usuarioPasswordConfirm">Confirmar Contraseña *</label>
-                <input type="password" id="usuarioPasswordConfirm" class="form-control" minlength="8" placeholder="Repita la contraseña">
-              </div>
+        <button type="button" class="btn-close-modal text-white" id="btnCerrarModalUsuario" onclick="app.closeModalUsuario()" title="Cerrar Ventana">✕</button>
+      </div>
+      <div class="modal-body p-4">
+        <form id="formUsuario" novalidate>
+          <input type="hidden" id="usuarioEditId">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="usuarioNombres" class="font-semibold text-sm">Nombres *</label>
+              <input type="text" id="usuarioNombres" class="form-control" required minlength="2" placeholder="Ej: Lic. Juan">
             </div>
-            <div class="form-actions">
-              <button type="button" class="btn btn-secondary" id="btnCancelarUsuario">Cancelar</button>
-              <button type="submit" class="btn btn-gold" id="btnGuardarUsuario">💾 Guardar Usuario</button>
+            <div class="form-group">
+              <label for="usuarioApellidos" class="font-semibold text-sm">Apellidos *</label>
+              <input type="text" id="usuarioApellidos" class="form-control" required minlength="2" placeholder="Ej: Pérez Mamani">
             </div>
-          </form>
-        </div>
+            <div class="form-group">
+              <label for="usuarioCargo" class="font-semibold text-sm">Cargo Institucional</label>
+              <input type="text" id="usuarioCargo" class="form-control" placeholder="Ej: Director de Deportes">
+            </div>
+            <div class="form-group">
+              <label for="usuarioEmail" class="font-semibold text-sm">Email Institucional *</label>
+              <input type="email" id="usuarioEmail" class="form-control" required placeholder="nombre@elalto.gob.bo">
+            </div>
+            <div class="form-group">
+              <label for="usuarioTelefono" class="font-semibold text-sm">Teléfono / WhatsApp</label>
+              <input type="text" id="usuarioTelefono" class="form-control" placeholder="77200000">
+            </div>
+            <div class="form-group">
+              <label for="usuarioRol" class="font-semibold text-sm">Rol del Sistema *</label>
+              <select id="usuarioRol" class="form-control" required>
+                <option value="">Seleccione un rol...</option>
+                <option value="1">Administrador General</option>
+                <option value="2">Supervisor / Director DICOM</option>
+                <option value="3">Diseñador Gráfico Institucional</option>
+                <option value="4">Solicitante Municipal</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="usuarioSecretaria" class="font-semibold text-sm">Secretaría Municipal</label>
+              <select id="usuarioSecretaria" class="form-control">
+                <option value="">Seleccione secretaría...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="usuarioDireccion" class="font-semibold text-sm">Dirección</label>
+              <select id="usuarioDireccion" class="form-control">
+                <option value="">Seleccione dirección...</option>
+              </select>
+            </div>
+            <div class="form-group" id="grupoPassword">
+              <label for="usuarioPassword" class="font-semibold text-sm">Contraseña *</label>
+              <input type="password" id="usuarioPassword" class="form-control" minlength="8" placeholder="Mín. 8 caracteres, 1 mayúscula, 1 número">
+            </div>
+            <div class="form-group" id="grupoPasswordConfirm">
+              <label for="usuarioPasswordConfirm" class="font-semibold text-sm">Confirmar Contraseña *</label>
+              <input type="password" id="usuarioPasswordConfirm" class="form-control" minlength="8" placeholder="Repita la contraseña">
+            </div>
+          </div>
+          <div class="form-actions mt-4">
+            <button type="button" class="btn btn-secondary" id="btnCancelarUsuario" onclick="app.closeModalUsuario()">Cancelar</button>
+            <button type="submit" class="btn btn-gold" id="btnGuardarUsuario">💾 Guardar Usuario</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 
   <!-- MODAL: RESET PASSWORD -->
-  <div class="modal-backdrop" id="modalResetPassBackdrop" style="display:none;">
+  <div class="modal-backdrop" id="modalResetPassBackdrop">
     <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>🔑 Contraseña Reseteada</h3>
-          <button class="modal-close" id="btnCerrarResetPass">&times;</button>
-        </div>
-        <div class="modal-body text-center">
-          <p class="mb-2">La nueva contraseña temporal para <strong id="resetPassEmail"></strong> es:</p>
-          <div class="password-display">
-            <code id="resetPassValue" class="password-code"></code>
-            <button class="btn btn-sm btn-outline" id="btnCopyPassword" title="Copiar al portapapeles">📋 Copiar</button>
+      <div class="modal-header bg-gamea-gradient text-white">
+        <div class="modal-header-brand">
+          <img src="img/escudo-el-alto.png" alt="Escudo El Alto" class="modal-logo-img">
+          <div>
+            <span class="badge-form-header">SEGURIDAD INSTITUCIONAL</span>
+            <h3 class="modal-title text-white">Contraseña Reseteada</h3>
           </div>
-          <p class="text-sm text-muted mt-2">⚠️ Esta contraseña se muestra una sola vez. Compártala de forma segura al usuario.</p>
         </div>
+        <button type="button" class="btn-close-modal text-white" id="btnCerrarResetPass" onclick="app.closeModalResetPass()" title="Cerrar Ventana">✕</button>
+      </div>
+      <div class="modal-body p-4 text-center">
+        <p class="mb-2">La nueva contraseña temporal para <strong id="resetPassEmail"></strong> es:</p>
+        <div class="password-display">
+          <code id="resetPassValue" class="password-code"></code>
+          <button class="btn btn-sm btn-outline" id="btnCopyPassword" title="Copiar al portapapeles">📋 Copiar</button>
+        </div>
+        <p class="text-sm text-muted mt-2">⚠️ Esta contraseña se muestra una sola vez. Compártala de forma segura al usuario.</p>
       </div>
     </div>
   </div>

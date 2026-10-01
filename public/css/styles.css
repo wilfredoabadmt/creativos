@@ -149,8 +149,18 @@ body {
 }
 
 .header-main-nav {
-  padding: 12px 0;
+  padding: 8px 0;
   background: #ffffff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.header-main-nav .header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
 }
 
 .header-color-strip {
@@ -163,12 +173,12 @@ body {
 .brand-group {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   flex-shrink: 0;
 }
 
 .brand-logo-escudo {
-  height: 48px;
+  height: 42px;
   width: auto;
   object-fit: contain;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
@@ -176,58 +186,67 @@ body {
 
 .brand-divider {
   width: 1.5px;
-  height: 38px;
+  height: 32px;
   background: #E2E8F0;
-  margin: 0 4px;
+  margin: 0 2px;
 }
 
 .brand-sub {
   display: block;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   color: var(--gamea-blue);
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .brand-title {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: var(--gamea-red);
   line-height: 1.1;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .brand-title span {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 700;
   background: var(--gamea-gold);
   color: #1a1a1a;
-  padding: 2px 7px;
+  padding: 2px 6px;
   border-radius: 4px;
   vertical-align: middle;
 }
 
-/* MENÚ Y NAVEGACIÓN EN UNA SOLA LÍNEA SIN APRETARSE */
-.main-menu {
+/* NAVEGACIÓN Y CONTROLES FLEXIBLES */
+.nav-controls {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.main-menu {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
 }
 
 .nav-btn {
   background: transparent;
   border: 1px solid transparent;
   font-family: var(--font-sans);
-  font-size: 0.92rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: #475569;
-  padding: 8px 16px;
+  padding: 6px 10px;
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -235,7 +254,7 @@ body {
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   flex-shrink: 0;
 }
 
@@ -1746,24 +1765,27 @@ body {
   background: #F8FAFC;
   border: 1px solid #E2E8F0;
   border-radius: 40px;
-  padding: 5px 14px 5px 6px;
-  display: flex;
+  padding: 4px 10px 4px 6px;
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   white-space: nowrap;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  max-width: 250px;
+  min-width: 0;
+  flex-shrink: 0;
 }
 
 .user-avatar-mini {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--gamea-red), var(--gamea-red-dark));
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 700;
   box-shadow: 0 2px 4px rgba(122, 19, 21, 0.25);
   flex-shrink: 0;
@@ -1774,40 +1796,51 @@ body {
   flex-direction: column;
   line-height: 1.15;
   text-align: left;
+  min-width: 0;
+  max-width: 135px;
+  overflow: hidden;
 }
 
 .user-name-label {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: var(--gamea-blue-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 
 .user-dir-label {
-  font-size: 0.7rem;
+  font-size: 0.66rem;
   color: var(--gamea-red);
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 
 .btn-logout {
-  background: #F1F5F9;
-  border: 1px solid #E2E8F0;
-  color: #64748B;
-  font-size: 0.75rem;
-  font-weight: 600;
+  background: #FEE2E2;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+  font-size: 0.72rem;
+  font-weight: 700;
   cursor: pointer;
-  margin-left: 6px;
-  padding: 4px 8px;
+  padding: 3px 8px;
   border-radius: 6px;
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
   gap: 3px;
+  flex-shrink: 0;
 }
 
 .btn-logout:hover {
-  color: #DC2626;
-  background: #FEE2E2;
-  border-color: #FCA5A5;
+  color: #FFFFFF;
+  background: #DC2626;
+  border-color: #DC2626;
 }
 
 .auth-lock-card {
@@ -1923,24 +1956,29 @@ img:not([height]):not(.modal-logo-img):not(.brand-logo-escudo):not(.brand-logo-i
   /* Distribución de la cabecera */
   .header-main-nav .header-container {
     flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .brand-group {
-    gap: 10px;
+    gap: 8px 12px;
+    justify-content: space-between;
   }
 
   .nav-controls {
-    gap: 14px;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 4px;
+    padding-top: 6px;
+    border-top: 1px solid #F1F5F9;
   }
 
   .main-menu {
-    gap: 6px;
+    gap: 4px;
+    flex: 1;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
   }
 
   .nav-btn {
-    padding: 8px 12px;
-    font-size: 0.86rem;
+    padding: 6px 9px;
+    font-size: 0.8rem;
   }
 
   /* Landing Page Grids */

@@ -165,6 +165,9 @@ const ORGANIGRAMA_GAMEA = [
   }
 ];
 
+// Alias para compatibilidad institucional
+const ORGANIGRAMA_OFICIAL = ORGANIGRAMA_GAMEA;
+
 // ==============================================================================
 // 2. USUARIOS OFICIALES POR DIRECCIÓN (SISTEMA DE AUTENTICACIÓN Y ROLES)
 // ==============================================================================
@@ -1975,10 +1978,11 @@ const app = {
   populateUsuarioSecretariasSelects() {
     const filterSec = document.getElementById('filterUsuarioSecretaria');
     const modalSec = document.getElementById('usuarioSecretaria');
+    const lista = typeof ORGANIGRAMA_GAMEA !== 'undefined' ? ORGANIGRAMA_GAMEA : [];
 
     if (filterSec && filterSec.options.length <= 1) {
       filterSec.innerHTML = '<option value="">Todas las secretarías</option>';
-      ORGANIGRAMA_OFICIAL.forEach(sec => {
+      lista.forEach(sec => {
         const opt = document.createElement('option');
         opt.value = sec.id;
         opt.textContent = sec.sigla ? `${sec.sigla} - ${sec.nombre}` : sec.nombre;
@@ -1988,7 +1992,7 @@ const app = {
 
     if (modalSec && modalSec.options.length <= 1) {
       modalSec.innerHTML = '<option value="">Seleccione secretaría...</option>';
-      ORGANIGRAMA_OFICIAL.forEach(sec => {
+      lista.forEach(sec => {
         const opt = document.createElement('option');
         opt.value = sec.id;
         opt.textContent = sec.sigla ? `${sec.sigla} - ${sec.nombre}` : sec.nombre;
@@ -2003,7 +2007,8 @@ const app = {
     dirSelect.innerHTML = '<option value="">Seleccione dirección...</option>';
     if (!secretariaId) return;
 
-    const sec = ORGANIGRAMA_OFICIAL.find(s => String(s.id) === String(secretariaId));
+    const lista = typeof ORGANIGRAMA_GAMEA !== 'undefined' ? ORGANIGRAMA_GAMEA : [];
+    const sec = lista.find(s => String(s.id) === String(secretariaId));
     if (sec && Array.isArray(sec.direcciones)) {
       sec.direcciones.forEach(d => {
         const opt = document.createElement('option');
@@ -2039,8 +2044,13 @@ const app = {
   },
 
   async renderUsersView() {
-    this.populateUsuarioSecretariasSelects();
-    this.switchUsuariosSubtab(state.usuariosState.subtabActual || 'usuarios');
+    try {
+      this.populateUsuarioSecretariasSelects();
+      this.switchUsuariosSubtab(state.usuariosState.subtabActual || 'usuarios');
+    } catch (e) {
+      console.error('Error renderUsersView:', e);
+      this.loadUsuariosFallback();
+    }
   },
 
   async loadUsuarios() {
@@ -2063,50 +2073,64 @@ const app = {
       if (res.ok) {
         const json = await res.json();
         if (json.exito && json.data) {
-          state.usuariosState.usuarios = json.data.usuarios || [];
-          state.usuariosState.total = json.data.paginacion?.total || 0;
-          state.usuariosState.paginas = json.data.paginacion?.paginas || 1;
-          this.renderUsuariosTable(state.usuariosState.usuarios);
+          const rows = Array.isArray(json.data) ? json.data : (json.data.usuarios || []);
+          const total = typeof json.total === 'number' ? json.total : (json.data.paginacion?.total || rows.length);
+          const paginas = typeof json.totalPages === 'number' ? json.totalPages : (json.data.paginacion?.paginas || Math.max(1, Math.ceil(total / state.usuariosState.limite)));
+
+          // Si el servidor retornó lista vacía o está en contingencia 'Sin BD', usamos catálogo precargado
+          if (rows.length === 0 && (!json.fuente || json.fuente === 'Sin BD' || total === 0)) {
+            this.loadUsuariosFallback();
+            return;
+          }
+
+          state.usuariosState.usuarios = rows;
+          state.usuariosState.total = total;
+          state.usuariosState.paginas = paginas;
+          this.renderUsuariosTable(rows);
           this.renderUsuariosPagination();
           return;
         }
       }
       throw new Error('Respuesta inválida del servidor');
     } catch (err) {
-      console.warn('⚠️ Error al cargar usuarios desde API, usando fallback local:', err);
-      let list = Object.values(USUARIOS_DIRECCIONES).map((u, idx) => ({
-        id: u.id || `local-${idx}`,
-        nombres: u.nombres,
-        apellidos: u.apellidos,
-        cargo: u.cargo || '',
-        email: u.email,
-        telefono: u.telefono || '',
-        rol_codigo: u.rol,
-        rol_nombre: u.rol === 'ADMIN' ? 'Administrador General' : (u.rol === 'SUPERVISOR' ? 'Supervisor / Directora DICOM' : (u.rol === 'DISENADOR' ? 'Diseñador Gráfico' : 'Solicitante Municipal')),
-        secretaria_nombre: u.secretaria,
-        direccion_nombre: u.direccion,
-        secretaria_id: u.secretaria_id,
-        direccion_id: u.direccion_id,
-        activo: true
-      }));
-
-      if (state.usuariosState.filtroRol) {
-        list = list.filter(u => u.rol_codigo === state.usuariosState.filtroRol);
-      }
-      if (state.usuariosState.filtroSecretaria) {
-        list = list.filter(u => String(u.secretaria_id) === String(state.usuariosState.filtroSecretaria));
-      }
-      if (state.usuariosState.busqueda) {
-        const q = state.usuariosState.busqueda.toLowerCase();
-        list = list.filter(u => `${u.nombres} ${u.apellidos} ${u.email}`.toLowerCase().includes(q));
-      }
-
-      state.usuariosState.usuarios = list;
-      state.usuariosState.total = list.length;
-      state.usuariosState.paginas = 1;
-      this.renderUsuariosTable(list);
-      this.renderUsuariosPagination();
+      console.warn('⚠️ Error al cargar usuarios desde API, usando fallback institucional:', err);
+      this.loadUsuariosFallback();
     }
+  },
+
+  loadUsuariosFallback() {
+    let list = Object.values(USUARIOS_DIRECCIONES).map((u, idx) => ({
+      id: u.id || `local-${idx}`,
+      nombres: u.nombres,
+      apellidos: u.apellidos,
+      cargo: u.cargo || '',
+      email: u.email,
+      telefono: u.telefono || '',
+      rol_codigo: u.rol,
+      rol_nombre: u.rol === 'ADMIN' ? 'Administrador General' : (u.rol === 'SUPERVISOR' ? 'Supervisor / Directora DICOM' : (u.rol === 'DISENADOR' ? 'Diseñador Gráfico' : 'Solicitante Municipal')),
+      secretaria_nombre: u.secretaria,
+      direccion_nombre: u.direccion,
+      secretaria_id: u.secretaria_id,
+      direccion_id: u.direccion_id,
+      activo: true
+    }));
+
+    if (state.usuariosState.filtroRol) {
+      list = list.filter(u => u.rol_codigo === state.usuariosState.filtroRol);
+    }
+    if (state.usuariosState.filtroSecretaria) {
+      list = list.filter(u => String(u.secretaria_id) === String(state.usuariosState.filtroSecretaria));
+    }
+    if (state.usuariosState.busqueda) {
+      const q = state.usuariosState.busqueda.toLowerCase();
+      list = list.filter(u => `${u.nombres} ${u.apellidos} ${u.email} ${u.cargo}`.toLowerCase().includes(q));
+    }
+
+    state.usuariosState.usuarios = list;
+    state.usuariosState.total = list.length;
+    state.usuariosState.paginas = Math.max(1, Math.ceil(list.length / state.usuariosState.limite));
+    this.renderUsuariosTable(list);
+    this.renderUsuariosPagination();
   },
 
   renderUsuariosTable(usuarios) {
@@ -2338,60 +2362,72 @@ const app = {
   },
 
   openModalUsuario(usuarioId = null) {
-    this.populateUsuarioSecretariasSelects();
-    const modal = document.getElementById('modalUsuarioBackdrop');
-    const form = document.getElementById('formUsuario');
-    const titulo = document.getElementById('modalUsuarioTitulo');
-    const inputId = document.getElementById('usuarioEditId');
-    const grupoPass = document.getElementById('grupoPassword');
-    const grupoPassConf = document.getElementById('grupoPasswordConfirm');
-    const inputEmail = document.getElementById('usuarioEmail');
-    const passInput = document.getElementById('usuarioPassword');
-    const passConfInput = document.getElementById('usuarioPasswordConfirm');
+    try {
+      this.populateUsuarioSecretariasSelects();
+      const modal = document.getElementById('modalUsuarioBackdrop');
+      const form = document.getElementById('formUsuario');
+      const titulo = document.getElementById('modalUsuarioTitulo');
+      const inputId = document.getElementById('usuarioEditId');
+      const grupoPass = document.getElementById('grupoPassword');
+      const grupoPassConf = document.getElementById('grupoPasswordConfirm');
+      const inputEmail = document.getElementById('usuarioEmail');
+      const passInput = document.getElementById('usuarioPassword');
+      const passConfInput = document.getElementById('usuarioPasswordConfirm');
 
-    if (!modal || !form) return;
-
-    form.reset();
-
-    if (usuarioId) {
-      // MODO EDICIÓN
-      titulo.textContent = '✏️ Editar Usuario Institucional';
-      inputId.value = usuarioId;
-      inputEmail.readOnly = true;
-      inputEmail.style.backgroundColor = 'rgba(255,255,255,0.05)';
-      if (grupoPass) grupoPass.style.display = 'none';
-      if (grupoPassConf) grupoPassConf.style.display = 'none';
-      if (passInput) passInput.required = false;
-      if (passConfInput) passConfInput.required = false;
-
-      const user = state.usuariosState.usuarios.find(u => String(u.id) === String(usuarioId));
-      if (user) {
-        this.populateModalUsuarioFields(user);
-      } else {
-        fetch(`/api/usuarios/${usuarioId}`)
-          .then(r => r.json())
-          .then(json => {
-            if (json.exito && json.data) {
-              this.populateModalUsuarioFields(json.data);
-            }
-          })
-          .catch(e => console.warn('Error fetching usuario:', e));
+      if (!modal) {
+        console.error('Modal usuario backdrop no encontrado');
+        return;
       }
-    } else {
-      // MODO CREACIÓN
-      titulo.textContent = '➕ Nuevo Usuario Institucional';
-      inputId.value = '';
-      inputEmail.readOnly = false;
-      inputEmail.style.backgroundColor = '';
-      if (grupoPass) grupoPass.style.display = 'block';
-      if (grupoPassConf) grupoPassConf.style.display = 'block';
-      if (passInput) passInput.required = true;
-      if (passConfInput) passConfInput.required = true;
-      this.onUsuarioSecretariaModalChange(null);
-    }
 
-    modal.classList.add('active');
-    modal.style.display = 'flex';
+      if (form) form.reset();
+
+      if (usuarioId) {
+        // MODO EDICIÓN
+        if (titulo) titulo.textContent = '✏️ Editar Usuario Institucional';
+        if (inputId) inputId.value = usuarioId;
+        if (inputEmail) {
+          inputEmail.readOnly = true;
+          inputEmail.style.backgroundColor = 'rgba(255,255,255,0.05)';
+        }
+        if (grupoPass) grupoPass.style.display = 'none';
+        if (grupoPassConf) grupoPassConf.style.display = 'none';
+        if (passInput) passInput.required = false;
+        if (passConfInput) passConfInput.required = false;
+
+        const user = state.usuariosState.usuarios.find(u => String(u.id) === String(usuarioId));
+        if (user) {
+          this.populateModalUsuarioFields(user);
+        } else {
+          fetch(`/api/usuarios/${usuarioId}`)
+            .then(r => r.json())
+            .then(json => {
+              if (json.exito && json.data) {
+                this.populateModalUsuarioFields(json.data);
+              }
+            })
+            .catch(e => console.warn('Error fetching usuario:', e));
+        }
+      } else {
+        // MODO CREACIÓN
+        if (titulo) titulo.textContent = '➕ Nuevo Usuario Institucional';
+        if (inputId) inputId.value = '';
+        if (inputEmail) {
+          inputEmail.readOnly = false;
+          inputEmail.style.backgroundColor = '';
+        }
+        if (grupoPass) grupoPass.style.display = 'block';
+        if (grupoPassConf) grupoPassConf.style.display = 'block';
+        if (passInput) passInput.required = true;
+        if (passConfInput) passConfInput.required = true;
+        this.onUsuarioSecretariaModalChange(null);
+      }
+
+      modal.classList.add('active');
+      modal.style.display = 'flex';
+    } catch (err) {
+      console.error('Error al abrir modal usuario:', err);
+      this.showToast('No se pudo abrir el modal: ' + err.message, 'error');
+    }
   },
 
   populateModalUsuarioFields(user) {
