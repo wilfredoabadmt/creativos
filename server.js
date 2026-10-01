@@ -587,17 +587,34 @@ app.post('/api/solicitudes/:id/cambios', async (req, res) => {
 // 5. Actualizar Estado de una Solicitud (Aprobación, Finalizado, etc.)
 app.put('/api/solicitudes/:id/estado', async (req, res) => {
   const { id } = req.params;
-  const { codigo_estado } = req.body;
+  const { codigo_estado, disenador_asignado_id, disenador_nombre } = req.body;
 
   if (pool && dbConnected) {
     try {
-      const updateRes = await pool.query(`
+      let query = `
         UPDATE comunica.solicitudes
-        SET estado_id = (SELECT id FROM comunica.estados WHERE codigo = $1 LIMIT 1),
+        SET estado_id = COALESCE((SELECT id FROM comunica.estados WHERE codigo = $1 LIMIT 1), estado_id),
             updated_at = NOW()
-        WHERE id = $2
-        RETURNING id, codigo_tramite, estado_id;
-      `, [codigo_estado, id]);
+      `;
+      const params = [codigo_estado, id];
+
+      if (disenador_asignado_id) {
+        query += `, disenador_asignado_id = $3 `;
+        params.push(disenador_asignado_id);
+      } else if (disenador_nombre) {
+        const usr = await pool.query(
+          `SELECT id FROM comunica.usuarios WHERE (nombres || ' ' || apellidos) ILIKE $1 OR rol_id = 3 LIMIT 1`,
+          [`%${disenador_nombre.split(' ')[0]}%`]
+        );
+        if (usr.rowCount > 0) {
+          query += `, disenador_asignado_id = $3 `;
+          params.push(usr.rows[0].id);
+        }
+      }
+
+      query += ` WHERE id = $2 RETURNING id, codigo_tramite, estado_id;`;
+
+      const updateRes = await pool.query(query, params);
 
       if (updateRes.rowCount === 0) {
         return res.status(404).json({ exito: false, mensaje: 'Solicitud no encontrada' });

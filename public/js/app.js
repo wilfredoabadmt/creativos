@@ -1623,30 +1623,73 @@ const app = {
           `}
         </div>
 
-        <!-- ACCIONES OPERATIVAS SEGÚN ROL -->
-        <div class="mt-4 pt-3 d-flex justify-between align-center flex-wrap gap-2" style="border-top:1px solid #E2E8F0;">
+        <!-- FLUJO DE ESTADOS DEL TRÁMITE (TRANSICIONES DIRECTAS) -->
+        <div class="mt-4 p-3" style="background:#F8FAFC; border:1px solid #CBD5E1; border-radius:8px;">
+          <div class="d-flex justify-between align-center mb-2 flex-wrap gap-2">
+            <strong style="font-size:0.83rem; color:#1E293B; text-transform:uppercase;">
+              🔄 Transición de Estados (Flujo de Producción Creativa DICOM):
+            </strong>
+            <span class="text-sm">Estado actual: <strong>${estadoObj.label}</strong></span>
+          </div>
+          <p class="text-xs text-muted mb-2">Haga clic en cualquiera de las fases para cambiar el estado del trámite en tiempo real:</p>
           <div class="d-flex gap-2 flex-wrap">
-            ${sol.estado_codigo !== 'APROBADO' && sol.estado_codigo !== 'FINALIZADO' && !String(sol.estado).includes('Aprobado') && !String(sol.estado).includes('Finalizado') ? `
+            <button type="button" class="btn btn-xs ${this.normalizeEstado(sol.estado || sol.estado_codigo) === 'PENDIENTE' ? 'btn-amarillo-active' : 'btn-outline'}" 
+              onclick="app.cambiarEstado('${sol.id}', 'PENDIENTE')" title="Marcar como Pendiente">
+              🟡 1. Pendiente
+            </button>
+            <button type="button" class="btn btn-xs ${this.normalizeEstado(sol.estado || sol.estado_codigo) === 'EN_REVISION' ? 'btn-azul-active' : 'btn-outline'}" 
+              onclick="app.cambiarEstado('${sol.id}', 'EN_REVISION')" title="Revisión técnica de insumos y asignación">
+              🔵 2. En revisión
+            </button>
+            <button type="button" class="btn btn-xs ${this.normalizeEstado(sol.estado || sol.estado_codigo) === 'DISENO_PROCESO' ? 'btn-morado-active' : 'btn-outline'}" 
+              onclick="app.cambiarEstado('${sol.id}', 'DISENO_PROCESO')" title="Diseñador elaborando arte">
+              🟣 3. En proceso
+            </button>
+            <button type="button" class="btn btn-xs ${this.normalizeEstado(sol.estado || sol.estado_codigo) === 'AJUSTES' ? 'btn-naranja-active' : 'btn-outline'}" 
+              onclick="app.cambiarEstado('${sol.id}', 'AJUSTES')" title="Ronda de modificaciones">
+              🟠 4. Ajustes
+            </button>
+            <button type="button" class="btn btn-xs ${this.normalizeEstado(sol.estado || sol.estado_codigo) === 'APROBADO' ? 'btn-verde-active' : 'btn-outline'}" 
+              onclick="app.cambiarEstado('${sol.id}', 'APROBADO')" title="Aprobación formal del solicitante">
+              🟢 5. Aprobado
+            </button>
+            <button type="button" class="btn btn-xs ${this.normalizeEstado(sol.estado || sol.estado_codigo) === 'FINALIZADO' ? 'btn-gris-active' : 'btn-outline'}" 
+              onclick="app.cambiarEstado('${sol.id}', 'FINALIZADO')" title="Arte final entregado">
+              ⚫ 6. Finalizado
+            </button>
+          </div>
+        </div>
+
+        <!-- ACCIONES OPERATIVAS SEGÚN FASE -->
+        <div class="mt-3 pt-3 d-flex justify-between align-center flex-wrap gap-2" style="border-top:1px solid #E2E8F0;">
+          <div class="d-flex gap-2 flex-wrap">
+            ${this.normalizeEstado(sol.estado || sol.estado_codigo) === 'PENDIENTE' ? `
+              <button class="btn btn-sm" style="background:#2563EB; color:#fff;" onclick="app.cambiarEstado('${sol.id}', 'EN_REVISION')">
+                🔵 Pasar a 'En revisión' (Validar Insumos)
+              </button>
+              <button class="btn btn-sm btn-outline" onclick="app.asignarDisenadorPrompt('${sol.id}')">
+                👤 Asignar Diseñador y Pasar a Revisión
+              </button>
+            ` : ''}
+
+            ${this.normalizeEstado(sol.estado || sol.estado_codigo) === 'EN_REVISION' ? `
+              <button class="btn btn-sm" style="background:#8B5CF6; color:#fff;" onclick="app.cambiarEstado('${sol.id}', 'DISENO_PROCESO')">
+                🟣 Iniciar 'Diseño en Proceso'
+              </button>
+              <button class="btn btn-sm btn-outline" onclick="app.asignarDisenadorPrompt('${sol.id}')">
+                👤 Reasignar Diseñador DICOM
+              </button>
+            ` : ''}
+
+            ${(this.normalizeEstado(sol.estado || sol.estado_codigo) === 'DISENO_PROCESO' || this.normalizeEstado(sol.estado || sol.estado_codigo) === 'AJUSTES') ? `
               <button class="btn btn-sm btn-gold" onclick="app.cambiarEstado('${sol.id}', 'APROBADO')">
                 ✅ Aprobar Propuesta (Visto Bueno)
               </button>
             ` : ''}
 
-            ${sol.estado_codigo === 'APROBADO' || String(sol.estado).includes('Aprobado') ? `
+            ${this.normalizeEstado(sol.estado || sol.estado_codigo) === 'APROBADO' ? `
               <button class="btn btn-sm btn-primary" onclick="app.cambiarEstado('${sol.id}', 'FINALIZADO')">
                 📦 Entregar y Finalizar Trámite
-              </button>
-            ` : ''}
-
-            ${(sol.estado_codigo === 'PENDIENTE' || String(sol.estado).includes('Pendiente')) && (state.currentUser?.rol === 'SUPERVISOR' || state.currentUser?.rol === 'ADMIN') ? `
-              <button class="btn btn-sm btn-outline" onclick="app.asignarDisenadorPrompt('${sol.id}')">
-                👤 Asignar Diseñador
-              </button>
-            ` : ''}
-
-            ${(sol.estado_codigo === 'EN_REVISION' || sol.estado_codigo === 'AJUSTES' || String(sol.estado).includes('revisión') || String(sol.estado).includes('Ajustes')) && (state.currentUser?.rol === 'DISENADOR' || state.currentUser?.rol === 'SUPERVISOR') ? `
-              <button class="btn btn-sm btn-outline" onclick="app.cambiarEstado('${sol.id}', 'DISENO_PROCESO')">
-                🎨 Marcar 'En Proceso Creativo'
               </button>
             ` : ''}
           </div>
@@ -1723,34 +1766,56 @@ const app = {
 
   async cambiarEstado(solicitudId, nuevoEstado) {
     try {
+      this.showToast(`⏳ Actualizando a ${this.getStatusBadge(nuevoEstado).label}...`, 'info');
       await fetch(`/api/solicitudes/${solicitudId}/estado`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ codigo_estado: nuevoEstado })
       });
       await this.loadSolicitudesFromApi();
+      this.showToast(`✅ Estado actualizado a: ${this.getStatusBadge(nuevoEstado).label}`, 'success');
     } catch (err) {
       console.warn('Error conectando a API para cambio de estado:', err);
       const sol = state.solicitudes.find(s => String(s.id) === String(solicitudId));
-      if (sol) sol.estado = nuevoEstado;
+      if (sol) {
+        sol.estado = nuevoEstado;
+        sol.estado_codigo = nuevoEstado;
+      }
       this.renderRequests();
       this.updateCounts();
     }
     this.openDetailModal(solicitudId);
-    this.showToast(`Estado actualizado a: ${this.getStatusBadge(nuevoEstado).label}`, 'success');
   },
 
-  asignarDisenadorPrompt(solicitudId) {
-    const dis = prompt('Ingrese el nombre del Diseñador Gráfico asignado:', 'Lic. Marco Antonio Choque');
+  async asignarDisenadorPrompt(solicitudId) {
+    const dis = prompt('Ingrese el nombre del Diseñador Gráfico de DICOM asignado:', 'Lic. Marco Antonio Choque');
     if (dis) {
-      const sol = state.solicitudes.find(s => String(s.id) === String(solicitudId));
-      if (sol) {
-        sol.disenador_asignado = dis;
-        sol.estado = 'EN_REVISION';
-        this.renderRequests();
-        this.updateCounts();
+      try {
+        this.showToast('⏳ Asignando diseñador en PostgreSQL...', 'info');
+        await fetch(`/api/solicitudes/${solicitudId}/estado`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            codigo_estado: 'EN_REVISION',
+            disenador_nombre: dis,
+            disenador_asignado_id: 'a0000001-0000-0000-0000-000000000002'
+          })
+        });
+        await this.loadSolicitudesFromApi();
         this.openDetailModal(solicitudId);
-        this.showToast(`Asignado exitosamente a: ${dis}`, 'success');
+        this.showToast(`✅ Diseñador asignado (${dis}) y trámite pasado a 🔵 En revisión`, 'success');
+      } catch (err) {
+        console.warn('Fallback local para asignación:', err);
+        const sol = state.solicitudes.find(s => String(s.id) === String(solicitudId));
+        if (sol) {
+          sol.disenador_asignado = dis;
+          sol.estado = 'EN_REVISION';
+          sol.estado_codigo = 'EN_REVISION';
+          this.renderRequests();
+          this.updateCounts();
+          this.openDetailModal(solicitudId);
+          this.showToast(`Asignado a: ${dis}`, 'success');
+        }
       }
     }
   },
