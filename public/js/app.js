@@ -11,7 +11,7 @@ const ORGANIGRAMA_GAMEA = [
   {
     id: 1,
     codigo: 'DESPACHO',
-    nombre: 'Despacho de la Alcaldesa',
+    nombre: 'Despacho del Alcalde',
     sigla: 'DESPACHO',
     direcciones: [
       { id: 1, codigo: 'DGAL', nombre: 'Dirección General de Asesoría Legal', sigla: 'DGAL' },
@@ -290,7 +290,7 @@ const USUARIOS_DIRECCIONES = {
     nombres: 'Ing. Wilfredo',
     apellidos: 'Abad Mancilla',
     cargo: 'Administrador General de Sistemas',
-    secretaria: 'Despacho de la Alcaldesa',
+    secretaria: 'Despacho del Alcalde',
     secretaria_id: 1,
     direccion: 'Dirección General de Asesoría Legal / Sistemas',
     direccion_id: 1,
@@ -489,7 +489,7 @@ const state = {
       disenador_asignado: 'Lic. Marco Antonio Choque',
       rondas_cambios_usadas: 0,
       historial_cambios: [],
-      texto_aprobado: 'La Alcaldesa de El Alto se complace en invitar a usted a la Solemne Sesión de Honor.',
+      texto_aprobado: 'El Alcalde de El Alto se complace en invitar a usted a la Solemne Sesión de Honor.',
       archivos: ['texto_protocolar_visado.pdf']
     }
   ]

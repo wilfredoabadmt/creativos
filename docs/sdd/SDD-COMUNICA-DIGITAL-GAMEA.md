@@ -43,12 +43,12 @@ Hasta el presente ciclo, el flujo de requerimientos hacia la Dirección de Comun
 - **Validación Sintáctica y Semántica Previa:** Impedir el ingreso de solicitudes incompletas o sin insumos aprobados.
 - **Trazabilidad Integral y SLA:** Asignar automáticamente un número de trámite único (código correlativo `SOL-YYYY-XXXX`), fecha de recepción y fecha límite fijada normativamente (hasta 7 días hábiles de producción estándar).
 - **Racionalización de Cambios:** Limitar formalmente las observaciones a un máximo de **2 rondas de cambios estructuradas**.
-- **Panel de Inteligencia Institucional:** Dotar al Director de Comunicación y al Despacho de la Alcaldesa de métricas de carga operativa, dependencias con mayor demanda y rendimiento de producción.
+- **Panel de Inteligencia Institucional:** Dotar al Director de Comunicación y al Despacho del Alcalde de métricas de carga operativa, dependencias con mayor demanda y rendimiento de producción.
 
 ### 1.4 Estructura Orgánica Oficial Homologada (D.M. N° 200)
 El sistema modela fielmente la jerarquía municipal aprobada mediante Decreto Municipal N° 200 para la Gestión 2026:
 
-1. **Despacho Alcaldesa:**
+1. **Despacho Alcalde:**
    - Dirección General de Asesoría Legal (DGAL)
    - Dirección de Relaciones Internacionales (DRI)
    - Unidad de Relaciones Públicas y Protocolo (URPP)

@@ -318,7 +318,7 @@ INSERT INTO tipos_diseno (nombre, descripcion, icono) VALUES
 
 -- Secretarías Municipales y Órganos (D.M. N° 200 - GESTIÓN 2026)
 INSERT INTO secretarias (id, codigo, nombre, sigla) VALUES
-(1, 'DESPACHO', 'Despacho de la Alcaldesa', 'DESPACHO'),
+(1, 'DESPACHO', 'Despacho del Alcalde', 'DESPACHO'),
 (2, 'SMGI', 'Secretaría Municipal de Gestión Institucional', 'SMGI'),
 (3, 'SMAF', 'Secretaría Municipal de Administración y Finanzas', 'SMAF'),
 (4, 'SMP', 'Secretaría Municipal de Planificación', 'SMP'),
@@ -335,7 +335,7 @@ INSERT INTO secretarias (id, codigo, nombre, sigla) VALUES
 
 -- Direcciones Oficiales Aprobadas por D.M. N° 200
 INSERT INTO direcciones (secretaria_id, codigo, nombre, sigla) VALUES
--- Despacho Alcaldesa (Asesoramiento y Control)
+-- Despacho Alcalde (Asesoramiento y Control)
 (1, 'DGAL', 'Dirección General de Asesoría Legal', 'DGAL'),
 (1, 'DRI', 'Dirección de Relaciones Internacionales', 'DRI'),
 (1, 'URPP', 'Unidad de Relaciones Públicas y Protocolo', 'URPP'),

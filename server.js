@@ -139,6 +139,11 @@ async function inicializarBaseDatos() {
       SET secretaria_id = d.secretaria_id
       FROM comunica.direcciones d
       WHERE s.direccion_id = d.id AND s.secretaria_id != d.secretaria_id;
+
+      -- Actualizar denominación institucional a Despacho del Alcalde
+      UPDATE comunica.secretarias
+      SET nombre = 'Despacho del Alcalde'
+      WHERE codigo = 'DESPACHO' AND nombre != 'Despacho del Alcalde';
     `);
     console.log('✅ [PostgreSQL 16] Trigger y consistencia relacional verificados.');
 
@@ -738,7 +743,7 @@ const rolesEnMemoria = [
 ];
 
 let usuariosEnMemoria = [
-  { id: 'a0000001-0000-0000-0000-000000000003', nombres: 'Ing. Wilfredo', apellidos: 'Abad Mancilla', cargo: 'Administrador General de Sistemas', email: 'admin@elalto.gob.bo', telefono_contacto: '77210000', activo: true, rol_id: 1, rol_codigo: 'ADMIN', rol_nombre: 'Administrador General', secretaria_id: 1, secretaria_nombre: 'Despacho de la Alcaldesa', secretaria_sigla: 'DESPACHO', direccion_id: 1, direccion_nombre: 'Dirección General de Asesoría Legal / Sistemas', direccion_sigla: 'DGS', unidad_id: null, created_at: '2026-01-01', ultimo_acceso: '2026-03-30 08:30' },
+  { id: 'a0000001-0000-0000-0000-000000000003', nombres: 'Ing. Wilfredo', apellidos: 'Abad Mancilla', cargo: 'Administrador General de Sistemas', email: 'admin@elalto.gob.bo', telefono_contacto: '77210000', activo: true, rol_id: 1, rol_codigo: 'ADMIN', rol_nombre: 'Administrador General', secretaria_id: 1, secretaria_nombre: 'Despacho del Alcalde', secretaria_sigla: 'DESPACHO', direccion_id: 1, direccion_nombre: 'Dirección General de Asesoría Legal / Sistemas', direccion_sigla: 'DGS', unidad_id: null, created_at: '2026-01-01', ultimo_acceso: '2026-03-30 08:30' },
   { id: 'a0000001-0000-0000-0000-000000000001', nombres: 'Lic. Roxana', apellidos: 'Vargas Quispe', cargo: 'Directora de Comunicación DICOM', email: 'director.dicom@elalto.gob.bo', telefono_contacto: '77210001', activo: true, rol_id: 2, rol_codigo: 'SUPERVISOR', rol_nombre: 'Supervisor / Directora DICOM', secretaria_id: 2, secretaria_nombre: 'Secretaría Municipal de Gestión Institucional', secretaria_sigla: 'SMGI', direccion_id: 2, direccion_nombre: 'Dirección de Comunicación', direccion_sigla: 'DICOM', unidad_id: null, created_at: '2026-01-02', ultimo_acceso: '2026-03-30 09:15' },
   { id: 'a0000001-0000-0000-0000-000000000002', nombres: 'Lic. Marco Antonio', apellidos: 'Choque Callisaya', cargo: 'Diseñador Gráfico Senior', email: 'disenador.marco@elalto.gob.bo', telefono_contacto: '77210002', activo: true, rol_id: 3, rol_codigo: 'DISENADOR', rol_nombre: 'Diseñador Gráfico Institucional', secretaria_id: 2, secretaria_nombre: 'Secretaría Municipal de Gestión Institucional', secretaria_sigla: 'SMGI', direccion_id: 2, direccion_nombre: 'Dirección de Comunicación', direccion_sigla: 'DICOM', unidad_id: null, created_at: '2026-01-03', ultimo_acceso: '2026-03-30 10:00' },
   { id: 'b0000001-0000-0000-0000-000000000001', nombres: 'Dra. Patricia', apellidos: 'Mendoza Limachi', cargo: 'Directora de Gestión en Salud', email: 'dir.salud@elalto.gob.bo', telefono_contacto: '78900001', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_id: 3, secretaria_nombre: 'Secretaría Municipal de Salud', secretaria_sigla: 'SMS', direccion_id: 3, direccion_nombre: 'Dirección de Gestión en Salud', direccion_sigla: 'DGSAL', unidad_id: null, created_at: '2026-01-10', ultimo_acceso: '2026-03-29 14:20' },
