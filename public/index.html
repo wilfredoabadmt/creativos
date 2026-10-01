@@ -14,48 +14,44 @@
   <!-- ENCABEZADO INSTITUCIONAL -->
   <header class="gamea-header">
     <div class="header-top-bar">
-      <div class="container d-flex justify-between align-center">
+      <div class="header-container d-flex justify-between align-center">
         <div class="badge-republica">
           <span class="flag-dot"></span> ESTADO PLURINACIONAL DE BOLIVIA • GOBIERNO AUTÓNOMO MUNICIPAL DE EL ALTO
         </div>
         <div class="top-date" id="currentDateDisplay">
-          La Paz - El Alto
+          El Alto - Gestión 2026
         </div>
       </div>
     </div>
     <div class="header-color-strip"></div>
     
     <div class="header-main-nav">
-      <div class="container d-flex justify-between align-center">
+      <div class="header-container d-flex justify-between align-center">
         <div class="brand-group d-flex align-center gap-2">
-          <img src="img/escudo-el-alto.png" alt="Escudo de El Alto" class="brand-logo-escudo" height="48">
+          <img src="img/escudo-el-alto.png" alt="Escudo de El Alto" class="brand-logo-escudo">
           <div class="brand-divider"></div>
           <div class="brand-text">
             <span class="brand-sub">GOBIERNO AUTÓNOMO MUNICIPAL DE EL ALTO</span>
             <h1 class="brand-title">COMUNICA DIGITAL <span>DICOM</span></h1>
           </div>
-          <div class="brand-divider hide-mobile"></div>
-          <img src="img/logo-gestion.png" alt="Gestión 2026-2031" class="brand-logo-gestion hide-mobile" height="40">
         </div>
 
-        <!-- ROLE SWITCHER & NAVIGATION -->
+        <!-- NAVEGACIÓN PRINCIPAL Y CONTROL DE SESIÓN -->
         <div class="nav-controls d-flex align-center gap-3">
-          <nav class="main-menu d-flex gap-2">
-            <button class="nav-btn active" data-tab="landing" id="btnTabLanding">Inicio</button>
-            <button class="nav-btn nav-btn-protected" data-tab="solicitud" id="btnTabSolicitud">Nueva Solicitud</button>
-            <button class="nav-btn nav-btn-protected" data-tab="bandeja" id="btnTabBandeja">Bandeja de Trámites <span class="badge-count" id="tramitesCount">6</span></button>
-            <button class="nav-btn nav-btn-protected" data-tab="dashboard" id="btnTabDashboard">Dashboard DICOM</button>
+          <nav class="main-menu">
+            <button class="nav-btn active" data-tab="landing" id="btnTabLanding">
+              <span>🏛️</span> Inicio
+            </button>
+            <button class="nav-btn nav-btn-protected" data-tab="solicitud" id="btnTabSolicitud">
+              <span>✍️</span> Nueva Solicitud
+            </button>
+            <button class="nav-btn nav-btn-protected" data-tab="bandeja" id="btnTabBandeja">
+              <span>📋</span> Bandeja de Trámites <span class="badge-count" id="tramitesCount">6</span>
+            </button>
+            <button class="nav-btn nav-btn-protected" data-tab="dashboard" id="btnTabDashboard">
+              <span>📊</span> Dashboard DICOM
+            </button>
           </nav>
-
-          <div class="role-selector-wrapper hide-mobile">
-            <label for="roleSelect" class="role-label">Modo:</label>
-            <select id="roleSelect" class="role-select">
-              <option value="SOLICITANTE">👤 Solicitante</option>
-              <option value="DISENADOR">🎨 Diseñador</option>
-              <option value="SUPERVISOR" selected>⭐ Supervisor</option>
-              <option value="ADMIN">🛡️ Admin</option>
-            </select>
-          </div>
 
           <div id="authNavControls">
             <!-- Cargado dinámicamente por app.js -->
