@@ -815,8 +815,8 @@ const app = {
       // Visitante anónimo / Modo público
       if (authControls) {
         authControls.innerHTML = `
-          <button class="btn btn-sm btn-gold font-semibold" onclick="app.openLoginModal()">
-            🔐 Ingresar al Sistema
+          <button class="btn-nav-login" onclick="app.openLoginModal()">
+            <span>🔐</span> Ingresar al Sistema
           </button>
         `;
       }
