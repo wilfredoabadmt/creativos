@@ -32,6 +32,10 @@ if (connectionString) {
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
   });
+
+  pool.on('connect', (client) => {
+    client.query('SET search_path TO comunica, public;');
+  });
 } else {
   console.warn('⚠️ [DB] No se detectó DATABASE_URL ni PGHOST. Se operará en modo contingencia memoria.');
 }
@@ -99,6 +103,36 @@ async function inicializarBaseDatos() {
     } else {
       console.log('✅ [PostgreSQL 16] Esquema institucional "comunica.solicitudes" verificado y listo.');
     }
+
+    // Actualizar función de trigger y search_path para garantizar correlativo sin errores
+    await client.query(`
+      SET search_path TO comunica, public;
+
+      CREATE OR REPLACE FUNCTION comunica.generar_codigo_tramite()
+      RETURNS TRIGGER AS $$
+      DECLARE
+          anio_actual TEXT := TO_CHAR(CURRENT_DATE, 'YYYY');
+          conteo INT;
+          nuevo_codigo TEXT;
+      BEGIN
+          SELECT COUNT(*) + 1 INTO conteo
+          FROM comunica.solicitudes
+          WHERE codigo_tramite LIKE 'SOL-' || anio_actual || '-%';
+
+          nuevo_codigo := 'SOL-' || anio_actual || '-' || LPAD(conteo::TEXT, 4, '0');
+          NEW.codigo_tramite := nuevo_codigo;
+          RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql;
+
+      DROP TRIGGER IF EXISTS trigger_generar_codigo_tramite ON comunica.solicitudes;
+      CREATE TRIGGER trigger_generar_codigo_tramite
+      BEFORE INSERT ON comunica.solicitudes
+      FOR EACH ROW
+      WHEN (NEW.codigo_tramite IS NULL OR NEW.codigo_tramite = '')
+      EXECUTE FUNCTION comunica.generar_codigo_tramite();
+    `);
+    console.log('✅ [PostgreSQL 16] Trigger de correlativo sincronizado con esquema comunica.');
 
     client.release();
   } catch (err) {
@@ -270,8 +304,18 @@ app.post('/api/solicitudes', async (req, res) => {
         ? body.plataformas 
         : ['Facebook'];
 
+      // Generar correlativo anual consistente
+      const anioActual = fechaRecepcion.getFullYear();
+      const countRes = await client.query(
+        `SELECT COUNT(*)::INT AS total FROM comunica.solicitudes WHERE codigo_tramite LIKE $1;`,
+        [`SOL-${anioActual}-%`]
+      );
+      const seq = (countRes.rows[0].total || 0) + 1;
+      const codigoTramiteGenerado = `SOL-${anioActual}-${String(seq).padStart(4, '0')}`;
+
       const insertSql = `
         INSERT INTO comunica.solicitudes (
+          codigo_tramite,
           solicitante_id,
           estado_id,
           secretaria_id,
@@ -309,11 +353,12 @@ app.post('/api/solicitudes', async (req, res) => {
           $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
           $11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
           $21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
-          $31, $32, 0
+          $31, $32, $33, 0
         ) RETURNING id, codigo_tramite, created_at;
       `;
 
       const values = [
+        codigoTramiteGenerado,
         solicitanteId,
         estadoId,
         secId,

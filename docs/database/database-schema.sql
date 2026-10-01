@@ -259,7 +259,7 @@ BEFORE UPDATE ON solicitudes
 FOR EACH ROW EXECUTE FUNCTION trigger_set_timestamp();
 
 -- Función para generar correlativo de trámite anual (SOL-2026-0001)
-CREATE OR REPLACE FUNCTION generar_codigo_tramite()
+CREATE OR REPLACE FUNCTION comunica.generar_codigo_tramite()
 RETURNS TRIGGER AS $$
 DECLARE
     anio_actual TEXT := TO_CHAR(CURRENT_DATE, 'YYYY');
@@ -267,7 +267,7 @@ DECLARE
     nuevo_codigo TEXT;
 BEGIN
     SELECT COUNT(*) + 1 INTO conteo
-    FROM solicitudes
+    FROM comunica.solicitudes
     WHERE codigo_tramite LIKE 'SOL-' || anio_actual || '-%';
 
     nuevo_codigo := 'SOL-' || anio_actual || '-' || LPAD(conteo::TEXT, 4, '0');
@@ -276,11 +276,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_generar_codigo_tramite ON comunica.solicitudes;
 CREATE TRIGGER trigger_generar_codigo_tramite
-BEFORE INSERT ON solicitudes
+BEFORE INSERT ON comunica.solicitudes
 FOR EACH ROW
 WHEN (NEW.codigo_tramite IS NULL OR NEW.codigo_tramite = '')
-EXECUTE FUNCTION generar_codigo_tramite();
+EXECUTE FUNCTION comunica.generar_codigo_tramite();
 
 -- ==============================================================================
 -- 17. CARGA DE DATOS SEMILLA (ORGANIGRAMA D.M. N° 200 - GESTIÓN 2026)
