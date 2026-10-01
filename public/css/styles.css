@@ -1473,12 +1473,15 @@ body {
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25);
   animation: modalScale 0.25s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-dialog.modal-md {
-  max-width: 600px;
+  max-width: 580px;
 }
 
 .modal-dialog.modal-lg {
@@ -1491,12 +1494,39 @@ body {
 }
 
 .modal-header {
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 16px 20px;
+  border-bottom: 2px solid var(--gamea-gold);
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #FAFBFD;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.modal-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.modal-header-brand div {
+  min-width: 0;
+}
+
+.modal-logo-img {
+  height: 40px !important;
+  max-height: 40px !important;
+  width: auto !important;
+  max-width: 45px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .modal-badge-id {
@@ -1510,9 +1540,10 @@ body {
 
 .modal-title {
   font-family: var(--font-display);
-  font-size: 1.3rem;
+  font-size: 1.22rem;
   font-weight: 700;
   color: var(--gamea-blue-dark);
+  line-height: 1.25;
 }
 
 .modal-header.bg-gamea-gradient {
@@ -1533,6 +1564,7 @@ body {
   height: 32px;
   border-radius: 50%;
   font-size: 1.1rem;
+  flex-shrink: 0;
   cursor: pointer;
   color: var(--text-muted);
   display: flex;
@@ -1840,6 +1872,9 @@ html, body {
 
 img {
   max-width: 100%;
+}
+
+img:not([height]):not(.modal-logo-img):not(.brand-logo-escudo):not(.brand-logo-img) {
   height: auto;
 }
 
@@ -2444,16 +2479,18 @@ img {
 
   /* Modales en Dispositivos Móviles */
   .modal-backdrop {
-    padding: 10px;
-    align-items: flex-end;
+    padding: 14px;
+    align-items: center;
   }
 
   .modal-dialog {
     max-width: 100%;
     width: 100%;
-    max-height: 92vh;
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    max-height: 90vh;
+    border-radius: var(--radius-lg);
     margin: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .modal-dialog.modal-md,
@@ -2465,11 +2502,18 @@ img {
     padding: 14px 16px;
     position: sticky;
     top: 0;
-    z-index: 20;
+    z-index: 30;
+    gap: 10px;
+  }
+
+  .modal-logo-img {
+    height: 34px !important;
+    max-height: 34px !important;
+    max-width: 38px !important;
   }
 
   .modal-title {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
   }
 
   .modal-body {
