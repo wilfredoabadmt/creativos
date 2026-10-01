@@ -236,10 +236,16 @@ graph TD
   - 🟢 `Aprobado`: `#10B981` (Verde esmeralda)
   - ⚫ `Finalizado`: `#475569` (Gris institucional completado)
 
-### 4.2 Principios de Usabilidad
-- **Formulario Wizard Progresivo:** División en 4 pasos claramente señalizados (1. Datos del Evento, 2. Características del Diseño, 3. Formato y Difusión, 4. Adjuntos y Envíos) para reducir la carga cognitiva.
-- **Micro-interacciones y Feedback Inmediato:** Indicador visual de porcentaje de completitud del brief técnico.
-- **Acciones Claras por Rol:** Botones de acción contextualmente habilitados según el rol del usuario en sesión.
+### 4.2 Principios de Usabilidad y Estándares de Diseño Visual
+- **Stepper Ejecutivo de 5 Pasos:** Implementación secuencial de alta legibilidad que cubre con 100% de paridad las 6 secciones de la Ficha Técnica del GAMEA:
+  - *Paso 01:* Datos del Evento o Actividad (Secretaría/Dirección según D.M. 200, título, fecha, lugar, público, objetivo y datos adicionales).
+  - *Paso 02:* Características del Diseño (tipo de pieza y estilo visual con opción libre reactiva).
+  - *Paso 03:* Formato y Medio de Difusión (impreso con dimensiones, digital con plataformas y formato requerido).
+  - *Paso 04:* Material e Insumos (checklist obligatorio de 5 insumos, brief textual y zona drag & drop).
+  - *Paso 05:* Solicitante y V.º B.º (datos de coordinación, consideraciones normativas y firma de visto bueno).
+- **Tipografía y Jerarquía Visual:** Tipografías combinadas de alta definición: *Outfit* para títulos principales y números de paso; *Inter* para el cuerpo y controles de formulario.
+- **Accesibilidad y Alto Contraste (WCAG 2.1 AA):** Cabeceras institucionales con fondos guindo oscuro `#4A0709` / `#7A1315` combinadas con textos blanco puro `#FFFFFF`, pill de objetivo en dorado luminoso `#FEE685` y botones con micro-interacciones sutiles de elevación.
+- **Stepper Interactivo Reactivo:** Indicadores de estado circular con micro-animaciones (activo en guindo `#7A1315` con halo de foco, completado en verde azulado `#0D9488` con glifo de verificación `✓` y conector progresivo iluminado).
 
 ---
 
