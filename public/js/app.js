@@ -273,8 +273,8 @@ const USUARIOS_DIRECCIONES = {
   'director.dicom@elalto.gob.bo': {
     id: 'a0000001-0000-0000-0000-000000000001',
     email: 'director.dicom@elalto.gob.bo',
-    nombres: 'Lic. Roxana',
-    apellidos: 'Vargas Quispe',
+    nombres: 'Lic. Mavelin',
+    apellidos: 'Yucra',
     cargo: 'Directora de Comunicación',
     secretaria: 'Secretaría Municipal de Gestión Institucional',
     secretaria_id: 2,
@@ -565,7 +565,7 @@ const app = {
       });
     }
 
-    // Botón de autocompletar demo
+    // Botón de autocompletar demo (desactivado en producción)
     const btnFillDemo = document.getElementById('btnFillDemo');
     if (btnFillDemo) {
       btnFillDemo.addEventListener('click', () => this.fillDemoData());
@@ -2266,7 +2266,7 @@ const app = {
           <div class="doc-sign-box">
             <div class="doc-seal-area">[ V.º B.º DIRECCIÓN DE COMUNICACIÓN ]</div>
             <div class="doc-sign-line"></div>
-            <div class="doc-sign-name">Lic. Roxana Vargas</div>
+            <div class="doc-sign-name">Lic. Mavelin Yucra</div>
             <div class="doc-sign-cargo">Directora de Comunicación - GAMEA</div>
           </div>
         </div>
@@ -2500,7 +2500,7 @@ const app = {
           <div class="doc-sign-box">
             <div class="doc-seal-area">[ CONTROL DE CALIDAD Y SUPERVISIÓN DICOM ]</div>
             <div class="doc-sign-line"></div>
-            <div class="doc-sign-name">Lic. Roxana Vargas</div>
+            <div class="doc-sign-name">Lic. Mavelin Yucra</div>
             <div class="doc-sign-cargo">Directora de Comunicación • GAMEA</div>
           </div>
         </div>

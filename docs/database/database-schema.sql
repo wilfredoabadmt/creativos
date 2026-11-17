@@ -410,7 +410,7 @@ INSERT INTO direcciones (secretaria_id, codigo, nombre, sigla) VALUES
 -- Usuarios Institucionales Preconfigurados por Dirección (Credenciales de Acceso Seguro)
 INSERT INTO usuarios (id, rol_id, secretaria_id, direccion_id, nombres, apellidos, cargo, email, telefono_contacto, password_hash) VALUES
 -- DICOM
-('a0000001-0000-0000-0000-000000000001', 2, 2, 4, 'Lic. Roxana', 'Vargas Quispe', 'Directora de Comunicación', 'director.dicom@elalto.gob.bo', '77210001', crypt('DicomElAlto2026!', gen_salt('bf'))),
+('a0000001-0000-0000-0000-000000000001', 2, 2, 4, 'Lic. Mavelin', 'Yucra', 'Directora de Comunicación', 'director.dicom@elalto.gob.bo', '77210001', crypt('DicomElAlto2026!', gen_salt('bf'))),
 ('a0000001-0000-0000-0000-000000000002', 3, 2, 4, 'Lic. Marco Antonio', 'Choque Callisaya', 'Diseñador Gráfico Senior', 'disenador.marco@elalto.gob.bo', '77210002', crypt('DicomElAlto2026!', gen_salt('bf'))),
 ('a0000001-0000-0000-0000-000000000003', 1, 2, 4, 'Ing. Wilfredo', 'Abad Mancilla', 'Administrador General de Sistemas', 'admin@elalto.gob.bo', '77210000', crypt('AdminElAlto2026!', gen_salt('bf'))),
 

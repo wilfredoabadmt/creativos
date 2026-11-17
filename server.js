@@ -13,13 +13,35 @@ const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
+// Cargar variables de entorno desde .env si existe (sin dependencias externas)
+const envFilePath = path.join(__dirname, '.env');
+if (fs.existsSync(envFilePath)) {
+  const envContent = fs.readFileSync(envFilePath, 'utf-8');
+  envContent.split(/\r?\n/).forEach(line => {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith('#')) {
+      const eqIdx = trimmed.indexOf('=');
+      if (eqIdx !== -1) {
+        const key = trimmed.substring(0, eqIdx).trim();
+        let val = trimmed.substring(eqIdx + 1).trim();
+        if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+          val = val.substring(1, val.length - 1);
+        }
+        if (!process.env[key]) {
+          process.env[key] = val;
+        }
+      }
+    }
+  });
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Configuración de conexión a PostgreSQL 16
 const connectionString = process.env.DATABASE_URL || (
-  process.env.PGHOST 
-    ? `postgresql://${process.env.PGUSER || 'creativos_user'}:${process.env.PGPASSWORD || 'Gamea2026!DicomCreativos'}@${process.env.PGHOST}:${process.env.PGPORT || 5432}/${process.env.PGDATABASE || 'creativos_db'}`
+  (process.env.PGHOST || process.env.DB_HOST)
+    ? `postgresql://${process.env.PGUSER || process.env.DB_USER || 'gamea_admin'}:${process.env.PGPASSWORD || process.env.DB_PASSWORD || 'SecretGamea2026_SecureDb!'}@${process.env.PGHOST || process.env.DB_HOST || 'localhost'}:${process.env.PGPORT || process.env.DB_PORT || 5432}/${process.env.PGDATABASE || process.env.DB_NAME || 'comunica_gamea'}`
     : undefined
 );
 
@@ -144,6 +166,11 @@ async function inicializarBaseDatos() {
       UPDATE comunica.secretarias
       SET nombre = 'Despacho del Alcalde'
       WHERE codigo = 'DESPACHO' AND nombre != 'Despacho del Alcalde';
+
+      -- Actualizar nombre oficial de la Directora de Comunicación
+      UPDATE comunica.usuarios
+      SET nombres = 'Lic. Mavelin', apellidos = 'Yucra'
+      WHERE email = 'director.dicom@elalto.gob.bo';
 
       -- Asegurar existencia del estado RECHAZADO
       INSERT INTO comunica.estados (codigo, nombre, color_hex, orden, descripcion)
@@ -714,30 +741,19 @@ app.get('/api/dashboard/metricas', async (req, res) => {
     }
   }
 
-  // Fallback demo
+  // En producción sin datos o contingencia, entregar contadores reales en cero sin datos ficticios
   res.json({
     exito: true,
     data: {
       resumen_kpi: {
-        solicitudes_recibidas: 142,
-        solicitudes_terminadas: 98,
-        solicitudes_pendientes: 44,
-        tiempo_promedio_dias: 4.8,
-        tasa_cumplimiento_sla: 94.2
+        solicitudes_recibidas: 0,
+        solicitudes_terminadas: 0,
+        solicitudes_pendientes: 0,
+        tiempo_promedio_dias: 0,
+        tasa_cumplimiento_sla: 100
       },
-      dependencias_mayor_demanda: [
-        { secretaria: 'Secretaría Municipal de Salud', total: 38, porcentaje: 26.8 },
-        { secretaria: 'Secretaría Municipal de Infraestructura Pública', total: 32, porcentaje: 22.5 },
-        { secretaria: 'Secretaría Municipal de Educación y Cultura', total: 24, porcentaje: 16.9 },
-        { secretaria: 'Secretaría Municipal de Desarrollo Económico', total: 18, porcentaje: 12.7 },
-        { secretaria: 'Secretaría Municipal de Seguridad Ciudadana', total: 16, porcentaje: 11.3 }
-      ],
-      piezas_mas_solicitadas: [
-        { tipo: 'Redes Sociales', cantidad: 60, porcentaje: 42.3 },
-        { tipo: 'Afiche y Poster', cantidad: 39, porcentaje: 27.5 },
-        { tipo: 'Banner y Gigantografía', cantidad: 25, porcentaje: 17.6 },
-        { tipo: 'Tríptico e Impresos', cantidad: 18, porcentaje: 12.6 }
-      ]
+      dependencias_mayor_demanda: [],
+      piezas_mas_solicitadas: []
     }
   });
 });
@@ -766,7 +782,7 @@ const rolesEnMemoria = [
 
 let usuariosEnMemoria = [
   { id: 'a0000001-0000-0000-0000-000000000003', nombres: 'Ing. Wilfredo', apellidos: 'Abad Mancilla', cargo: 'Administrador General de Sistemas', email: 'admin@elalto.gob.bo', telefono_contacto: '77210000', activo: true, rol_id: 1, rol_codigo: 'ADMIN', rol_nombre: 'Administrador General', secretaria_id: 1, secretaria_nombre: 'Despacho del Alcalde', secretaria_sigla: 'DESPACHO', direccion_id: 1, direccion_nombre: 'Dirección General de Asesoría Legal / Sistemas', direccion_sigla: 'DGS', unidad_id: null, created_at: '2026-01-01', ultimo_acceso: '2026-03-30 08:30' },
-  { id: 'a0000001-0000-0000-0000-000000000001', nombres: 'Lic. Roxana', apellidos: 'Vargas Quispe', cargo: 'Directora de Comunicación DICOM', email: 'director.dicom@elalto.gob.bo', telefono_contacto: '77210001', activo: true, rol_id: 2, rol_codigo: 'SUPERVISOR', rol_nombre: 'Supervisor / Directora DICOM', secretaria_id: 2, secretaria_nombre: 'Secretaría Municipal de Gestión Institucional', secretaria_sigla: 'SMGI', direccion_id: 2, direccion_nombre: 'Dirección de Comunicación', direccion_sigla: 'DICOM', unidad_id: null, created_at: '2026-01-02', ultimo_acceso: '2026-03-30 09:15' },
+  { id: 'a0000001-0000-0000-0000-000000000001', nombres: 'Lic. Mavelin', apellidos: 'Yucra', cargo: 'Directora de Comunicación DICOM', email: 'director.dicom@elalto.gob.bo', telefono_contacto: '77210001', activo: true, rol_id: 2, rol_codigo: 'SUPERVISOR', rol_nombre: 'Supervisor / Directora DICOM', secretaria_id: 2, secretaria_nombre: 'Secretaría Municipal de Gestión Institucional', secretaria_sigla: 'SMGI', direccion_id: 2, direccion_nombre: 'Dirección de Comunicación', direccion_sigla: 'DICOM', unidad_id: null, created_at: '2026-01-02', ultimo_acceso: '2026-03-30 09:15' },
   { id: 'a0000001-0000-0000-0000-000000000002', nombres: 'Lic. Marco Antonio', apellidos: 'Choque Callisaya', cargo: 'Diseñador Gráfico Senior', email: 'disenador.marco@elalto.gob.bo', telefono_contacto: '77210002', activo: true, rol_id: 3, rol_codigo: 'DISENADOR', rol_nombre: 'Diseñador Gráfico Institucional', secretaria_id: 2, secretaria_nombre: 'Secretaría Municipal de Gestión Institucional', secretaria_sigla: 'SMGI', direccion_id: 2, direccion_nombre: 'Dirección de Comunicación', direccion_sigla: 'DICOM', unidad_id: null, created_at: '2026-01-03', ultimo_acceso: '2026-03-30 10:00' },
   { id: 'b0000001-0000-0000-0000-000000000001', nombres: 'Dra. Patricia', apellidos: 'Mendoza Limachi', cargo: 'Directora de Gestión en Salud', email: 'dir.salud@elalto.gob.bo', telefono_contacto: '78900001', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_id: 3, secretaria_nombre: 'Secretaría Municipal de Salud', secretaria_sigla: 'SMS', direccion_id: 3, direccion_nombre: 'Dirección de Gestión en Salud', direccion_sigla: 'DGSAL', unidad_id: null, created_at: '2026-01-10', ultimo_acceso: '2026-03-29 14:20' },
   { id: 'b0000001-0000-0000-0000-000000000002', nombres: 'Ing. Roberto', apellidos: 'Mamani Condori', cargo: 'Director de Obras Municipales', email: 'dir.obras@elalto.gob.bo', telefono_contacto: '78900002', activo: true, rol_id: 4, rol_codigo: 'SOLICITANTE', rol_nombre: 'Solicitante Municipal', secretaria_id: 4, secretaria_nombre: 'Secretaría Municipal de Infraestructura Pública', secretaria_sigla: 'SMIP', direccion_id: 4, direccion_nombre: 'Dirección de Obras Municipales', direccion_sigla: 'DOM', unidad_id: null, created_at: '2026-01-12', ultimo_acceso: '2026-03-28 11:45' },
