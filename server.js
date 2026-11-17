@@ -190,6 +190,9 @@ async function inicializarBaseDatos() {
           activo BOOLEAN DEFAULT TRUE,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
+      ALTER TABLE comunica.unidades ADD COLUMN IF NOT EXISTS codigo VARCHAR(50);
+      ALTER TABLE comunica.unidades ADD COLUMN IF NOT EXISTS sigla VARCHAR(50);
+      ALTER TABLE comunica.unidades ADD COLUMN IF NOT EXISTS activo BOOLEAN DEFAULT TRUE;
 
       -- Asegurar rol SUPERADMIN
       INSERT INTO comunica.roles (codigo, nombre, descripcion)
@@ -1540,12 +1543,13 @@ app.get('/api/organigrama', async (req, res) => {
       `);
       return res.json({ exito: true, data: result.rows });
     } catch (err) {
-      console.warn('⚠️ Error consultando organigrama:', err.message);
+      console.warn('⚠️ Error consultando organigrama SQL:', err.message);
+      return res.json({ exito: true, fuente: 'Memoria oficial', data: organigramaEnMemoria });
     }
   }
 
   // Fallback desde archivo JSON estructurado
-  res.json({ exito: true, data: organigramaEnMemoria });
+  res.json({ exito: true, fuente: 'Memoria oficial', data: organigramaEnMemoria });
 });
 
 // --- CRUD SECRETARÍAS ---
