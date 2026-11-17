@@ -942,6 +942,7 @@
         <div class="usuarios-subtabs mb-3">
           <button class="subtab-btn active" data-subtab="usuarios" id="subtabUsuarios">👥 Usuarios</button>
           <button class="subtab-btn" data-subtab="roles" id="subtabRoles">🛡️ Roles</button>
+          <button class="subtab-btn" data-subtab="organigrama" id="subtabOrganigrama">🏛️ Organigrama Municipal (D.M. N° 200)</button>
         </div>
 
         <!-- Panel: Usuarios -->
@@ -1011,6 +1012,32 @@
             <!-- Renderizado dinámico por app.js -->
           </div>
         </div>
+
+        <!-- Panel: Organigrama Municipal y Gestión Estructural (CRUD) -->
+        <div id="panelOrganigrama" class="usuarios-panel" style="display:none;">
+          <div class="organigrama-mgmt-header d-flex justify-between align-center flex-wrap gap-2 mb-3">
+            <div>
+              <h3 style="color:#D4AF37; margin:0;">🏛️ Estructura Orgánica Oficial GAM El Alto</h3>
+              <p class="text-sm text-muted" style="margin:4px 0 0 0;">Gestión jerárquica de Secretarías, Direcciones y Unidades (D.M. N° 200 - Gestión 2026)</p>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-gold" onclick="app.openModalSecretaria()">➕ Nueva Secretaría</button>
+              <button class="btn btn-sm btn-primary" onclick="app.openModalDireccion()">➕ Nueva Dirección</button>
+              <button class="btn btn-sm btn-outline" onclick="app.openModalUnidad()">➕ Nueva Unidad</button>
+            </div>
+          </div>
+
+          <!-- Buscador y filtro en organigrama -->
+          <div class="organigrama-filter-bar mb-3 d-flex gap-2 flex-wrap">
+            <input type="text" id="searchOrganigrama" class="form-control" placeholder="Buscar dependencia, dirección o unidad..." style="max-width: 380px;" oninput="app.filterOrganigramaTree(this.value)">
+            <span class="badge badge-info" id="organigramaStatsPill">Cargando dependencias...</span>
+          </div>
+
+          <!-- Árbol / Listado Interactivo de Organigrama -->
+          <div class="organigrama-tree-container" id="organigramaTreeContainer">
+            <!-- Renderizado dinámico por app.js -->
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1059,10 +1086,11 @@
               <label for="usuarioRol" class="font-semibold text-sm">Rol del Sistema *</label>
               <select id="usuarioRol" class="form-control" required>
                 <option value="">Seleccione un rol...</option>
-                <option value="1">Administrador General</option>
-                <option value="2">Supervisor / Director DICOM</option>
-                <option value="3">Diseñador Gráfico Institucional</option>
-                <option value="4">Solicitante Municipal</option>
+                <option value="SUPERADMIN">👑 Super Administrador Municipal</option>
+                <option value="ADMIN">🛡️ Administrador General</option>
+                <option value="SUPERVISOR">⭐ Supervisor / Director DICOM</option>
+                <option value="DISENADOR">🎨 Diseñador Gráfico Institucional</option>
+                <option value="SOLICITANTE">📋 Solicitante Municipal</option>
               </select>
             </div>
             <div class="form-group">
@@ -1073,8 +1101,14 @@
             </div>
             <div class="form-group">
               <label for="usuarioDireccion" class="font-semibold text-sm">Dirección</label>
-              <select id="usuarioDireccion" class="form-control">
+              <select id="usuarioDireccion" class="form-control" onchange="app.onUsuarioDireccionModalChange(this.value)">
                 <option value="">Seleccione dirección...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="usuarioUnidad" class="font-semibold text-sm">Unidad / Área Organizacional</label>
+              <select id="usuarioUnidad" class="form-control">
+                <option value="">Seleccione unidad (opcional)...</option>
               </select>
             </div>
             <div class="form-group" id="grupoPassword">
@@ -1329,5 +1363,125 @@
   <div id="documentoImpresionOficial" aria-hidden="true"></div>
 
   <script src="js/app.js"></script>
+
+  <!-- MODAL: CREAR / EDITAR SECRETARÍA -->
+  <div class="modal-backdrop" id="modalSecretariaBackdrop">
+    <div class="modal-dialog modal-md">
+      <div class="modal-header bg-gamea-gradient text-white">
+        <div class="modal-header-brand">
+          <img src="img/escudo-el-alto.png" alt="Escudo El Alto" class="modal-logo-img">
+          <div>
+            <span class="badge-form-header">SUPERADMIN MUNICIPAL</span>
+            <h3 class="modal-title text-white" id="modalSecTitulo">Secretaría Municipal</h3>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal text-white" onclick="app.closeModalSecretaria()">✕</button>
+      </div>
+      <div class="modal-body p-4">
+        <form id="formSecretaria" onsubmit="app.handleSecretariaSubmit(event)">
+          <input type="hidden" id="secEditId">
+          <div class="form-group mb-3">
+            <label class="font-semibold text-sm">Código Único *</label>
+            <input type="text" id="secCodigo" class="form-control" required placeholder="Ej: SMAF">
+          </div>
+          <div class="form-group mb-3">
+            <label class="font-semibold text-sm">Nombre Oficial de Secretaría *</label>
+            <input type="text" id="secNombre" class="form-control" required placeholder="Ej: Secretaría Municipal de Administración y Finanzas">
+          </div>
+          <div class="form-group mb-3">
+            <label class="font-semibold text-sm">Sigla Oficial</label>
+            <input type="text" id="secSigla" class="form-control" placeholder="Ej: SMAF">
+          </div>
+          <div class="form-actions mt-3 d-flex justify-end gap-2">
+            <button type="button" class="btn btn-secondary" onclick="app.closeModalSecretaria()">Cancelar</button>
+            <button type="submit" class="btn btn-gold">💾 Guardar Secretaría</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CREAR / EDITAR DIRECCIÓN -->
+  <div class="modal-backdrop" id="modalDireccionBackdrop">
+    <div class="modal-dialog modal-md">
+      <div class="modal-header bg-gamea-gradient text-white">
+        <div class="modal-header-brand">
+          <img src="img/escudo-el-alto.png" alt="Escudo El Alto" class="modal-logo-img">
+          <div>
+            <span class="badge-form-header">SUPERADMIN MUNICIPAL</span>
+            <h3 class="modal-title text-white" id="modalDirTitulo">Dirección Municipal</h3>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal text-white" onclick="app.closeModalDireccion()">✕</button>
+      </div>
+      <div class="modal-body p-4">
+        <form id="formDireccion" onsubmit="app.handleDireccionSubmit(event)">
+          <input type="hidden" id="dirEditId">
+          <div class="form-group mb-3">
+            <label class="font-semibold text-sm">Secretaría Perteneciente *</label>
+            <select id="dirSecretariaSelect" class="form-control" required>
+              <option value="">Seleccione secretaría...</option>
+            </select>
+          </div>
+          <div class="form-group mb-3">
+            <label class="font-semibold text-sm">Código *</label>
+            <input type="text" id="dirCodigo" class="form-control" required placeholder="Ej: DIR-ADM">
+          </div>
+          <div class="form-group mb-3">
+            <label class="font-semibold text-sm">Nombre de la Dirección *</label>
+            <input type="text" id="dirNombre" class="form-control" required placeholder="Ej: Dirección Administrativa">
+          </div>
+          <div class="form-group mb-3">
+            <label class="font-semibold text-sm">Sigla</label>
+            <input type="text" id="dirSigla" class="form-control" placeholder="Ej: DADM">
+          </div>
+          <div class="form-actions mt-3 d-flex justify-end gap-2">
+            <button type="button" class="btn btn-secondary" onclick="app.closeModalDireccion()">Cancelar</button>
+            <button type="submit" class="btn btn-primary">💾 Guardar Dirección</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CREAR / EDITAR UNIDAD -->
+  <div class="modal-backdrop" id="modalUnidadBackdrop">
+    <div class="modal-dialog modal-md">
+      <div class="modal-header bg-gamea-gradient text-white">
+        <div class="modal-header-brand">
+          <img src="img/escudo-el-alto.png" alt="Escudo El Alto" class="modal-logo-img">
+          <div>
+            <span class="badge-form-header">SUPERADMIN MUNICIPAL</span>
+            <h3 class="modal-title text-white" id="modalUnitTitulo">Unidad / Área</h3>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal text-white" onclick="app.closeModalUnidad()">✕</button>
+      </div>
+      <div class="modal-body p-4">
+        <form id="formUnidad" onsubmit="app.handleUnidadSubmit(event)">
+          <input type="hidden" id="unitEditId">
+          <div class="form-group mb-3">
+            <label class="font-semibold text-sm">Dirección Dependiente *</label>
+            <select id="unitDireccionSelect" class="form-control" required>
+              <option value="">Seleccione dirección...</option>
+            </select>
+          </div>
+          <div class="form-group mb-3">
+            <label class="font-semibold text-sm">Nombre de la Unidad / Área *</label>
+            <input type="text" id="unitNombre" class="form-control" required placeholder="Ej: Unidad de Presupuesto">
+          </div>
+          <div class="form-group mb-3">
+            <label class="font-semibold text-sm">Sigla / Código (Opcional)</label>
+            <input type="text" id="unitSigla" class="form-control" placeholder="Ej: UP">
+          </div>
+          <div class="form-actions mt-3 d-flex justify-end gap-2">
+            <button type="button" class="btn btn-secondary" onclick="app.closeModalUnidad()">Cancelar</button>
+            <button type="submit" class="btn btn-outline" style="border-color:#D4AF37; color:#D4AF37;">💾 Guardar Unidad</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

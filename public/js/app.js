@@ -9,163 +9,651 @@
 // ==============================================================================
 const ORGANIGRAMA_GAMEA = [
   {
-    id: 1,
-    codigo: 'DESPACHO',
-    nombre: 'Despacho del Alcalde',
-    sigla: 'DESPACHO',
-    direcciones: [
-      { id: 1, codigo: 'DGAL', nombre: 'Dirección General de Asesoría Legal', sigla: 'DGAL' },
-      { id: 2, codigo: 'DRI', nombre: 'Dirección de Relaciones Internacionales', sigla: 'DRI' },
-      { id: 3, codigo: 'URPP', nombre: 'Unidad de Relaciones Públicas y Protocolo', sigla: 'URPP' }
+    "codigo": "DESPACHO",
+    "nombre": "Despacho del Alcalde",
+    "sigla": "DESPACHO",
+    "direcciones": [
+      {
+        "codigo": "DGAL",
+        "nombre": "Dirección General de Asesoría Legal",
+        "sigla": "DGAL",
+        "unidades": [
+          "Unidad de Asuntos Jurisdiccionales",
+          "Unidad de Normas Municipales y Asuntos Administrativos",
+          "Unidad de Defensa y Regularización de Bienes de Dominio Municipal"
+        ]
+      },
+      {
+        "codigo": "DIPLAN",
+        "nombre": "Dirección de Planificación",
+        "sigla": "DIPLAN",
+        "unidades": [
+          "Unidad de Programación de Operaciones",
+          "Unidad de Inversión Pública y Seguimiento",
+          "Unidad de Desarrollo Organizacional",
+          "Unidad de Planificación Estratégica",
+          "Unidad de Ordenamiento Territorial"
+        ]
+      },
+      {
+        "codigo": "DRI",
+        "nombre": "Dirección de Relaciones Internacionales",
+        "sigla": "DRI",
+        "unidades": []
+      },
+      {
+        "codigo": "UNID-DESPACHO",
+        "nombre": "Unidades de Asesoramiento y Control Directo del Despacho",
+        "sigla": "U-DESPACHO",
+        "unidades": [
+          "Unidad de Transparencia y Lucha Contra la Corrupción",
+          "Unidad Sumariante",
+          "Unidad de Auditoría Interna",
+          "Unidad de Límites",
+          "Unidad de Relaciones Públicas y Protocolo",
+          "Unidad de Gestión Social"
+        ]
+      }
     ]
   },
   {
-    id: 2,
-    codigo: 'SMGI',
-    nombre: 'Secretaría Municipal de Gestión Institucional',
-    sigla: 'SMGI',
-    direcciones: [
-      { id: 4, codigo: 'DICOM', nombre: 'Dirección de Comunicación', sigla: 'DICOM' },
-      { id: 5, codigo: 'DAC', nombre: 'Dirección de Atención Ciudadana', sigla: 'DAC' }
+    "codigo": "SMGI",
+    "nombre": "Secretaría Municipal de Gestión Institucional",
+    "sigla": "SMGI",
+    "direcciones": [
+      {
+        "codigo": "DICOM",
+        "nombre": "Dirección de Comunicación",
+        "sigla": "DICOM",
+        "unidades": [
+          "Unidad de Prensa",
+          "Unidad de Imagen Corporativa",
+          "Unidad de Comunicación Digital"
+        ]
+      },
+      {
+        "codigo": "DAC",
+        "nombre": "Dirección de Atención Ciudadana",
+        "sigla": "DAC",
+        "unidades": [
+          "Unidad de Coordinación con Subalcaldías",
+          "Unidad de Archivo Central",
+          "Unidad de Prevención de Conflictos",
+          "Unidad de Sistema Único de Trámites"
+        ]
+      },
+      {
+        "codigo": "DAP",
+        "nombre": "Dirección de Alumbrado Público",
+        "sigla": "DAP",
+        "unidades": [
+          "Unidad Operativa de Alumbrado Público",
+          "Unidad de Programas y Proyectos de Alumbrado Público"
+        ]
+      }
     ]
   },
   {
-    id: 3,
-    codigo: 'SMAF',
-    nombre: 'Secretaría Municipal de Administración y Finanzas',
-    sigla: 'SMAF',
-    direcciones: [
-      { id: 6, codigo: 'DIR-ADM', nombre: 'Dirección Administrativa', sigla: 'DIR-ADM' },
-      { id: 7, codigo: 'DIR-CONT', nombre: 'Dirección de Contrataciones', sigla: 'DIR-CONT' },
-      { id: 8, codigo: 'DIR-TES', nombre: 'Dirección del Tesoro Municipal', sigla: 'DIR-TES' },
-      { id: 9, codigo: 'DIR-ATM', nombre: 'Dirección de Administración Tributaria Municipal', sigla: 'DATM' },
-      { id: 10, codigo: 'DIR-TH', nombre: 'Dirección de Talento Humano', sigla: 'DTH' }
+    "codigo": "SMAF",
+    "nombre": "Secretaría Municipal de Administración y Finanzas",
+    "sigla": "SMAF",
+    "direcciones": [
+      {
+        "codigo": "DIR-TES",
+        "nombre": "Dirección del Tesoro Municipal",
+        "sigla": "DTM",
+        "unidades": [
+          "Unidad de Tesorería",
+          "Unidad de Presupuesto",
+          "Unidad de Contabilidad",
+          "Unidad de Crédito Público y Gestión de Financiamiento"
+        ]
+      },
+      {
+        "codigo": "DIR-TH",
+        "nombre": "Dirección de Talento Humano",
+        "sigla": "DTH",
+        "unidades": [
+          "Unidad de Registro",
+          "Unidad de Asesoría Legal DTH",
+          "Unidad de Planillas y Control",
+          "Unidad de Selección y Contratación",
+          "Unidad de Capacitación y Evaluación"
+        ]
+      },
+      {
+        "codigo": "DIR-ATM",
+        "nombre": "Dirección de Administración Tributaria Municipal",
+        "sigla": "DATM",
+        "unidades": [
+          "Unidad de Ingresos y Control Tributario",
+          "Unidad de Asesoría Jurídica y Cobranza Coactiva",
+          "Unidad de Fiscalización y Recaudaciones"
+        ]
+      },
+      {
+        "codigo": "DIR-CONT",
+        "nombre": "Dirección de Contrataciones",
+        "sigla": "DCONT",
+        "unidades": [
+          "Unidad de Adquisiciones y Contrataciones Menores",
+          "Unidad de Licitaciones",
+          "Unidad Jurídica de Contrataciones"
+        ]
+      },
+      {
+        "codigo": "DIR-ADM",
+        "nombre": "Dirección Administrativa",
+        "sigla": "DADM",
+        "unidades": [
+          "Unidad de Activos Fijos",
+          "Unidad de Servicios Generales y Mantenimiento",
+          "Unidad de Almacenes",
+          "Unidad de Administración de Sistemas de Información"
+        ]
+      }
     ]
   },
   {
-    id: 4,
-    codigo: 'SMP',
-    nombre: 'Secretaría Municipal de Planificación',
-    sigla: 'SMP',
-    direcciones: [
-      { id: 11, codigo: 'DIR-PLAN', nombre: 'Dirección de Planificación', sigla: 'DIPLAN' },
-      { id: 12, codigo: 'DIR-ATC', nombre: 'Dirección de Administración Territorial y Catastro', sigla: 'DATC' }
+    "codigo": "SMMU",
+    "nombre": "Secretaría Municipal de Movilidad Urbana",
+    "sigla": "SMMU",
+    "direcciones": [
+      {
+        "codigo": "DIR-RMU",
+        "nombre": "Dirección de Regulación de la Movilidad Urbana",
+        "sigla": "DRMU",
+        "unidades": [
+          "Unidad de Planificación de la Movilidad Urbana Sostenible",
+          "Unidad de Señalización y Semaforización",
+          "Unidad de Regulación del Transporte",
+          "Unidad Guardia Municipal de Transporte"
+        ]
+      }
     ]
   },
   {
-    id: 5,
-    codigo: 'SMMU',
-    nombre: 'Secretaría Municipal de Movilidad Urbana',
-    sigla: 'SMMU',
-    direcciones: [
-      { id: 13, codigo: 'DIR-RMU', nombre: 'Dirección de Regulación de la Movilidad Urbana', sigla: 'DRMU' },
-      { id: 14, codigo: 'DIR-BUS', nombre: 'Dirección Municipal de Transporte Público – Bus Municipal', sigla: 'DMTP-BUS' }
+    "codigo": "SMEC",
+    "nombre": "Secretaría Municipal de Educación y Cultura",
+    "sigla": "SMEC",
+    "direcciones": [
+      {
+        "codigo": "DIR-CULT",
+        "nombre": "Dirección de Cultura",
+        "sigla": "DCULT",
+        "unidades": [
+          "Unidad de Fomento a Iniciativas Artísticas y Culturales",
+          "Escuela Municipal de Artes",
+          "Unidad de Administración de Espacios Culturales",
+          "Unidad de Turismo"
+        ]
+      },
+      {
+        "codigo": "DIR-ASE",
+        "nombre": "Dirección de Atención Servicios de Educación",
+        "sigla": "DASE",
+        "unidades": [
+          "Unidad de Programas Educativos",
+          "Unidad de la Juventud"
+        ]
+      },
+      {
+        "codigo": "DIR-AMIE",
+        "nombre": "Dirección de Administración y Mejora de la Infraestructura y Equipamiento Educativo",
+        "sigla": "DAMIEE",
+        "unidades": [
+          "Unidad de Mejora de la Infraestructura y Equipamiento Educativo",
+          "Unidad de Regularización de Bienes Inmuebles Sector de Educación"
+        ]
+      }
     ]
   },
   {
-    id: 6,
-    codigo: 'SMEC',
-    nombre: 'Secretaría Municipal de Educación y Cultura',
-    sigla: 'SMEC',
-    direcciones: [
-      { id: 15, codigo: 'DIR-CULT', nombre: 'Dirección de Cultura', sigla: 'DICCULT' },
-      { id: 16, codigo: 'DIR-DEP', nombre: 'Dirección de Deportes', sigla: 'DIR-DEP' },
-      { id: 17, codigo: 'DIR-ASE', nombre: 'Dirección de Atención y Servicios de Educación', sigla: 'DASE' }
+    "codigo": "SMDHSI",
+    "nombre": "Secretaría Municipal de Desarrollo Humano y Social Integral",
+    "sigla": "SMDHSI",
+    "direcciones": [
+      {
+        "codigo": "DIR-NGAS",
+        "nombre": "Dirección de Niñez, Género y Atención Social",
+        "sigla": "DNGAS",
+        "unidades": [
+          "Unidad de la Infancia, Niñez y Adolescencia",
+          "Unidad de la Mujer",
+          "Unidad de Atención Integral a la Familia",
+          "Unidad de Poblaciones Diversas"
+        ]
+      },
+      {
+        "codigo": "DIR-DI",
+        "nombre": "Dirección de Desarrollo Integral",
+        "sigla": "DDI",
+        "unidades": [
+          "Unidad de Adultos Mayores",
+          "Unidad de Atención a Personas con Discapacidad"
+        ]
+      },
+      {
+        "codigo": "DIR-DEP",
+        "nombre": "Dirección de Deportes",
+        "sigla": "DDEP",
+        "unidades": [
+          "Unidad de Infraestructura Deportiva",
+          "Unidad de Fortalecimiento Deportivo"
+        ]
+      }
     ]
   },
   {
-    id: 7,
-    codigo: 'SMDHSI',
-    nombre: 'Secretaría Municipal de Desarrollo Humano y Social Integral',
-    sigla: 'SMDHSI',
-    direcciones: [
-      { id: 18, codigo: 'DIR-NGAS', nombre: 'Dirección de Niñez, Género y Atención Social', sigla: 'DNGAS' },
-      { id: 19, codigo: 'DIR-DI', nombre: 'Dirección de Desarrollo Integral', sigla: 'DDI' }
+    "codigo": "SMSC",
+    "nombre": "Secretaría Municipal de Seguridad Ciudadana",
+    "sigla": "SMSC",
+    "direcciones": [
+      {
+        "codigo": "DIR-SPPST",
+        "nombre": "Dirección de Seguridad Pública, Programas de Seguridad Ciudadana y Soluciones Tecnológicas",
+        "sigla": "DSPPST",
+        "unidades": [
+          "Intendencia, Guardia y Banda Municipal",
+          "Unidad del Observatorio Municipal",
+          "Unidad de Programas de Seguridad Ciudadana y Soluciones Tecnológicas"
+        ]
+      },
+      {
+        "codigo": "DIR-FM",
+        "nombre": "Dirección de Ferias y Mercados",
+        "sigla": "DFM",
+        "unidades": [
+          "Unidad de Ferias",
+          "Unidad de Mercados"
+        ]
+      }
     ]
   },
   {
-    id: 8,
-    codigo: 'SMSC',
-    nombre: 'Secretaría Municipal de Seguridad Ciudadana',
-    sigla: 'SMSC',
-    direcciones: [
-      { id: 20, codigo: 'DIR-SP', nombre: 'Dirección de Seguridad Pública, Programas y Soluciones Tecnológicas', sigla: 'DSPPST' },
-      { id: 21, codigo: 'INT-GUARD', nombre: 'Intendencia, Guardia y Banda Municipal', sigla: 'IGBM' },
-      { id: 22, codigo: 'DIR-FM', nombre: 'Dirección de Ferias y Mercados', sigla: 'DFM' }
+    "codigo": "SMS",
+    "nombre": "Secretaría Municipal de Salud",
+    "sigla": "SMS",
+    "direcciones": [
+      {
+        "codigo": "DIR-GS",
+        "nombre": "Dirección de Gestión en Salud",
+        "sigla": "DGS",
+        "unidades": [
+          "Unidad de Planificación Municipal en Salud",
+          "Unidad Técnica de Administración del S.U.S.",
+          "Unidad de Programas y Proyectos",
+          "Unidad de Promoción y Prevención",
+          "Unidad de Epidemiología"
+        ]
+      },
+      {
+        "codigo": "DIR-ESPN",
+        "nombre": "Dirección de Establecimientos de Salud de Primer Nivel",
+        "sigla": "DESPN",
+        "unidades": [
+          "Red de Salud Municipal Corea",
+          "Red de Salud Municipal Los Andes",
+          "Red de Salud Municipal Holandés",
+          "Red de Salud Municipal Lotes y Servicios",
+          "Red de Salud Municipal Senkata"
+        ]
+      },
+      {
+        "codigo": "DIR-GSSND",
+        "nombre": "Dirección de Gestión Servicios de Salud Nivel Desconcentrado",
+        "sigla": "DGSSND",
+        "unidades": [
+          "Hospital Municipal Boliviano Holandés",
+          "Hospital Municipal Los Andes",
+          "Hospital Municipal Modelo Corea",
+          "Hospital Municipal Qullañ Uta",
+          "Hospital Municipal Modelo Boliviano Japonés"
+        ]
+      }
     ]
   },
   {
-    id: 9,
-    codigo: 'SMS',
-    nombre: 'Secretaría Municipal de Salud',
-    sigla: 'SMS',
-    direcciones: [
-      { id: 23, codigo: 'DIR-GS', nombre: 'Dirección de Gestión en Salud', sigla: 'DGS' },
-      { id: 24, codigo: 'DIR-GSSND', nombre: 'Dirección de Gestión Servicios de Salud Nivel Desconcentrado', sigla: 'DGSSND' },
-      { id: 25, codigo: 'DIR-ESPN', nombre: 'Dirección de Establecimientos de Salud de Primer Nivel', sigla: 'DESPN' },
-      { id: 26, codigo: 'HOSP-MUN', nombre: 'Red de Hospitales Municipales (Holandés, Los Andes, Corea, Qullañ Uta, Japonés)', sigla: 'HOSP-MUN' }
+    "codigo": "SMIP",
+    "nombre": "Secretaría Municipal de Infraestructura Pública",
+    "sigla": "SMIP",
+    "direcciones": [
+      {
+        "codigo": "DIR-PM",
+        "nombre": "Dirección de Proyectos Municipales",
+        "sigla": "DPM",
+        "unidades": [
+          "Unidad de Proyectos Municipales",
+          "Unidad de Proyectos Estratégicos"
+        ]
+      },
+      {
+        "codigo": "DIR-FO",
+        "nombre": "Dirección de Fiscalización de Obras",
+        "sigla": "DFO",
+        "unidades": [
+          "Unidad de Fiscalización de Proyectos Estratégicos",
+          "Unidad de Fiscalización de Proyectos Municipales"
+        ]
+      },
+      {
+        "codigo": "DIR-SO",
+        "nombre": "Dirección de Supervisión de Obras",
+        "sigla": "DSO",
+        "unidades": [
+          "Unidad de Supervisión de Obras Estratégicas",
+          "Unidad de Supervisión de Obras Municipales",
+          "Unidad de Cierre de Proyectos"
+        ]
+      },
+      {
+        "codigo": "DIR-OM",
+        "nombre": "Dirección de Obras Municipales",
+        "sigla": "DOM",
+        "unidades": [
+          "Unidad de Infraestructura Municipal",
+          "Unidad de Infraestructura Vial",
+          "Unidad de Pavimentos",
+          "Unidad de Mantenimiento y Bacheo",
+          "Unidad de Administración de Maquinarias"
+        ]
+      },
+      {
+        "codigo": "DIR-ATC",
+        "nombre": "Dirección de Administración Territorial y Catastro",
+        "sigla": "DATC",
+        "unidades": [
+          "Unidad de Catastro Municipal y Cartografía",
+          "Unidad de Administración Territorial",
+          "Unidad de Vialidad",
+          "Unidad Jurídica de Administración Territorial"
+        ]
+      }
     ]
   },
   {
-    id: 10,
-    codigo: 'SMIP',
-    nombre: 'Secretaría Municipal de Infraestructura Pública',
-    sigla: 'SMIP',
-    direcciones: [
-      { id: 27, codigo: 'DIR-PM', nombre: 'Dirección de Proyectos Municipales', sigla: 'DPM' },
-      { id: 28, codigo: 'DIR-SO', nombre: 'Dirección de Supervisión de Obras', sigla: 'DSO' },
-      { id: 29, codigo: 'DIR-FO', nombre: 'Dirección de Fiscalización de Obras', sigla: 'DFO' },
-      { id: 30, codigo: 'DIR-OM', nombre: 'Dirección de Obras Municipales', sigla: 'DOM' },
-      { id: 31, codigo: 'DIR-AP', nombre: 'Dirección de Alumbrado Público', sigla: 'DAP' }
+    "codigo": "SMASGAR",
+    "nombre": "Secretaría Municipal de Agua, Saneamiento, Gestión Ambiental y Riesgos",
+    "sigla": "SMASGAR",
+    "direcciones": [
+      {
+        "codigo": "DIR-SBRHCA",
+        "nombre": "Dirección de Saneamiento Básico, Recursos Hídricos y Control Ambiental",
+        "sigla": "DSBRHCA",
+        "unidades": [
+          "Unidad de Recursos Hídricos y Drenaje Pluvial",
+          "Unidad de Saneamiento Básico",
+          "Unidad de Control y Monitoreo Ambiental",
+          "Unidad de Prevención y Calidad Ambiental"
+        ]
+      },
+      {
+        "codigo": "DIR-GIR",
+        "nombre": "Dirección de Gestión Integral de Residuos",
+        "sigla": "DGIR",
+        "unidades": [
+          "Unidad de Gestión de Residuos",
+          "Unidad de Seguimiento y Control"
+        ]
+      },
+      {
+        "codigo": "DIR-GR",
+        "nombre": "Dirección de Gestión de Riesgos",
+        "sigla": "DGR",
+        "unidades": [
+          "Unidad de Prevención de Riesgos",
+          "Centro de Operaciones de Emergencia (COE)"
+        ]
+      },
+      {
+        "codigo": "DIR-FAP",
+        "nombre": "Dirección de Forestación y Áreas Protegidas",
+        "sigla": "DFAP",
+        "unidades": [
+          "Unidad de Áreas Verdes, Protegidas y Bofedales",
+          "Unidad de Forestación"
+        ]
+      }
     ]
   },
   {
-    id: 11,
-    codigo: 'SMASGAR',
-    nombre: 'Secretaría Municipal de Agua, Saneamiento, Gestión Ambiental y Riesgos',
-    sigla: 'SMASGAR',
-    direcciones: [
-      { id: 32, codigo: 'DIR-GIR', nombre: 'Dirección de Gestión Integral de Residuos', sigla: 'DGIR' },
-      { id: 33, codigo: 'DIR-SBRHCA', nombre: 'Dirección de Saneamiento Básico, Recursos Hídricos y Control Ambiental', sigla: 'DSBRHCA' },
-      { id: 34, codigo: 'DIR-GR', nombre: 'Dirección de Gestión de Riesgos', sigla: 'DGR' },
-      { id: 35, codigo: 'DIR-FAP', nombre: 'Dirección de Forestación y Áreas Protegidas', sigla: 'DFAP' }
+    "codigo": "SMDE",
+    "nombre": "Secretaría Municipal de Desarrollo Económico",
+    "sigla": "SMDE",
+    "direcciones": [
+      {
+        "codigo": "DIR-DPPYMES",
+        "nombre": "Dirección de Desarrollo Productivo de Pequeñas y Medianas Empresas",
+        "sigla": "DDP-PYMES",
+        "unidades": [
+          "Unidad de Competitividad y Productividad",
+          "Unidad de Innovación y Emprendimiento"
+        ]
+      },
+      {
+        "codigo": "DIR-DPA",
+        "nombre": "Dirección de Desarrollo Productivo Artesanal",
+        "sigla": "DDPA",
+        "unidades": [
+          "Unidad de Promoción Artesanal",
+          "Unidad de Desarrollo Productivo Artesanal"
+        ]
+      },
+      {
+        "codigo": "DIR-ASA",
+        "nombre": "Dirección de Agropecuaria y Seguridad Alimentaria",
+        "sigla": "DASA",
+        "unidades": [
+          "Unidad de Fortalecimiento Agropecuario",
+          "Unidad de Gestión de Proyectos Agropecuarios"
+        ]
+      },
+      {
+        "codigo": "DIR-SMEI",
+        "nombre": "Dirección de Servicios Municipales e Iniciativas Económicas",
+        "sigla": "DSMEI",
+        "unidades": [
+          "Unidad de Administración de Servicios Municipales",
+          "Unidad de Iniciativas Económicas"
+        ]
+      },
+      {
+        "codigo": "DIR-BUS",
+        "nombre": "Dirección Municipal de Transporte Público – Bus Municipal",
+        "sigla": "DMTP-BUS",
+        "unidades": [
+          "Unidad de Operaciones",
+          "Unidad de Mantenimiento",
+          "Unidad de Administración y Recaudo"
+        ]
+      }
     ]
   },
   {
-    id: 12,
-    codigo: 'SMDE',
-    nombre: 'Secretaría Municipal de Desarrollo Económico',
-    sigla: 'SMDE',
-    direcciones: [
-      { id: 36, codigo: 'DIR-DPA', nombre: 'Dirección de Desarrollo Productivo Artesanal', sigla: 'DDPA' },
-      { id: 37, codigo: 'DIR-ASA', nombre: 'Dirección de Agropecuaria y Seguridad Alimentaria', sigla: 'DASA' },
-      { id: 38, codigo: 'DIR-DPPYME', nombre: 'Dirección de Desarrollo Productivo de Pequeñas y Medianas Empresas', sigla: 'DDPPYME' },
-      { id: 39, codigo: 'DIR-SMEI', nombre: 'Dirección de Servicios Municipales e Iniciativas Económicas', sigla: 'DSMEI' }
+    "codigo": "SUBALCALDIAS",
+    "nombre": "Subalcaldías Municipales (Distritos Urbanos y Rurales D-1 al D-14)",
+    "sigla": "SUB-D1-14",
+    "direcciones": [
+      {
+        "codigo": "SUB-D1",
+        "nombre": "Subalcaldía Distrito Municipal - 1",
+        "sigla": "SDM-1",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D2",
+        "nombre": "Subalcaldía Distrito Municipal - 2",
+        "sigla": "SDM-2",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D3",
+        "nombre": "Subalcaldía Distrito Municipal - 3",
+        "sigla": "SDM-3",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D4",
+        "nombre": "Subalcaldía Distrito Municipal - 4",
+        "sigla": "SDM-4",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D5",
+        "nombre": "Subalcaldía Distrito Municipal - 5",
+        "sigla": "SDM-5",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D6",
+        "nombre": "Subalcaldía Distrito Municipal - 6",
+        "sigla": "SDM-6",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D7",
+        "nombre": "Subalcaldía Distrito Municipal - 7",
+        "sigla": "SDM-7",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D8",
+        "nombre": "Subalcaldía Distrito Municipal - 8",
+        "sigla": "SDM-8",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D9",
+        "nombre": "Subalcaldía Distrito Municipal - 9",
+        "sigla": "SDM-9",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D10",
+        "nombre": "Subalcaldía Distrito Municipal - 10",
+        "sigla": "SDM-10",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D11",
+        "nombre": "Subalcaldía Distrito Municipal - 11",
+        "sigla": "SDM-11",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D12",
+        "nombre": "Subalcaldía Distrito Municipal - 12",
+        "sigla": "SDM-12",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D13",
+        "nombre": "Subalcaldía Distrito Municipal - 13",
+        "sigla": "SDM-13",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D14",
+        "nombre": "Subalcaldía Distrito Municipal - 14",
+        "sigla": "SDM-14",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      }
     ]
   },
   {
-    id: 13,
-    codigo: 'SUBALCALDIAS',
-    nombre: 'Subalcaldías Municipales (Distritos 1 al 14)',
-    sigla: 'SUB-D1-14',
-    direcciones: [
-      { id: 40, codigo: 'SUB-D1-7', nombre: 'Subalcaldías Distritos Urbanos (D-1 al D-7)', sigla: 'SUB-URB1' },
-      { id: 41, codigo: 'SUB-D8-14', nombre: 'Subalcaldías Distritos Urbanos y Rurales (D-8 al D-14)', sigla: 'SUB-URB2' }
-    ]
-  },
-  {
-    id: 14,
-    codigo: 'DESCENTRALIZADO',
-    nombre: 'Nivel Descentralizado y Empresas Municipales',
-    sigla: 'DESCENTRALIZADO',
-    direcciones: [
-      { id: 42, codigo: 'TERM-MET', nombre: 'Terminal Metropolitana El Alto', sigla: 'TMEA' },
-      { id: 43, codigo: 'LAB-OXIG', nombre: 'Laboratorio Industrial de Oxígeno Medicinal – G.A.M.E.A.', sigla: 'LIOM-GAMEA' }
+    "codigo": "DESCENTRALIZADO",
+    "nombre": "Nivel Descentralizado y Empresas Municipales",
+    "sigla": "DESCENTRALIZADO",
+    "direcciones": [
+      {
+        "codigo": "TMEA",
+        "nombre": "Terminal Metropolitana El Alto",
+        "sigla": "TMEA",
+        "unidades": [
+          "Unidad de Administración y Operaciones"
+        ]
+      },
+      {
+        "codigo": "LIOM-GAMEA",
+        "nombre": "Laboratorio Industrial de Oxígeno Medicinal – G.A.M.E.A.",
+        "sigla": "LIOM-GAMEA",
+        "unidades": [
+          "Unidad de Producción y Calidad"
+        ]
+      }
     ]
   }
 ];
-
-// Alias para compatibilidad institucional
 const ORGANIGRAMA_OFICIAL = ORGANIGRAMA_GAMEA;
 
 // ==============================================================================
@@ -283,6 +771,20 @@ const USUARIOS_DIRECCIONES = {
     telefono: '77210001',
     rol: 'SUPERVISOR',
     badge: '⭐ Directora DICOM'
+  },
+  'superadmin@elalto.gob.bo': {
+    id: 'c0000001-0000-0000-0000-000000000001',
+    email: 'superadmin@elalto.gob.bo',
+    nombres: 'Ing. Wilfredo',
+    apellidos: 'Abad Mancilla',
+    cargo: 'Super Administrador del Sistema Municipal',
+    secretaria: 'Despacho del Alcalde',
+    secretaria_id: 1,
+    direccion: 'Dirección General de Asesoría Legal',
+    direccion_id: 1,
+    telefono: '77210000',
+    rol: 'SUPERADMIN',
+    badge: '👑 Super Administrador Municipal'
   },
   'admin@elalto.gob.bo': {
     id: 'a0000001-0000-0000-0000-000000000003',
@@ -708,7 +1210,7 @@ const app = {
         );
         return;
       }
-      if (state.currentUser.rol !== 'ADMIN' && state.currentUser.rol_id !== 1) {
+      if (state.currentUser.rol !== 'ADMIN' && state.currentUser.rol !== 'SUPERADMIN' && state.currentUser.rol_id !== 1 && state.currentUser.rol_id !== 0) {
         this.showToast('Acceso denegado: solo el Administrador General puede gestionar usuarios.', 'error');
         return;
       }
@@ -794,7 +1296,7 @@ const app = {
 
       protectedBtns.forEach(btn => {
         if (btn.classList.contains('nav-btn-admin')) {
-          btn.style.display = (state.currentUser.rol === 'ADMIN' || state.currentUser.rol_id === 1) ? 'inline-flex' : 'none';
+          btn.style.display = (state.currentUser.rol === 'ADMIN' || state.currentUser.rol === 'SUPERADMIN' || state.currentUser.rol_id === 1 || state.currentUser.rol_id === 0) ? 'inline-flex' : 'none';
         } else {
           btn.style.display = 'inline-flex';
         }
@@ -917,7 +1419,7 @@ const app = {
 
   showTab(tabName) {
     if (tabName === 'usuarios') {
-      if (!state.currentUser || (state.currentUser.rol !== 'ADMIN' && state.currentUser.rol_id !== 1)) {
+      if (!state.currentUser || (state.currentUser.rol !== 'ADMIN' && state.currentUser.rol !== 'SUPERADMIN' && state.currentUser.rol_id !== 1 && state.currentUser.rol_id !== 0)) {
         this.showToast('Acceso denegado: solo el Administrador General puede acceder a la Gestión de Usuarios.', 'error');
         return;
       }
@@ -2576,27 +3078,396 @@ const app = {
     state.usuariosState.subtabActual = subtab;
     const btnUsuarios = document.getElementById('subtabUsuarios');
     const btnRoles = document.getElementById('subtabRoles');
+    const btnOrganigrama = document.getElementById('subtabOrganigrama');
     const panelUsuarios = document.getElementById('panelUsuarios');
     const panelRoles = document.getElementById('panelRoles');
+    const panelOrganigrama = document.getElementById('panelOrganigrama');
 
-    if (btnUsuarios && btnRoles && panelUsuarios && panelRoles) {
-      if (subtab === 'usuarios') {
-        btnUsuarios.classList.add('active');
-        btnRoles.classList.remove('active');
-        panelUsuarios.style.display = 'block';
-        panelRoles.style.display = 'none';
-        this.loadUsuarios();
+    [btnUsuarios, btnRoles, btnOrganigrama].forEach(b => b && b.classList.remove('active'));
+    [panelUsuarios, panelRoles, panelOrganigrama].forEach(p => p && (p.style.display = 'none'));
+
+    if (subtab === 'roles') {
+      if (btnRoles) btnRoles.classList.add('active');
+      if (panelRoles) panelRoles.style.display = 'block';
+      this.loadRoles();
+    } else if (subtab === 'organigrama') {
+      if (btnOrganigrama) btnOrganigrama.classList.add('active');
+      if (panelOrganigrama) panelOrganigrama.style.display = 'block';
+      this.loadOrganigramaFromApi();
+    } else {
+      if (btnUsuarios) btnUsuarios.classList.add('active');
+      if (panelUsuarios) panelUsuarios.style.display = 'block';
+      this.loadUsuarios();
+    }
+  },
+
+  // ==============================================================================
+  // GESTIÓN DEL ORGANIGRAMA Y ESTRUCTURA ORGÁNICA (SUPERADMIN)
+  // ==============================================================================
+  async loadOrganigramaFromApi() {
+    try {
+      const res = await fetch('/api/organigrama');
+      if (res.ok) {
+        const json = await res.json();
+        if (json.exito && Array.isArray(json.data) && json.data.length > 0) {
+          state.organigramaData = json.data;
+          this.renderOrganigramaTree(json.data);
+          this.populateAllSelectsFromOrganigrama(json.data);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Cargando organigrama local fallback:', e);
+    }
+    state.organigramaData = ORGANIGRAMA_GAMEA;
+    this.renderOrganigramaTree(ORGANIGRAMA_GAMEA);
+  },
+
+  populateAllSelectsFromOrganigrama(lista) {
+    const filterSec = document.getElementById('filterUsuarioSecretaria');
+    const modalSec = document.getElementById('usuarioSecretaria');
+    const dirSec = document.getElementById('dirSecretariaSelect');
+
+    [filterSec, modalSec, dirSec].forEach(select => {
+      if (!select) return;
+      const firstVal = select.options[0]?.text || 'Seleccione secretaría...';
+      select.innerHTML = `<option value="">${firstVal}</option>`;
+      lista.forEach(sec => {
+        const opt = document.createElement('option');
+        opt.value = sec.id || sec.secretaria_id;
+        const nombre = sec.nombre || sec.secretaria_nombre;
+        const sigla = sec.sigla || sec.secretaria_sigla;
+        opt.textContent = sigla ? `${sigla} - ${nombre}` : nombre;
+        select.appendChild(opt);
+      });
+    });
+
+    // Populate unitDireccionSelect
+    const unitDirSelect = document.getElementById('unitDireccionSelect');
+    if (unitDirSelect) {
+      unitDirSelect.innerHTML = '<option value="">Seleccione dirección...</option>';
+      lista.forEach(sec => {
+        const dirs = sec.direcciones || [];
+        dirs.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.id;
+          opt.textContent = `[${sec.sigla || 'GAMEA'}] ${d.sigla ? d.sigla + ' - ' : ''}${d.nombre}`;
+          unitDirSelect.appendChild(opt);
+        });
+      });
+    }
+  },
+
+  renderOrganigramaTree(data) {
+    const container = document.getElementById('organigramaTreeContainer');
+    const statsPill = document.getElementById('organigramaStatsPill');
+    if (!container) return;
+
+    let totalDirs = 0;
+    let totalUnits = 0;
+
+    const html = data.map(sec => {
+      const secId = sec.id || sec.secretaria_id;
+      const secNombre = sec.nombre || sec.secretaria_nombre;
+      const secSigla = sec.sigla || sec.secretaria_sigla;
+      const secCodigo = sec.codigo || sec.secretaria_codigo || '';
+      const dirs = sec.direcciones || [];
+      totalDirs += dirs.length;
+
+      const dirsHtml = dirs.map(dir => {
+        const units = dir.unidades || [];
+        totalUnits += units.length;
+        const unitsHtml = units.map(u => {
+          const uNombre = typeof u === 'string' ? u : u.nombre;
+          const uId = typeof u === 'object' ? u.id : null;
+          return `
+            <li class="unit-tree-item d-flex justify-between align-center py-1">
+              <span>🔹 ${this.escapeHtml(uNombre)}</span>
+              ${uId ? `
+                <div class="tree-actions">
+                  <button class="btn-xs-icon" title="Editar Unidad" onclick="app.openModalUnidad(${uId}, '${this.escapeHtml(uNombre)}', ${dir.id})">✏️</button>
+                  <button class="btn-xs-icon text-danger" title="Desactivar Unidad" onclick="app.deleteUnidad(${uId})">🗑️</button>
+                </div>
+              ` : ''}
+            </li>
+          `;
+        }).join('');
+
+        return `
+          <div class="dir-tree-card mb-2 p-3">
+            <div class="d-flex justify-between align-center flex-wrap gap-2">
+              <div>
+                <strong style="color:#ffffff;">📂 ${this.escapeHtml(dir.nombre)}</strong>
+                ${dir.sigla ? `<span class="badge badge-secondary ml-2">${this.escapeHtml(dir.sigla)}</span>` : ''}
+                ${dir.codigo ? `<code class="text-xs text-muted ml-1">[${this.escapeHtml(dir.codigo)}]</code>` : ''}
+              </div>
+              <div class="tree-actions d-flex gap-1">
+                <button class="btn btn-xs btn-outline" onclick="app.openModalUnidad(null, '', ${dir.id})" title="Agregar Unidad a esta Dirección">➕ Unidad</button>
+                <button class="btn btn-xs btn-outline" onclick="app.openModalDireccion(${dir.id}, '${this.escapeHtml(dir.nombre)}', '${this.escapeHtml(dir.codigo || '')}', '${this.escapeHtml(dir.sigla || '')}', ${secId})">✏️</button>
+                <button class="btn btn-xs btn-outline text-danger" onclick="app.deleteDireccion(${dir.id})">🗑️</button>
+              </div>
+            </div>
+            ${units.length > 0 ? `
+              <ul class="units-sublist mt-2 pl-3" style="list-style:none; border-left:2px solid rgba(212,175,55,0.3);">
+                ${unitsHtml}
+              </ul>
+            ` : '<div class="text-xs text-muted mt-1 italic pl-3">Sin unidades registradas</div>'}
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="secretaria-tree-card mb-3 p-4" style="background:#1e293b; border:1px solid #334155; border-radius:10px;">
+          <div class="d-flex justify-between align-center flex-wrap gap-2 mb-3 pb-2 border-bottom">
+            <div>
+              <span class="badge badge-gold mb-1">SECRETARÍA MUNICIPAL / NIVEL</span>
+              <h4 style="margin:0; color:#D4AF37;">🏛️ ${this.escapeHtml(secNombre)}</h4>
+              ${secSigla ? `<span class="badge badge-primary mt-1">${this.escapeHtml(secSigla)}</span>` : ''}
+            </div>
+            <div class="tree-actions d-flex gap-1">
+              <button class="btn btn-sm btn-primary" onclick="app.openModalDireccion(null, '', '', '', ${secId})">➕ Dirección</button>
+              <button class="btn btn-sm btn-outline" onclick="app.openModalSecretaria(${secId}, '${this.escapeHtml(secNombre)}', '${this.escapeHtml(secCodigo)}', '${this.escapeHtml(secSigla || '')}')">✏️ Editar</button>
+              <button class="btn btn-sm btn-outline text-danger" onclick="app.deleteSecretaria(${secId})">🗑️</button>
+            </div>
+          </div>
+          <div class="direcciones-list">
+            ${dirsHtml.length > 0 ? dirsHtml : '<div class="text-sm text-muted">Sin direcciones vinculadas</div>'}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    container.innerHTML = html;
+    if (statsPill) {
+      statsPill.textContent = `Total: ${data.length} Secretarías | ${totalDirs} Direcciones | ${totalUnits} Unidades`;
+    }
+  },
+
+  filterOrganigramaTree(query) {
+    if (!state.organigramaData) return;
+    const q = (query || '').toLowerCase().trim();
+    if (!q) {
+      this.renderOrganigramaTree(state.organigramaData);
+      return;
+    }
+    const filtered = state.organigramaData.map(sec => {
+      const secNombre = (sec.nombre || sec.secretaria_nombre || '').toLowerCase();
+      const secSigla = (sec.sigla || sec.secretaria_sigla || '').toLowerCase();
+      const matchSec = secNombre.includes(q) || secSigla.includes(q);
+
+      const dirs = (sec.direcciones || []).filter(d => {
+        const dNombre = (d.nombre || '').toLowerCase();
+        const dSigla = (d.sigla || '').toLowerCase();
+        const matchDir = dNombre.includes(q) || dSigla.includes(q);
+        const matchUnits = (d.unidades || []).some(u => {
+          const uNombre = (typeof u === 'string' ? u : u.nombre).toLowerCase();
+          return uNombre.includes(q);
+        });
+        return matchDir || matchUnits;
+      });
+
+      if (matchSec || dirs.length > 0) {
+        return { ...sec, direcciones: dirs };
+      }
+      return null;
+    }).filter(Boolean);
+
+    this.renderOrganigramaTree(filtered);
+  },
+
+  // --- MODALES Y ACCIONES SECRETARÍAS ---
+  openModalSecretaria(id = null, nombre = '', codigo = '', sigla = '') {
+    document.getElementById('secEditId').value = id || '';
+    document.getElementById('secNombre').value = nombre || '';
+    document.getElementById('secCodigo').value = codigo || '';
+    document.getElementById('secSigla').value = sigla || '';
+    document.getElementById('modalSecTitulo').textContent = id ? 'Editar Secretaría' : 'Nueva Secretaría';
+    document.getElementById('modalSecretariaBackdrop').classList.add('active');
+  },
+  closeModalSecretaria() {
+    document.getElementById('modalSecretariaBackdrop').classList.remove('active');
+  },
+  async handleSecretariaSubmit(e) {
+    e.preventDefault();
+    const id = document.getElementById('secEditId').value;
+    const body = {
+      codigo: document.getElementById('secCodigo').value.trim(),
+      nombre: document.getElementById('secNombre').value.trim(),
+      sigla: document.getElementById('secSigla').value.trim()
+    };
+    try {
+      const url = id ? `/api/secretarias/${id}` : '/api/secretarias';
+      const method = id ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const json = await res.json();
+      if (json.exito) {
+        this.showToast(json.mensaje || 'Secretaría guardada', 'success');
+        this.closeModalSecretaria();
+        await this.loadOrganigramaFromApi();
       } else {
-        btnUsuarios.classList.remove('active');
-        btnRoles.classList.add('active');
-        panelUsuarios.style.display = 'none';
-        panelRoles.style.display = 'block';
-        this.loadRoles();
+        this.showToast(json.mensaje || 'Error al guardar', 'error');
+      }
+    } catch (err) {
+      this.showToast('Error de conexión', 'error');
+    }
+  },
+  async deleteSecretaria(id) {
+    if (!confirm('¿Está seguro de desactivar esta secretaría?')) return;
+    try {
+      const res = await fetch(`/api/secretarias/${id}`, { method: 'DELETE' });
+      const json = await res.json();
+      if (json.exito) {
+        this.showToast('Secretaría desactivada', 'success');
+        await this.loadOrganigramaFromApi();
+      } else {
+        this.showToast(json.mensaje || 'Error al desactivar', 'error');
+      }
+    } catch (e) {
+      this.showToast('Error de red', 'error');
+    }
+  },
+
+  // --- MODALES Y ACCIONES DIRECCIONES ---
+  openModalDireccion(id = null, nombre = '', codigo = '', sigla = '', secretariaId = '') {
+    document.getElementById('dirEditId').value = id || '';
+    document.getElementById('dirNombre').value = nombre || '';
+    document.getElementById('dirCodigo').value = codigo || '';
+    document.getElementById('dirSigla').value = sigla || '';
+    if (secretariaId) document.getElementById('dirSecretariaSelect').value = secretariaId;
+    document.getElementById('modalDirTitulo').textContent = id ? 'Editar Dirección' : 'Nueva Dirección';
+    document.getElementById('modalDireccionBackdrop').classList.add('active');
+  },
+  closeModalDireccion() {
+    document.getElementById('modalDireccionBackdrop').classList.remove('active');
+  },
+  async handleDireccionSubmit(e) {
+    e.preventDefault();
+    const id = document.getElementById('dirEditId').value;
+    const body = {
+      secretaria_id: document.getElementById('dirSecretariaSelect').value,
+      codigo: document.getElementById('dirCodigo').value.trim(),
+      nombre: document.getElementById('dirNombre').value.trim(),
+      sigla: document.getElementById('dirSigla').value.trim()
+    };
+    try {
+      const url = id ? `/api/direcciones/${id}` : '/api/direcciones';
+      const method = id ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const json = await res.json();
+      if (json.exito) {
+        this.showToast(json.mensaje || 'Dirección guardada', 'success');
+        this.closeModalDireccion();
+        await this.loadOrganigramaFromApi();
+      } else {
+        this.showToast(json.mensaje || 'Error al guardar', 'error');
+      }
+    } catch (err) {
+      this.showToast('Error de red', 'error');
+    }
+  },
+  async deleteDireccion(id) {
+    if (!confirm('¿Está seguro de desactivar esta dirección?')) return;
+    try {
+      const res = await fetch(`/api/direcciones/${id}`, { method: 'DELETE' });
+      const json = await res.json();
+      if (json.exito) {
+        this.showToast('Dirección desactivada', 'success');
+        await this.loadOrganigramaFromApi();
+      } else {
+        this.showToast(json.mensaje || 'Error al desactivar', 'error');
+      }
+    } catch (e) {
+      this.showToast('Error de red', 'error');
+    }
+  },
+
+  // --- MODALES Y ACCIONES UNIDADES ---
+  openModalUnidad(id = null, nombre = '', direccionId = '', sigla = '') {
+    document.getElementById('unitEditId').value = id || '';
+    document.getElementById('unitNombre').value = nombre || '';
+    document.getElementById('unitSigla').value = sigla || '';
+    if (direccionId) document.getElementById('unitDireccionSelect').value = direccionId;
+    document.getElementById('modalUnitTitulo').textContent = id ? 'Editar Unidad / Área' : 'Nueva Unidad / Área';
+    document.getElementById('modalUnidadBackdrop').classList.add('active');
+  },
+  closeModalUnidad() {
+    document.getElementById('modalUnidadBackdrop').classList.remove('active');
+  },
+  async handleUnidadSubmit(e) {
+    e.preventDefault();
+    const id = document.getElementById('unitEditId').value;
+    const body = {
+      direccion_id: document.getElementById('unitDireccionSelect').value,
+      nombre: document.getElementById('unitNombre').value.trim(),
+      sigla: document.getElementById('unitSigla').value.trim()
+    };
+    try {
+      const url = id ? `/api/unidades/${id}` : '/api/unidades';
+      const method = id ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const json = await res.json();
+      if (json.exito) {
+        this.showToast(json.mensaje || 'Unidad / Área guardada', 'success');
+        this.closeModalUnidad();
+        await this.loadOrganigramaFromApi();
+      } else {
+        this.showToast(json.mensaje || 'Error al guardar', 'error');
+      }
+    } catch (err) {
+      this.showToast('Error de red', 'error');
+    }
+  },
+  async deleteUnidad(id) {
+    if (!confirm('¿Está seguro de desactivar esta unidad / área?')) return;
+    try {
+      const res = await fetch(`/api/unidades/${id}`, { method: 'DELETE' });
+      const json = await res.json();
+      if (json.exito) {
+        this.showToast('Unidad desactivada', 'success');
+        await this.loadOrganigramaFromApi();
+      } else {
+        this.showToast(json.mensaje || 'Error al desactivar', 'error');
+      }
+    } catch (e) {
+      this.showToast('Error de red', 'error');
+    }
+  },
+
+  onUsuarioDireccionModalChange(dirId) {
+    const unitSelect = document.getElementById('usuarioUnidad');
+    if (!unitSelect) return;
+    unitSelect.innerHTML = '<option value="">Seleccione unidad (opcional)...</option>';
+    if (!dirId) return;
+
+    // Buscar en organigramaData
+    const data = state.organigramaData || ORGANIGRAMA_GAMEA;
+    for (const sec of data) {
+      const dir = (sec.direcciones || []).find(d => String(d.id) === String(dirId));
+      if (dir && Array.isArray(dir.unidades)) {
+        dir.unidades.forEach(u => {
+          const opt = document.createElement('option');
+          opt.value = typeof u === 'object' ? u.id : u;
+          opt.textContent = typeof u === 'object' ? u.nombre : u;
+          unitSelect.appendChild(opt);
+        });
+        break;
       }
     }
   },
 
-  async renderUsersView() {
+  renderUsersView() {
     try {
       this.populateUsuarioSecretariasSelects();
       this.switchUsuariosSubtab(state.usuariosState.subtabActual || 'usuarios');
@@ -2702,8 +3573,8 @@ const app = {
     tbody.innerHTML = usuarios.map(u => {
       const iniciales = `${(u.nombres || '').charAt(0)}${(u.apellidos || '').charAt(0)}`.toUpperCase() || 'U';
       const rolClass = (u.rol_codigo || '').toLowerCase();
-      const rolBadge = rolClass === 'admin' ? 'badge-admin' : (rolClass === 'supervisor' ? 'badge-supervisor' : (rolClass === 'disenador' ? 'badge-disenador' : 'badge-solicitante'));
-      const avatarClass = rolClass === 'admin' ? 'avatar-admin' : (rolClass === 'supervisor' ? 'avatar-supervisor' : (rolClass === 'disenador' ? 'avatar-disenador' : 'avatar-solicitante'));
+      const rolBadge = rolClass === 'superadmin' ? 'badge-superadmin' : (rolClass === 'admin' ? 'badge-admin' : (rolClass === 'supervisor' ? 'badge-supervisor' : (rolClass === 'disenador' ? 'badge-disenador' : 'badge-solicitante')));
+      const avatarClass = rolClass === 'superadmin' ? 'avatar-superadmin' : (rolClass === 'admin' ? 'avatar-admin' : (rolClass === 'supervisor' ? 'avatar-supervisor' : (rolClass === 'disenador' ? 'avatar-disenador' : 'avatar-solicitante')));
 
       const isCurrentAdmin = state.currentUser && (state.currentUser.id === u.id || state.currentUser.email === u.email);
 

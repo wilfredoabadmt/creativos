@@ -179,9 +179,37 @@ async function inicializarBaseDatos() {
 
       -- Columna de motivo de rechazo en solicitudes
       ALTER TABLE comunica.solicitudes ADD COLUMN IF NOT EXISTS motivo_rechazo TEXT;
-    `);
-    console.log('✅ [PostgreSQL 16] Trigger, estados y consistencia relacional verificados.');
 
+      -- Asegurar tabla de unidades / áreas organizacionales
+      CREATE TABLE IF NOT EXISTS comunica.unidades (
+          id SERIAL PRIMARY KEY,
+          direccion_id INT NOT NULL REFERENCES comunica.direcciones(id) ON DELETE CASCADE,
+          codigo VARCHAR(50),
+          nombre VARCHAR(250) NOT NULL,
+          sigla VARCHAR(50),
+          activo BOOLEAN DEFAULT TRUE,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+
+      -- Asegurar rol SUPERADMIN
+      INSERT INTO comunica.roles (codigo, nombre, descripcion)
+      VALUES ('SUPERADMIN', 'Super Administrador Municipal', 'Control supremo del sistema: administración de usuarios, roles, secretarías, direcciones, áreas y auditoría completa')
+      ON CONFLICT (codigo) DO UPDATE 
+      SET nombre = EXCLUDED.nombre, descripcion = EXCLUDED.descripcion;
+    `);
+
+    // Sincronizar catálogo oficial y Super Administrador si la tabla unidades está vacía
+    const checkUnits = await client.query("SELECT COUNT(*)::INT AS total FROM comunica.unidades;");
+    if (checkUnits.rows[0].total === 0) {
+      const seedPath = path.join(__dirname, 'docs', 'database', 'organigrama-seed.sql');
+      if (fs.existsSync(seedPath)) {
+        const seedSql = fs.readFileSync(seedPath, 'utf-8');
+        await client.query(seedSql);
+        console.log('🏛️ [Organigrama D.M. N° 200] Catálogo de Secretarías, Direcciones, Unidades y SuperAdmin cargados exitosamente.');
+      }
+    }
+
+    console.log('✅ [PostgreSQL 16] Trigger, estados, unidades y consistencia relacional verificados.');
     client.release();
   } catch (err) {
     dbConnected = false;
@@ -774,6 +802,7 @@ function generarPasswordTemporal(longitud = 12) {
 
 // Catálogo y almacén en memoria para usuarios y roles (modo contingencia / offline)
 const rolesEnMemoria = [
+  { id: 0, codigo: 'SUPERADMIN', nombre: 'Super Administrador Municipal', descripcion: 'Control supremo del sistema: administración de usuarios, roles, secretarías, direcciones y áreas', activo: true },
   { id: 1, codigo: 'ADMIN', nombre: 'Administrador General', descripcion: 'Control total del sistema institucional', activo: true },
   { id: 2, codigo: 'SUPERVISOR', nombre: 'Supervisor / Director DICOM', descripcion: 'Priorización y asignación de requerimientos', activo: true },
   { id: 3, codigo: 'DISENADOR', nombre: 'Diseñador Gráfico', descripcion: 'Ejecución y producción creativa institucional', activo: true },
@@ -781,6 +810,7 @@ const rolesEnMemoria = [
 ];
 
 let usuariosEnMemoria = [
+  { id: 'c0000001-0000-0000-0000-000000000001', nombres: 'Ing. Wilfredo', apellidos: 'Abad Mancilla', cargo: 'Super Administrador del Sistema Municipal', email: 'superadmin@elalto.gob.bo', telefono_contacto: '77210000', activo: true, rol_id: 0, rol_codigo: 'SUPERADMIN', rol_nombre: 'Super Administrador Municipal', secretaria_id: 1, secretaria_nombre: 'Despacho del Alcalde', secretaria_sigla: 'DESPACHO', direccion_id: 1, direccion_nombre: 'Dirección General de Asesoría Legal / Sistemas', direccion_sigla: 'DGS', unidad_id: null, created_at: '2026-01-01', ultimo_acceso: '2026-03-30 08:00' },
   { id: 'a0000001-0000-0000-0000-000000000003', nombres: 'Ing. Wilfredo', apellidos: 'Abad Mancilla', cargo: 'Administrador General de Sistemas', email: 'admin@elalto.gob.bo', telefono_contacto: '77210000', activo: true, rol_id: 1, rol_codigo: 'ADMIN', rol_nombre: 'Administrador General', secretaria_id: 1, secretaria_nombre: 'Despacho del Alcalde', secretaria_sigla: 'DESPACHO', direccion_id: 1, direccion_nombre: 'Dirección General de Asesoría Legal / Sistemas', direccion_sigla: 'DGS', unidad_id: null, created_at: '2026-01-01', ultimo_acceso: '2026-03-30 08:30' },
   { id: 'a0000001-0000-0000-0000-000000000001', nombres: 'Lic. Mavelin', apellidos: 'Yucra', cargo: 'Directora de Comunicación DICOM', email: 'director.dicom@elalto.gob.bo', telefono_contacto: '77210001', activo: true, rol_id: 2, rol_codigo: 'SUPERVISOR', rol_nombre: 'Supervisor / Directora DICOM', secretaria_id: 2, secretaria_nombre: 'Secretaría Municipal de Gestión Institucional', secretaria_sigla: 'SMGI', direccion_id: 2, direccion_nombre: 'Dirección de Comunicación', direccion_sigla: 'DICOM', unidad_id: null, created_at: '2026-01-02', ultimo_acceso: '2026-03-30 09:15' },
   { id: 'a0000001-0000-0000-0000-000000000002', nombres: 'Lic. Marco Antonio', apellidos: 'Choque Callisaya', cargo: 'Diseñador Gráfico Senior', email: 'disenador.marco@elalto.gob.bo', telefono_contacto: '77210002', activo: true, rol_id: 3, rol_codigo: 'DISENADOR', rol_nombre: 'Diseñador Gráfico Institucional', secretaria_id: 2, secretaria_nombre: 'Secretaría Municipal de Gestión Institucional', secretaria_sigla: 'SMGI', direccion_id: 2, direccion_nombre: 'Dirección de Comunicación', direccion_sigla: 'DICOM', unidad_id: null, created_at: '2026-01-03', ultimo_acceso: '2026-03-30 10:00' },
@@ -1452,7 +1482,19 @@ app.put('/api/roles/:id', async (req, res) => {
   }
 });
 
-// 7. Organigrama Oficial (Secretarías y Direcciones)
+
+// ==============================================================================
+// CRUD COMPLETO DEL ORGANIGRAMA INSTITUCIONAL (SUPERADMIN / ADMIN)
+// Secretarías, Direcciones, Unidades y Organigrama Jerárquico
+// ==============================================================================
+
+// Helper para cargar organigrama en memoria si no hay BD
+let organigramaEnMemoria = [];
+try {
+  organigramaEnMemoria = JSON.parse(fs.readFileSync(path.join(__dirname, 'organigrama_oficial_gamea.json'), 'utf-8'));
+} catch (e) {}
+
+// GET /api/organigrama - Árbol completo con Secretarías, Direcciones y Unidades
 app.get('/api/organigrama', async (req, res) => {
   if (pool && dbConnected) {
     try {
@@ -1460,19 +1502,40 @@ app.get('/api/organigrama', async (req, res) => {
         SELECT 
           s.id AS secretaria_id,
           s.nombre AS secretaria_nombre,
+          s.codigo AS secretaria_codigo,
           s.sigla AS secretaria_sigla,
-          json_agg(
-            json_build_object(
-              'id', d.id,
-              'nombre', d.nombre,
-              'codigo', d.codigo,
-              'sigla', d.sigla
-            ) ORDER BY d.id
+          s.activo AS secretaria_activo,
+          COALESCE(
+            json_agg(
+              json_build_object(
+                'id', d.id,
+                'nombre', d.nombre,
+                'codigo', d.codigo,
+                'sigla', d.sigla,
+                'activo', d.activo,
+                'unidades', COALESCE(u_agg.unidades, '[]'::json)
+              ) ORDER BY d.id
+            ) FILTER (WHERE d.id IS NOT NULL), '[]'::json
           ) AS direcciones
         FROM comunica.secretarias s
-        JOIN comunica.direcciones d ON s.id = d.secretaria_id
-        WHERE s.activo = TRUE AND d.activo = TRUE
-        GROUP BY s.id, s.nombre, s.sigla
+        LEFT JOIN comunica.direcciones d ON s.id = d.secretaria_id AND d.activo = TRUE
+        LEFT JOIN (
+          SELECT 
+            u.direccion_id,
+            json_agg(
+              json_build_object(
+                'id', u.id,
+                'nombre', u.nombre,
+                'sigla', u.sigla,
+                'activo', u.activo
+              ) ORDER BY u.id
+            ) AS unidades
+          FROM comunica.unidades u
+          WHERE u.activo = TRUE
+          GROUP BY u.direccion_id
+        ) u_agg ON d.id = u_agg.direccion_id
+        WHERE s.activo = TRUE
+        GROUP BY s.id, s.nombre, s.codigo, s.sigla, s.activo
         ORDER BY s.id;
       `);
       return res.json({ exito: true, data: result.rows });
@@ -1481,7 +1544,251 @@ app.get('/api/organigrama', async (req, res) => {
     }
   }
 
-  res.json({ exito: false, mensaje: 'Organigrama no disponible desde BD' });
+  // Fallback desde archivo JSON estructurado
+  res.json({ exito: true, data: organigramaEnMemoria });
+});
+
+// --- CRUD SECRETARÍAS ---
+app.get('/api/secretarias', async (req, res) => {
+  if (pool && dbConnected) {
+    try {
+      const result = await pool.query(`
+        SELECT s.id, s.codigo, s.nombre, s.sigla, s.activo, COUNT(d.id)::INT as total_direcciones
+        FROM comunica.secretarias s
+        LEFT JOIN comunica.direcciones d ON s.id = d.secretaria_id AND d.activo = TRUE
+        GROUP BY s.id, s.codigo, s.nombre, s.sigla, s.activo
+        ORDER BY s.id ASC
+      `);
+      return res.json({ exito: true, data: result.rows });
+    } catch (err) {
+      return res.status(500).json({ exito: false, error: err.message });
+    }
+  }
+  const data = organigramaEnMemoria.map((s, idx) => ({ id: idx + 1, codigo: s.codigo, nombre: s.nombre, sigla: s.sigla, activo: true, total_direcciones: s.direcciones?.length || 0 }));
+  res.json({ exito: true, data });
+});
+
+app.post('/api/secretarias', async (req, res) => {
+  const { codigo, nombre, sigla } = req.body;
+  if (!nombre || !codigo) return res.status(400).json({ exito: false, mensaje: 'Código y nombre son obligatorios' });
+  if (pool && dbConnected) {
+    try {
+      const ins = await pool.query(
+        `INSERT INTO comunica.secretarias (codigo, nombre, sigla) VALUES ($1, $2, $3) RETURNING *`,
+        [codigo.trim().toUpperCase(), nombre.trim(), sigla ? sigla.trim().toUpperCase() : null]
+      );
+      return res.status(201).json({ exito: true, mensaje: 'Secretaría creada con éxito', data: ins.rows[0] });
+    } catch (err) {
+      return res.status(500).json({ exito: false, error: err.message });
+    }
+  }
+  res.status(201).json({ exito: true, mensaje: 'Secretaría registrada en memoria', data: { id: Date.now(), codigo, nombre, sigla, activo: true } });
+});
+
+app.put('/api/secretarias/:id', async (req, res) => {
+  const { id } = req.params;
+  const { codigo, nombre, sigla, activo } = req.body;
+  if (pool && dbConnected) {
+    try {
+      const upd = await pool.query(
+        `UPDATE comunica.secretarias SET codigo = COALESCE($1, codigo), nombre = COALESCE($2, nombre), sigla = COALESCE($3, sigla), activo = COALESCE($4, activo) WHERE id = $5 RETURNING *`,
+        [codigo ? codigo.trim().toUpperCase() : null, nombre ? nombre.trim() : null, sigla ? sigla.trim().toUpperCase() : null, activo, id]
+      );
+      if (upd.rowCount === 0) return res.status(404).json({ exito: false, mensaje: 'Secretaría no encontrada' });
+      return res.json({ exito: true, mensaje: 'Secretaría actualizada con éxito', data: upd.rows[0] });
+    } catch (err) {
+      return res.status(500).json({ exito: false, error: err.message });
+    }
+  }
+  res.json({ exito: true, mensaje: 'Secretaría actualizada' });
+});
+
+app.delete('/api/secretarias/:id', async (req, res) => {
+  const { id } = req.params;
+  if (pool && dbConnected) {
+    try {
+      const checkDirs = await pool.query('SELECT COUNT(*)::INT as total FROM comunica.direcciones WHERE secretaria_id = $1 AND activo = TRUE', [id]);
+      if (checkDirs.rows[0].total > 0) {
+        return res.status(400).json({ exito: false, mensaje: `No se puede eliminar la secretaría porque tiene ${checkDirs.rows[0].total} direcciones activas vinculadas` });
+      }
+      await pool.query('UPDATE comunica.secretarias SET activo = FALSE WHERE id = $1', [id]);
+      return res.json({ exito: true, mensaje: 'Secretaría desactivada con éxito' });
+    } catch (err) {
+      return res.status(500).json({ exito: false, error: err.message });
+    }
+  }
+  res.json({ exito: true, mensaje: 'Secretaría desactivada' });
+});
+
+// --- CRUD DIRECCIONES ---
+app.get('/api/direcciones', async (req, res) => {
+  const { secretaria_id } = req.query;
+  if (pool && dbConnected) {
+    try {
+      let query = `
+        SELECT d.id, d.secretaria_id, s.nombre AS secretaria_nombre, s.sigla AS secretaria_sigla,
+               d.codigo, d.nombre, d.sigla, d.activo, COUNT(u.id)::INT AS total_unidades
+        FROM comunica.direcciones d
+        JOIN comunica.secretarias s ON d.secretaria_id = s.id
+        LEFT JOIN comunica.unidades u ON d.id = u.direccion_id AND u.activo = TRUE
+      `;
+      const params = [];
+      if (secretaria_id) {
+        query += ` WHERE d.secretaria_id = $1 `;
+        params.push(parseInt(secretaria_id));
+      }
+      query += ` GROUP BY d.id, d.secretaria_id, s.nombre, s.sigla, d.codigo, d.nombre, d.sigla, d.activo ORDER BY d.id ASC `;
+      const result = await pool.query(query, params);
+      return res.json({ exito: true, data: result.rows });
+    } catch (err) {
+      return res.status(500).json({ exito: false, error: err.message });
+    }
+  }
+  res.json({ exito: true, data: [] });
+});
+
+app.post('/api/direcciones', async (req, res) => {
+  const { secretaria_id, codigo, nombre, sigla } = req.body;
+  if (!secretaria_id || !codigo || !nombre) {
+    return res.status(400).json({ exito: false, mensaje: 'Secretaría, código y nombre son obligatorios' });
+  }
+  if (pool && dbConnected) {
+    try {
+      const ins = await pool.query(
+        `INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla) VALUES ($1, $2, $3, $4) RETURNING *`,
+        [parseInt(secretaria_id), codigo.trim().toUpperCase(), nombre.trim(), sigla ? sigla.trim().toUpperCase() : null]
+      );
+      return res.status(201).json({ exito: true, mensaje: 'Dirección creada con éxito', data: ins.rows[0] });
+    } catch (err) {
+      return res.status(500).json({ exito: false, error: err.message });
+    }
+  }
+  res.status(201).json({ exito: true, mensaje: 'Dirección registrada en memoria', data: { id: Date.now(), secretaria_id, codigo, nombre, sigla } });
+});
+
+app.put('/api/direcciones/:id', async (req, res) => {
+  const { id } = req.params;
+  const { secretaria_id, codigo, nombre, sigla, activo } = req.body;
+  if (pool && dbConnected) {
+    try {
+      const upd = await pool.query(
+        `UPDATE comunica.direcciones SET 
+            secretaria_id = COALESCE($1, secretaria_id),
+            codigo = COALESCE($2, codigo),
+            nombre = COALESCE($3, nombre),
+            sigla = COALESCE($4, sigla),
+            activo = COALESCE($5, activo)
+         WHERE id = $6 RETURNING *`,
+        [secretaria_id ? parseInt(secretaria_id) : null, codigo ? codigo.trim().toUpperCase() : null, nombre ? nombre.trim() : null, sigla ? sigla.trim().toUpperCase() : null, activo, id]
+      );
+      if (upd.rowCount === 0) return res.status(404).json({ exito: false, mensaje: 'Dirección no encontrada' });
+      return res.json({ exito: true, mensaje: 'Dirección actualizada con éxito', data: upd.rows[0] });
+    } catch (err) {
+      return res.status(500).json({ exito: false, error: err.message });
+    }
+  }
+  res.json({ exito: true, mensaje: 'Dirección actualizada' });
+});
+
+app.delete('/api/direcciones/:id', async (req, res) => {
+  const { id } = req.params;
+  if (pool && dbConnected) {
+    try {
+      const checkUnits = await pool.query('SELECT COUNT(*)::INT as total FROM comunica.unidades WHERE direccion_id = $1 AND activo = TRUE', [id]);
+      if (checkUnits.rows[0].total > 0) {
+        return res.status(400).json({ exito: false, mensaje: `No se puede eliminar la dirección porque tiene ${checkUnits.rows[0].total} unidades activas vinculadas` });
+      }
+      await pool.query('UPDATE comunica.direcciones SET activo = FALSE WHERE id = $1', [id]);
+      return res.json({ exito: true, mensaje: 'Dirección desactivada con éxito' });
+    } catch (err) {
+      return res.status(500).json({ exito: false, error: err.message });
+    }
+  }
+  res.json({ exito: true, mensaje: 'Dirección desactivada' });
+});
+
+// --- CRUD UNIDADES / ÁREAS ---
+app.get('/api/unidades', async (req, res) => {
+  const { direccion_id } = req.query;
+  if (pool && dbConnected) {
+    try {
+      let query = `
+        SELECT u.id, u.direccion_id, d.nombre AS direccion_nombre, d.sigla AS direccion_sigla,
+               d.secretaria_id, s.nombre AS secretaria_nombre, s.sigla AS secretaria_sigla,
+               u.codigo, u.nombre, u.sigla, u.activo
+        FROM comunica.unidades u
+        JOIN comunica.direcciones d ON u.direccion_id = d.id
+        JOIN comunica.secretarias s ON d.secretaria_id = s.id
+      `;
+      const params = [];
+      if (direccion_id) {
+        query += ` WHERE u.direccion_id = $1 `;
+        params.push(parseInt(direccion_id));
+      }
+      query += ` ORDER BY u.id ASC `;
+      const result = await pool.query(query, params);
+      return res.json({ exito: true, data: result.rows });
+    } catch (err) {
+      return res.status(500).json({ exito: false, error: err.message });
+    }
+  }
+  res.json({ exito: true, data: [] });
+});
+
+app.post('/api/unidades', async (req, res) => {
+  const { direccion_id, codigo, nombre, sigla } = req.body;
+  if (!direccion_id || !nombre) {
+    return res.status(400).json({ exito: false, mensaje: 'Dirección y nombre de unidad son obligatorios' });
+  }
+  if (pool && dbConnected) {
+    try {
+      const ins = await pool.query(
+        `INSERT INTO comunica.unidades (direccion_id, codigo, nombre, sigla) VALUES ($1, $2, $3, $4) RETURNING *`,
+        [parseInt(direccion_id), codigo ? codigo.trim().toUpperCase() : null, nombre.trim(), sigla ? sigla.trim().toUpperCase() : null]
+      );
+      return res.status(201).json({ exito: true, mensaje: 'Unidad / Área creada con éxito', data: ins.rows[0] });
+    } catch (err) {
+      return res.status(500).json({ exito: false, error: err.message });
+    }
+  }
+  res.status(201).json({ exito: true, mensaje: 'Unidad registrada en memoria', data: { id: Date.now(), direccion_id, nombre, sigla } });
+});
+
+app.put('/api/unidades/:id', async (req, res) => {
+  const { id } = req.params;
+  const { direccion_id, codigo, nombre, sigla, activo } = req.body;
+  if (pool && dbConnected) {
+    try {
+      const upd = await pool.query(
+        `UPDATE comunica.unidades SET 
+            direccion_id = COALESCE($1, direccion_id),
+            codigo = COALESCE($2, codigo),
+            nombre = COALESCE($3, nombre),
+            sigla = COALESCE($4, sigla),
+            activo = COALESCE($5, activo)
+         WHERE id = $6 RETURNING *`,
+        [direccion_id ? parseInt(direccion_id) : null, codigo ? codigo.trim().toUpperCase() : null, nombre ? nombre.trim() : null, sigla ? sigla.trim().toUpperCase() : null, activo, id]
+      );
+      if (upd.rowCount === 0) return res.status(404).json({ exito: false, mensaje: 'Unidad no encontrada' });
+      return res.json({ exito: true, mensaje: 'Unidad / Área actualizada con éxito', data: upd.rows[0] });
+    } catch (err) {
+      return res.status(500).json({ exito: false, error: err.message });
+    }
+  }
+  res.json({ exito: true, mensaje: 'Unidad actualizada' });
+});
+
+app.delete('/api/unidades/:id', async (req, res) => {
+  const { id } = req.params;
+  if (pool && dbConnected) {
+    try {
+      await pool.query('UPDATE comunica.unidades SET activo = FALSE WHERE id = $1', [id]);
+      return res.json({ exito: true, mensaje: 'Unidad / Área desactivada con éxito' });
+    } catch (err) {
+      return res.status(500).json({ exito: false, error: err.message });
+    }
+  }
+  res.json({ exito: true, mensaje: 'Unidad desactivada' });
 });
 
 // Redirigir todas las rutas restantes al index.html

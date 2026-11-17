@@ -1,0 +1,647 @@
+[
+  {
+    "codigo": "DESPACHO",
+    "nombre": "Despacho del Alcalde",
+    "sigla": "DESPACHO",
+    "direcciones": [
+      {
+        "codigo": "DGAL",
+        "nombre": "Dirección General de Asesoría Legal",
+        "sigla": "DGAL",
+        "unidades": [
+          "Unidad de Asuntos Jurisdiccionales",
+          "Unidad de Normas Municipales y Asuntos Administrativos",
+          "Unidad de Defensa y Regularización de Bienes de Dominio Municipal"
+        ]
+      },
+      {
+        "codigo": "DIPLAN",
+        "nombre": "Dirección de Planificación",
+        "sigla": "DIPLAN",
+        "unidades": [
+          "Unidad de Programación de Operaciones",
+          "Unidad de Inversión Pública y Seguimiento",
+          "Unidad de Desarrollo Organizacional",
+          "Unidad de Planificación Estratégica",
+          "Unidad de Ordenamiento Territorial"
+        ]
+      },
+      {
+        "codigo": "DRI",
+        "nombre": "Dirección de Relaciones Internacionales",
+        "sigla": "DRI",
+        "unidades": []
+      },
+      {
+        "codigo": "UNID-DESPACHO",
+        "nombre": "Unidades de Asesoramiento y Control Directo del Despacho",
+        "sigla": "U-DESPACHO",
+        "unidades": [
+          "Unidad de Transparencia y Lucha Contra la Corrupción",
+          "Unidad Sumariante",
+          "Unidad de Auditoría Interna",
+          "Unidad de Límites",
+          "Unidad de Relaciones Públicas y Protocolo",
+          "Unidad de Gestión Social"
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "SMGI",
+    "nombre": "Secretaría Municipal de Gestión Institucional",
+    "sigla": "SMGI",
+    "direcciones": [
+      {
+        "codigo": "DICOM",
+        "nombre": "Dirección de Comunicación",
+        "sigla": "DICOM",
+        "unidades": [
+          "Unidad de Prensa",
+          "Unidad de Imagen Corporativa",
+          "Unidad de Comunicación Digital"
+        ]
+      },
+      {
+        "codigo": "DAC",
+        "nombre": "Dirección de Atención Ciudadana",
+        "sigla": "DAC",
+        "unidades": [
+          "Unidad de Coordinación con Subalcaldías",
+          "Unidad de Archivo Central",
+          "Unidad de Prevención de Conflictos",
+          "Unidad de Sistema Único de Trámites"
+        ]
+      },
+      {
+        "codigo": "DAP",
+        "nombre": "Dirección de Alumbrado Público",
+        "sigla": "DAP",
+        "unidades": [
+          "Unidad Operativa de Alumbrado Público",
+          "Unidad de Programas y Proyectos de Alumbrado Público"
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "SMAF",
+    "nombre": "Secretaría Municipal de Administración y Finanzas",
+    "sigla": "SMAF",
+    "direcciones": [
+      {
+        "codigo": "DIR-TES",
+        "nombre": "Dirección del Tesoro Municipal",
+        "sigla": "DTM",
+        "unidades": [
+          "Unidad de Tesorería",
+          "Unidad de Presupuesto",
+          "Unidad de Contabilidad",
+          "Unidad de Crédito Público y Gestión de Financiamiento"
+        ]
+      },
+      {
+        "codigo": "DIR-TH",
+        "nombre": "Dirección de Talento Humano",
+        "sigla": "DTH",
+        "unidades": [
+          "Unidad de Registro",
+          "Unidad de Asesoría Legal DTH",
+          "Unidad de Planillas y Control",
+          "Unidad de Selección y Contratación",
+          "Unidad de Capacitación y Evaluación"
+        ]
+      },
+      {
+        "codigo": "DIR-ATM",
+        "nombre": "Dirección de Administración Tributaria Municipal",
+        "sigla": "DATM",
+        "unidades": [
+          "Unidad de Ingresos y Control Tributario",
+          "Unidad de Asesoría Jurídica y Cobranza Coactiva",
+          "Unidad de Fiscalización y Recaudaciones"
+        ]
+      },
+      {
+        "codigo": "DIR-CONT",
+        "nombre": "Dirección de Contrataciones",
+        "sigla": "DCONT",
+        "unidades": [
+          "Unidad de Adquisiciones y Contrataciones Menores",
+          "Unidad de Licitaciones",
+          "Unidad Jurídica de Contrataciones"
+        ]
+      },
+      {
+        "codigo": "DIR-ADM",
+        "nombre": "Dirección Administrativa",
+        "sigla": "DADM",
+        "unidades": [
+          "Unidad de Activos Fijos",
+          "Unidad de Servicios Generales y Mantenimiento",
+          "Unidad de Almacenes",
+          "Unidad de Administración de Sistemas de Información"
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "SMMU",
+    "nombre": "Secretaría Municipal de Movilidad Urbana",
+    "sigla": "SMMU",
+    "direcciones": [
+      {
+        "codigo": "DIR-RMU",
+        "nombre": "Dirección de Regulación de la Movilidad Urbana",
+        "sigla": "DRMU",
+        "unidades": [
+          "Unidad de Planificación de la Movilidad Urbana Sostenible",
+          "Unidad de Señalización y Semaforización",
+          "Unidad de Regulación del Transporte",
+          "Unidad Guardia Municipal de Transporte"
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "SMEC",
+    "nombre": "Secretaría Municipal de Educación y Cultura",
+    "sigla": "SMEC",
+    "direcciones": [
+      {
+        "codigo": "DIR-CULT",
+        "nombre": "Dirección de Cultura",
+        "sigla": "DCULT",
+        "unidades": [
+          "Unidad de Fomento a Iniciativas Artísticas y Culturales",
+          "Escuela Municipal de Artes",
+          "Unidad de Administración de Espacios Culturales",
+          "Unidad de Turismo"
+        ]
+      },
+      {
+        "codigo": "DIR-ASE",
+        "nombre": "Dirección de Atención Servicios de Educación",
+        "sigla": "DASE",
+        "unidades": [
+          "Unidad de Programas Educativos",
+          "Unidad de la Juventud"
+        ]
+      },
+      {
+        "codigo": "DIR-AMIE",
+        "nombre": "Dirección de Administración y Mejora de la Infraestructura y Equipamiento Educativo",
+        "sigla": "DAMIEE",
+        "unidades": [
+          "Unidad de Mejora de la Infraestructura y Equipamiento Educativo",
+          "Unidad de Regularización de Bienes Inmuebles Sector de Educación"
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "SMDHSI",
+    "nombre": "Secretaría Municipal de Desarrollo Humano y Social Integral",
+    "sigla": "SMDHSI",
+    "direcciones": [
+      {
+        "codigo": "DIR-NGAS",
+        "nombre": "Dirección de Niñez, Género y Atención Social",
+        "sigla": "DNGAS",
+        "unidades": [
+          "Unidad de la Infancia, Niñez y Adolescencia",
+          "Unidad de la Mujer",
+          "Unidad de Atención Integral a la Familia",
+          "Unidad de Poblaciones Diversas"
+        ]
+      },
+      {
+        "codigo": "DIR-DI",
+        "nombre": "Dirección de Desarrollo Integral",
+        "sigla": "DDI",
+        "unidades": [
+          "Unidad de Adultos Mayores",
+          "Unidad de Atención a Personas con Discapacidad"
+        ]
+      },
+      {
+        "codigo": "DIR-DEP",
+        "nombre": "Dirección de Deportes",
+        "sigla": "DDEP",
+        "unidades": [
+          "Unidad de Infraestructura Deportiva",
+          "Unidad de Fortalecimiento Deportivo"
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "SMSC",
+    "nombre": "Secretaría Municipal de Seguridad Ciudadana",
+    "sigla": "SMSC",
+    "direcciones": [
+      {
+        "codigo": "DIR-SPPST",
+        "nombre": "Dirección de Seguridad Pública, Programas de Seguridad Ciudadana y Soluciones Tecnológicas",
+        "sigla": "DSPPST",
+        "unidades": [
+          "Intendencia, Guardia y Banda Municipal",
+          "Unidad del Observatorio Municipal",
+          "Unidad de Programas de Seguridad Ciudadana y Soluciones Tecnológicas"
+        ]
+      },
+      {
+        "codigo": "DIR-FM",
+        "nombre": "Dirección de Ferias y Mercados",
+        "sigla": "DFM",
+        "unidades": [
+          "Unidad de Ferias",
+          "Unidad de Mercados"
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "SMS",
+    "nombre": "Secretaría Municipal de Salud",
+    "sigla": "SMS",
+    "direcciones": [
+      {
+        "codigo": "DIR-GS",
+        "nombre": "Dirección de Gestión en Salud",
+        "sigla": "DGS",
+        "unidades": [
+          "Unidad de Planificación Municipal en Salud",
+          "Unidad Técnica de Administración del S.U.S.",
+          "Unidad de Programas y Proyectos",
+          "Unidad de Promoción y Prevención",
+          "Unidad de Epidemiología"
+        ]
+      },
+      {
+        "codigo": "DIR-ESPN",
+        "nombre": "Dirección de Establecimientos de Salud de Primer Nivel",
+        "sigla": "DESPN",
+        "unidades": [
+          "Red de Salud Municipal Corea",
+          "Red de Salud Municipal Los Andes",
+          "Red de Salud Municipal Holandés",
+          "Red de Salud Municipal Lotes y Servicios",
+          "Red de Salud Municipal Senkata"
+        ]
+      },
+      {
+        "codigo": "DIR-GSSND",
+        "nombre": "Dirección de Gestión Servicios de Salud Nivel Desconcentrado",
+        "sigla": "DGSSND",
+        "unidades": [
+          "Hospital Municipal Boliviano Holandés",
+          "Hospital Municipal Los Andes",
+          "Hospital Municipal Modelo Corea",
+          "Hospital Municipal Qullañ Uta",
+          "Hospital Municipal Modelo Boliviano Japonés"
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "SMIP",
+    "nombre": "Secretaría Municipal de Infraestructura Pública",
+    "sigla": "SMIP",
+    "direcciones": [
+      {
+        "codigo": "DIR-PM",
+        "nombre": "Dirección de Proyectos Municipales",
+        "sigla": "DPM",
+        "unidades": [
+          "Unidad de Proyectos Municipales",
+          "Unidad de Proyectos Estratégicos"
+        ]
+      },
+      {
+        "codigo": "DIR-FO",
+        "nombre": "Dirección de Fiscalización de Obras",
+        "sigla": "DFO",
+        "unidades": [
+          "Unidad de Fiscalización de Proyectos Estratégicos",
+          "Unidad de Fiscalización de Proyectos Municipales"
+        ]
+      },
+      {
+        "codigo": "DIR-SO",
+        "nombre": "Dirección de Supervisión de Obras",
+        "sigla": "DSO",
+        "unidades": [
+          "Unidad de Supervisión de Obras Estratégicas",
+          "Unidad de Supervisión de Obras Municipales",
+          "Unidad de Cierre de Proyectos"
+        ]
+      },
+      {
+        "codigo": "DIR-OM",
+        "nombre": "Dirección de Obras Municipales",
+        "sigla": "DOM",
+        "unidades": [
+          "Unidad de Infraestructura Municipal",
+          "Unidad de Infraestructura Vial",
+          "Unidad de Pavimentos",
+          "Unidad de Mantenimiento y Bacheo",
+          "Unidad de Administración de Maquinarias"
+        ]
+      },
+      {
+        "codigo": "DIR-ATC",
+        "nombre": "Dirección de Administración Territorial y Catastro",
+        "sigla": "DATC",
+        "unidades": [
+          "Unidad de Catastro Municipal y Cartografía",
+          "Unidad de Administración Territorial",
+          "Unidad de Vialidad",
+          "Unidad Jurídica de Administración Territorial"
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "SMASGAR",
+    "nombre": "Secretaría Municipal de Agua, Saneamiento, Gestión Ambiental y Riesgos",
+    "sigla": "SMASGAR",
+    "direcciones": [
+      {
+        "codigo": "DIR-SBRHCA",
+        "nombre": "Dirección de Saneamiento Básico, Recursos Hídricos y Control Ambiental",
+        "sigla": "DSBRHCA",
+        "unidades": [
+          "Unidad de Recursos Hídricos y Drenaje Pluvial",
+          "Unidad de Saneamiento Básico",
+          "Unidad de Control y Monitoreo Ambiental",
+          "Unidad de Prevención y Calidad Ambiental"
+        ]
+      },
+      {
+        "codigo": "DIR-GIR",
+        "nombre": "Dirección de Gestión Integral de Residuos",
+        "sigla": "DGIR",
+        "unidades": [
+          "Unidad de Gestión de Residuos",
+          "Unidad de Seguimiento y Control"
+        ]
+      },
+      {
+        "codigo": "DIR-GR",
+        "nombre": "Dirección de Gestión de Riesgos",
+        "sigla": "DGR",
+        "unidades": [
+          "Unidad de Prevención de Riesgos",
+          "Centro de Operaciones de Emergencia (COE)"
+        ]
+      },
+      {
+        "codigo": "DIR-FAP",
+        "nombre": "Dirección de Forestación y Áreas Protegidas",
+        "sigla": "DFAP",
+        "unidades": [
+          "Unidad de Áreas Verdes, Protegidas y Bofedales",
+          "Unidad de Forestación"
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "SMDE",
+    "nombre": "Secretaría Municipal de Desarrollo Económico",
+    "sigla": "SMDE",
+    "direcciones": [
+      {
+        "codigo": "DIR-DPPYMES",
+        "nombre": "Dirección de Desarrollo Productivo de Pequeñas y Medianas Empresas",
+        "sigla": "DDP-PYMES",
+        "unidades": [
+          "Unidad de Competitividad y Productividad",
+          "Unidad de Innovación y Emprendimiento"
+        ]
+      },
+      {
+        "codigo": "DIR-DPA",
+        "nombre": "Dirección de Desarrollo Productivo Artesanal",
+        "sigla": "DDPA",
+        "unidades": [
+          "Unidad de Promoción Artesanal",
+          "Unidad de Desarrollo Productivo Artesanal"
+        ]
+      },
+      {
+        "codigo": "DIR-ASA",
+        "nombre": "Dirección de Agropecuaria y Seguridad Alimentaria",
+        "sigla": "DASA",
+        "unidades": [
+          "Unidad de Fortalecimiento Agropecuario",
+          "Unidad de Gestión de Proyectos Agropecuarios"
+        ]
+      },
+      {
+        "codigo": "DIR-SMEI",
+        "nombre": "Dirección de Servicios Municipales e Iniciativas Económicas",
+        "sigla": "DSMEI",
+        "unidades": [
+          "Unidad de Administración de Servicios Municipales",
+          "Unidad de Iniciativas Económicas"
+        ]
+      },
+      {
+        "codigo": "DIR-BUS",
+        "nombre": "Dirección Municipal de Transporte Público – Bus Municipal",
+        "sigla": "DMTP-BUS",
+        "unidades": [
+          "Unidad de Operaciones",
+          "Unidad de Mantenimiento",
+          "Unidad de Administración y Recaudo"
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "SUBALCALDIAS",
+    "nombre": "Subalcaldías Municipales (Distritos Urbanos y Rurales D-1 al D-14)",
+    "sigla": "SUB-D1-14",
+    "direcciones": [
+      {
+        "codigo": "SUB-D1",
+        "nombre": "Subalcaldía Distrito Municipal - 1",
+        "sigla": "SDM-1",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D2",
+        "nombre": "Subalcaldía Distrito Municipal - 2",
+        "sigla": "SDM-2",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D3",
+        "nombre": "Subalcaldía Distrito Municipal - 3",
+        "sigla": "SDM-3",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D4",
+        "nombre": "Subalcaldía Distrito Municipal - 4",
+        "sigla": "SDM-4",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D5",
+        "nombre": "Subalcaldía Distrito Municipal - 5",
+        "sigla": "SDM-5",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D6",
+        "nombre": "Subalcaldía Distrito Municipal - 6",
+        "sigla": "SDM-6",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D7",
+        "nombre": "Subalcaldía Distrito Municipal - 7",
+        "sigla": "SDM-7",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D8",
+        "nombre": "Subalcaldía Distrito Municipal - 8",
+        "sigla": "SDM-8",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D9",
+        "nombre": "Subalcaldía Distrito Municipal - 9",
+        "sigla": "SDM-9",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D10",
+        "nombre": "Subalcaldía Distrito Municipal - 10",
+        "sigla": "SDM-10",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D11",
+        "nombre": "Subalcaldía Distrito Municipal - 11",
+        "sigla": "SDM-11",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D12",
+        "nombre": "Subalcaldía Distrito Municipal - 12",
+        "sigla": "SDM-12",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D13",
+        "nombre": "Subalcaldía Distrito Municipal - 13",
+        "sigla": "SDM-13",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      },
+      {
+        "codigo": "SUB-D14",
+        "nombre": "Subalcaldía Distrito Municipal - 14",
+        "sigla": "SDM-14",
+        "unidades": [
+          "Unidad de Infraestructura Pública",
+          "Unidad de Desarrollo Humano",
+          "Asesoría Jurídica",
+          "Unidad de Finanzas y Administración"
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "DESCENTRALIZADO",
+    "nombre": "Nivel Descentralizado y Empresas Municipales",
+    "sigla": "DESCENTRALIZADO",
+    "direcciones": [
+      {
+        "codigo": "TMEA",
+        "nombre": "Terminal Metropolitana El Alto",
+        "sigla": "TMEA",
+        "unidades": [
+          "Unidad de Administración y Operaciones"
+        ]
+      },
+      {
+        "codigo": "LIOM-GAMEA",
+        "nombre": "Laboratorio Industrial de Oxígeno Medicinal – G.A.M.E.A.",
+        "sigla": "LIOM-GAMEA",
+        "unidades": [
+          "Unidad de Producción y Calidad"
+        ]
+      }
+    ]
+  }
+]

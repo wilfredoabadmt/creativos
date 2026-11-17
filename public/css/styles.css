@@ -3649,3 +3649,57 @@ img:not([height]):not(.modal-logo-img):not(.brand-logo-escudo):not(.brand-logo-i
     color: #64748B;
   }
 }
+
+
+/* SUPERADMIN STYLES & ORGANIGRAMA TREE */
+.user-avatar.avatar-superadmin { background: linear-gradient(135deg, #78350F, #D97706, #F59E0B); box-shadow: 0 0 10px rgba(217,119,6,0.5); }
+.role-badge.badge-superadmin { background: rgba(217,119,6,0.25); color: #FCD34D; border: 1px solid rgba(245,158,11,0.5); font-weight: 700; }
+
+.organigrama-tree-container {
+  max-height: 800px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.secretaria-tree-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.secretaria-tree-card:hover {
+  border-color: #D4AF37 !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+.dir-tree-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(51, 65, 85, 0.7);
+  border-radius: 8px;
+}
+
+.dir-tree-card:hover {
+  border-color: #38bdf8;
+}
+
+.unit-tree-item {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  border-bottom: 1px dashed rgba(255,255,255,0.05);
+}
+
+.unit-tree-item:last-child {
+  border-bottom: none;
+}
+
+.btn-xs-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  transition: background 0.15s;
+}
+
+.btn-xs-icon:hover {
+  background: rgba(255,255,255,0.1);
+}
