@@ -1,12 +1,11 @@
 -- ==============================================================================
 -- COMUNICA DIGITAL - GOBIERNO AUTÓNOMO MUNICIPAL DE EL ALTO
 -- SEMILLA DEL ORGANIGRAMA OFICIAL COMPLETO (D.M. N° 200 - GESTIÓN 2026)
--- Secretarías, Direcciones y Unidades Organizacionales
 -- ==============================================================================
 
 SET search_path TO comunica, public;
 
--- 1. Asegurar tabla unidades si no existe
+-- 1. Tabla unidades
 CREATE TABLE IF NOT EXISTS comunica.unidades (
     id SERIAL PRIMARY KEY,
     direccion_id INT NOT NULL REFERENCES comunica.direcciones(id) ON DELETE CASCADE,
@@ -17,282 +16,2087 @@ CREATE TABLE IF NOT EXISTS comunica.unidades (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Asegurar rol SUPERADMIN en tabla roles
+-- 2. Asegurar rol SUPERADMIN
 INSERT INTO comunica.roles (codigo, nombre, descripcion)
 VALUES ('SUPERADMIN', 'Super Administrador Municipal', 'Control supremo: gestión de organigrama, secretarías, direcciones, unidades y todos los usuarios del municipio')
 ON CONFLICT (codigo) DO UPDATE 
 SET nombre = EXCLUDED.nombre, descripcion = EXCLUDED.descripcion;
 
--- Asegurar columna superadmin en usuarios o rol SUPERADMIN
+-- 3. Upsert Secretarías por 'codigo' para evitar choque de ID previo
 
--- Truncar / actualizar estructuras
--- Insertar o actualizar Secretarías
-INSERT INTO comunica.secretarias (id, codigo, nombre, sigla) VALUES
-(1, 'DESPACHO', 'Despacho del Alcalde', 'DESPACHO'),
-(2, 'SMGI', 'Secretaría Municipal de Gestión Institucional', 'SMGI'),
-(3, 'SMAF', 'Secretaría Municipal de Administración y Finanzas', 'SMAF'),
-(4, 'SMMU', 'Secretaría Municipal de Movilidad Urbana', 'SMMU'),
-(5, 'SMEC', 'Secretaría Municipal de Educación y Cultura', 'SMEC'),
-(6, 'SMDHSI', 'Secretaría Municipal de Desarrollo Humano y Social Integral', 'SMDHSI'),
-(7, 'SMSC', 'Secretaría Municipal de Seguridad Ciudadana', 'SMSC'),
-(8, 'SMS', 'Secretaría Municipal de Salud', 'SMS'),
-(9, 'SMIP', 'Secretaría Municipal de Infraestructura Pública', 'SMIP'),
-(10, 'SMASGAR', 'Secretaría Municipal de Agua, Saneamiento, Gestión Ambiental y Riesgos', 'SMASGAR'),
-(11, 'SMDE', 'Secretaría Municipal de Desarrollo Económico', 'SMDE'),
-(12, 'SUBALCALDIAS', 'Subalcaldías Municipales (Distritos Urbanos y Rurales D-1 al D-14)', 'SUB-D1-14'),
-(13, 'DESCENTRALIZADO', 'Nivel Descentralizado y Empresas Municipales', 'DESCENTRALIZADO')
-ON CONFLICT (id) DO UPDATE 
-SET codigo = EXCLUDED.codigo, nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla;
-SELECT setval('comunica.secretarias_id_seq', (SELECT MAX(id) FROM comunica.secretarias));
+INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
+VALUES ('DESPACHO', 'Despacho del Alcalde', 'DESPACHO', TRUE)
+ON CONFLICT (codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
 
--- Insertar o actualizar Direcciones
-INSERT INTO comunica.direcciones (id, secretaria_id, codigo, nombre, sigla) VALUES
-(1, 1, 'DGAL', 'Dirección General de Asesoría Legal', 'DGAL'),
-(2, 1, 'DIPLAN', 'Dirección de Planificación', 'DIPLAN'),
-(3, 1, 'DRI', 'Dirección de Relaciones Internacionales', 'DRI'),
-(4, 1, 'UNID-DESPACHO', 'Unidades de Asesoramiento y Control Directo del Despacho', 'U-DESPACHO'),
-(5, 2, 'DICOM', 'Dirección de Comunicación', 'DICOM'),
-(6, 2, 'DAC', 'Dirección de Atención Ciudadana', 'DAC'),
-(7, 2, 'DAP', 'Dirección de Alumbrado Público', 'DAP'),
-(8, 3, 'DIR-TES', 'Dirección del Tesoro Municipal', 'DTM'),
-(9, 3, 'DIR-TH', 'Dirección de Talento Humano', 'DTH'),
-(10, 3, 'DIR-ATM', 'Dirección de Administración Tributaria Municipal', 'DATM'),
-(11, 3, 'DIR-CONT', 'Dirección de Contrataciones', 'DCONT'),
-(12, 3, 'DIR-ADM', 'Dirección Administrativa', 'DADM'),
-(13, 4, 'DIR-RMU', 'Dirección de Regulación de la Movilidad Urbana', 'DRMU'),
-(14, 5, 'DIR-CULT', 'Dirección de Cultura', 'DCULT'),
-(15, 5, 'DIR-ASE', 'Dirección de Atención Servicios de Educación', 'DASE'),
-(16, 5, 'DIR-AMIE', 'Dirección de Administración y Mejora de la Infraestructura y Equipamiento Educativo', 'DAMIEE'),
-(17, 6, 'DIR-NGAS', 'Dirección de Niñez, Género y Atención Social', 'DNGAS'),
-(18, 6, 'DIR-DI', 'Dirección de Desarrollo Integral', 'DDI'),
-(19, 6, 'DIR-DEP', 'Dirección de Deportes', 'DDEP'),
-(20, 7, 'DIR-SPPST', 'Dirección de Seguridad Pública, Programas de Seguridad Ciudadana y Soluciones Tecnológicas', 'DSPPST'),
-(21, 7, 'DIR-FM', 'Dirección de Ferias y Mercados', 'DFM'),
-(22, 8, 'DIR-GS', 'Dirección de Gestión en Salud', 'DGS'),
-(23, 8, 'DIR-ESPN', 'Dirección de Establecimientos de Salud de Primer Nivel', 'DESPN'),
-(24, 8, 'DIR-GSSND', 'Dirección de Gestión Servicios de Salud Nivel Desconcentrado', 'DGSSND'),
-(25, 9, 'DIR-PM', 'Dirección de Proyectos Municipales', 'DPM'),
-(26, 9, 'DIR-FO', 'Dirección de Fiscalización de Obras', 'DFO'),
-(27, 9, 'DIR-SO', 'Dirección de Supervisión de Obras', 'DSO'),
-(28, 9, 'DIR-OM', 'Dirección de Obras Municipales', 'DOM'),
-(29, 9, 'DIR-ATC', 'Dirección de Administración Territorial y Catastro', 'DATC'),
-(30, 10, 'DIR-SBRHCA', 'Dirección de Saneamiento Básico, Recursos Hídricos y Control Ambiental', 'DSBRHCA'),
-(31, 10, 'DIR-GIR', 'Dirección de Gestión Integral de Residuos', 'DGIR'),
-(32, 10, 'DIR-GR', 'Dirección de Gestión de Riesgos', 'DGR'),
-(33, 10, 'DIR-FAP', 'Dirección de Forestación y Áreas Protegidas', 'DFAP'),
-(34, 11, 'DIR-DPPYMES', 'Dirección de Desarrollo Productivo de Pequeñas y Medianas Empresas', 'DDP-PYMES'),
-(35, 11, 'DIR-DPA', 'Dirección de Desarrollo Productivo Artesanal', 'DDPA'),
-(36, 11, 'DIR-ASA', 'Dirección de Agropecuaria y Seguridad Alimentaria', 'DASA'),
-(37, 11, 'DIR-SMEI', 'Dirección de Servicios Municipales e Iniciativas Económicas', 'DSMEI'),
-(38, 11, 'DIR-BUS', 'Dirección Municipal de Transporte Público – Bus Municipal', 'DMTP-BUS'),
-(39, 12, 'SUB-D1', 'Subalcaldía Distrito Municipal - 1', 'SDM-1'),
-(40, 12, 'SUB-D2', 'Subalcaldía Distrito Municipal - 2', 'SDM-2'),
-(41, 12, 'SUB-D3', 'Subalcaldía Distrito Municipal - 3', 'SDM-3'),
-(42, 12, 'SUB-D4', 'Subalcaldía Distrito Municipal - 4', 'SDM-4'),
-(43, 12, 'SUB-D5', 'Subalcaldía Distrito Municipal - 5', 'SDM-5'),
-(44, 12, 'SUB-D6', 'Subalcaldía Distrito Municipal - 6', 'SDM-6'),
-(45, 12, 'SUB-D7', 'Subalcaldía Distrito Municipal - 7', 'SDM-7'),
-(46, 12, 'SUB-D8', 'Subalcaldía Distrito Municipal - 8', 'SDM-8'),
-(47, 12, 'SUB-D9', 'Subalcaldía Distrito Municipal - 9', 'SDM-9'),
-(48, 12, 'SUB-D10', 'Subalcaldía Distrito Municipal - 10', 'SDM-10'),
-(49, 12, 'SUB-D11', 'Subalcaldía Distrito Municipal - 11', 'SDM-11'),
-(50, 12, 'SUB-D12', 'Subalcaldía Distrito Municipal - 12', 'SDM-12'),
-(51, 12, 'SUB-D13', 'Subalcaldía Distrito Municipal - 13', 'SDM-13'),
-(52, 12, 'SUB-D14', 'Subalcaldía Distrito Municipal - 14', 'SDM-14'),
-(53, 13, 'TMEA', 'Terminal Metropolitana El Alto', 'TMEA'),
-(54, 13, 'LIOM-GAMEA', 'Laboratorio Industrial de Oxígeno Medicinal – G.A.M.E.A.', 'LIOM-GAMEA')
-ON CONFLICT (id) DO UPDATE 
-SET secretaria_id = EXCLUDED.secretaria_id, codigo = EXCLUDED.codigo, nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla;
-SELECT setval('comunica.direcciones_id_seq', (SELECT MAX(id) FROM comunica.direcciones));
+INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
+VALUES ('SMGI', 'Secretaría Municipal de Gestión Institucional', 'SMGI', TRUE)
+ON CONFLICT (codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
 
--- Insertar Unidades
+INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
+VALUES ('SMAF', 'Secretaría Municipal de Administración y Finanzas', 'SMAF', TRUE)
+ON CONFLICT (codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
+
+INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
+VALUES ('SMMU', 'Secretaría Municipal de Movilidad Urbana', 'SMMU', TRUE)
+ON CONFLICT (codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
+
+INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
+VALUES ('SMEC', 'Secretaría Municipal de Educación y Cultura', 'SMEC', TRUE)
+ON CONFLICT (codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
+
+INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
+VALUES ('SMDHSI', 'Secretaría Municipal de Desarrollo Humano y Social Integral', 'SMDHSI', TRUE)
+ON CONFLICT (codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
+
+INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
+VALUES ('SMSC', 'Secretaría Municipal de Seguridad Ciudadana', 'SMSC', TRUE)
+ON CONFLICT (codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
+
+INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
+VALUES ('SMS', 'Secretaría Municipal de Salud', 'SMS', TRUE)
+ON CONFLICT (codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
+
+INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
+VALUES ('SMIP', 'Secretaría Municipal de Infraestructura Pública', 'SMIP', TRUE)
+ON CONFLICT (codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
+
+INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
+VALUES ('SMASGAR', 'Secretaría Municipal de Agua, Saneamiento, Gestión Ambiental y Riesgos', 'SMASGAR', TRUE)
+ON CONFLICT (codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
+
+INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
+VALUES ('SMDE', 'Secretaría Municipal de Desarrollo Económico', 'SMDE', TRUE)
+ON CONFLICT (codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
+
+INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
+VALUES ('SUBALCALDIAS', 'Subalcaldías Municipales (Distritos Urbanos y Rurales D-1 al D-14)', 'SUB-D1-14', TRUE)
+ON CONFLICT (codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
+
+INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
+VALUES ('DESCENTRALIZADO', 'Nivel Descentralizado y Empresas Municipales', 'DESCENTRALIZADO', TRUE)
+ON CONFLICT (codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
+
+-- 4. Upsert Direcciones por 'codigo'
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'DESPACHO' LIMIT 1),
+  'DGAL',
+  'Dirección General de Asesoría Legal',
+  'DGAL',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'DESPACHO' LIMIT 1),
+  'DIPLAN',
+  'Dirección de Planificación',
+  'DIPLAN',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'DESPACHO' LIMIT 1),
+  'DRI',
+  'Dirección de Relaciones Internacionales',
+  'DRI',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'DESPACHO' LIMIT 1),
+  'UNID-DESPACHO',
+  'Unidades de Asesoramiento y Control Directo del Despacho',
+  'U-DESPACHO',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMGI' LIMIT 1),
+  'DICOM',
+  'Dirección de Comunicación',
+  'DICOM',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMGI' LIMIT 1),
+  'DAC',
+  'Dirección de Atención Ciudadana',
+  'DAC',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMGI' LIMIT 1),
+  'DAP',
+  'Dirección de Alumbrado Público',
+  'DAP',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMAF' LIMIT 1),
+  'DIR-TES',
+  'Dirección del Tesoro Municipal',
+  'DTM',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMAF' LIMIT 1),
+  'DIR-TH',
+  'Dirección de Talento Humano',
+  'DTH',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMAF' LIMIT 1),
+  'DIR-ATM',
+  'Dirección de Administración Tributaria Municipal',
+  'DATM',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMAF' LIMIT 1),
+  'DIR-CONT',
+  'Dirección de Contrataciones',
+  'DCONT',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMAF' LIMIT 1),
+  'DIR-ADM',
+  'Dirección Administrativa',
+  'DADM',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMMU' LIMIT 1),
+  'DIR-RMU',
+  'Dirección de Regulación de la Movilidad Urbana',
+  'DRMU',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMEC' LIMIT 1),
+  'DIR-CULT',
+  'Dirección de Cultura',
+  'DCULT',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMEC' LIMIT 1),
+  'DIR-ASE',
+  'Dirección de Atención Servicios de Educación',
+  'DASE',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMEC' LIMIT 1),
+  'DIR-AMIE',
+  'Dirección de Administración y Mejora de la Infraestructura y Equipamiento Educativo',
+  'DAMIEE',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMDHSI' LIMIT 1),
+  'DIR-NGAS',
+  'Dirección de Niñez, Género y Atención Social',
+  'DNGAS',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMDHSI' LIMIT 1),
+  'DIR-DI',
+  'Dirección de Desarrollo Integral',
+  'DDI',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMDHSI' LIMIT 1),
+  'DIR-DEP',
+  'Dirección de Deportes',
+  'DDEP',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMSC' LIMIT 1),
+  'DIR-SPPST',
+  'Dirección de Seguridad Pública, Programas de Seguridad Ciudadana y Soluciones Tecnológicas',
+  'DSPPST',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMSC' LIMIT 1),
+  'DIR-FM',
+  'Dirección de Ferias y Mercados',
+  'DFM',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMS' LIMIT 1),
+  'DIR-GS',
+  'Dirección de Gestión en Salud',
+  'DGS',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMS' LIMIT 1),
+  'DIR-ESPN',
+  'Dirección de Establecimientos de Salud de Primer Nivel',
+  'DESPN',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMS' LIMIT 1),
+  'DIR-GSSND',
+  'Dirección de Gestión Servicios de Salud Nivel Desconcentrado',
+  'DGSSND',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMIP' LIMIT 1),
+  'DIR-PM',
+  'Dirección de Proyectos Municipales',
+  'DPM',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMIP' LIMIT 1),
+  'DIR-FO',
+  'Dirección de Fiscalización de Obras',
+  'DFO',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMIP' LIMIT 1),
+  'DIR-SO',
+  'Dirección de Supervisión de Obras',
+  'DSO',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMIP' LIMIT 1),
+  'DIR-OM',
+  'Dirección de Obras Municipales',
+  'DOM',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMIP' LIMIT 1),
+  'DIR-ATC',
+  'Dirección de Administración Territorial y Catastro',
+  'DATC',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMASGAR' LIMIT 1),
+  'DIR-SBRHCA',
+  'Dirección de Saneamiento Básico, Recursos Hídricos y Control Ambiental',
+  'DSBRHCA',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMASGAR' LIMIT 1),
+  'DIR-GIR',
+  'Dirección de Gestión Integral de Residuos',
+  'DGIR',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMASGAR' LIMIT 1),
+  'DIR-GR',
+  'Dirección de Gestión de Riesgos',
+  'DGR',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMASGAR' LIMIT 1),
+  'DIR-FAP',
+  'Dirección de Forestación y Áreas Protegidas',
+  'DFAP',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMDE' LIMIT 1),
+  'DIR-DPPYMES',
+  'Dirección de Desarrollo Productivo de Pequeñas y Medianas Empresas',
+  'DDP-PYMES',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMDE' LIMIT 1),
+  'DIR-DPA',
+  'Dirección de Desarrollo Productivo Artesanal',
+  'DDPA',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMDE' LIMIT 1),
+  'DIR-ASA',
+  'Dirección de Agropecuaria y Seguridad Alimentaria',
+  'DASA',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMDE' LIMIT 1),
+  'DIR-SMEI',
+  'Dirección de Servicios Municipales e Iniciativas Económicas',
+  'DSMEI',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SMDE' LIMIT 1),
+  'DIR-BUS',
+  'Dirección Municipal de Transporte Público – Bus Municipal',
+  'DMTP-BUS',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D1',
+  'Subalcaldía Distrito Municipal - 1',
+  'SDM-1',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D2',
+  'Subalcaldía Distrito Municipal - 2',
+  'SDM-2',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D3',
+  'Subalcaldía Distrito Municipal - 3',
+  'SDM-3',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D4',
+  'Subalcaldía Distrito Municipal - 4',
+  'SDM-4',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D5',
+  'Subalcaldía Distrito Municipal - 5',
+  'SDM-5',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D6',
+  'Subalcaldía Distrito Municipal - 6',
+  'SDM-6',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D7',
+  'Subalcaldía Distrito Municipal - 7',
+  'SDM-7',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D8',
+  'Subalcaldía Distrito Municipal - 8',
+  'SDM-8',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D9',
+  'Subalcaldía Distrito Municipal - 9',
+  'SDM-9',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D10',
+  'Subalcaldía Distrito Municipal - 10',
+  'SDM-10',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D11',
+  'Subalcaldía Distrito Municipal - 11',
+  'SDM-11',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D12',
+  'Subalcaldía Distrito Municipal - 12',
+  'SDM-12',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D13',
+  'Subalcaldía Distrito Municipal - 13',
+  'SDM-13',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'SUBALCALDIAS' LIMIT 1),
+  'SUB-D14',
+  'Subalcaldía Distrito Municipal - 14',
+  'SDM-14',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'DESCENTRALIZADO' LIMIT 1),
+  'TMEA',
+  'Terminal Metropolitana El Alto',
+  'TMEA',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
+VALUES (
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'DESCENTRALIZADO' LIMIT 1),
+  'LIOM-GAMEA',
+  'Laboratorio Industrial de Oxígeno Medicinal – G.A.M.E.A.',
+  'LIOM-GAMEA',
+  TRUE
+)
+ON CONFLICT (codigo) DO UPDATE
+SET secretaria_id = EXCLUDED.secretaria_id,
+    nombre = EXCLUDED.nombre,
+    sigla = EXCLUDED.sigla,
+    activo = TRUE;
+
+-- 5. Cargar Unidades
 DELETE FROM comunica.unidades;
-INSERT INTO comunica.unidades (id, direccion_id, nombre) VALUES
-(1, 1, 'Unidad de Asuntos Jurisdiccionales'),
-(2, 1, 'Unidad de Normas Municipales y Asuntos Administrativos'),
-(3, 1, 'Unidad de Defensa y Regularización de Bienes de Dominio Municipal'),
-(4, 2, 'Unidad de Programación de Operaciones'),
-(5, 2, 'Unidad de Inversión Pública y Seguimiento'),
-(6, 2, 'Unidad de Desarrollo Organizacional'),
-(7, 2, 'Unidad de Planificación Estratégica'),
-(8, 2, 'Unidad de Ordenamiento Territorial'),
-(9, 4, 'Unidad de Transparencia y Lucha Contra la Corrupción'),
-(10, 4, 'Unidad Sumariante'),
-(11, 4, 'Unidad de Auditoría Interna'),
-(12, 4, 'Unidad de Límites'),
-(13, 4, 'Unidad de Relaciones Públicas y Protocolo'),
-(14, 4, 'Unidad de Gestión Social'),
-(15, 5, 'Unidad de Prensa'),
-(16, 5, 'Unidad de Imagen Corporativa'),
-(17, 5, 'Unidad de Comunicación Digital'),
-(18, 6, 'Unidad de Coordinación con Subalcaldías'),
-(19, 6, 'Unidad de Archivo Central'),
-(20, 6, 'Unidad de Prevención de Conflictos'),
-(21, 6, 'Unidad de Sistema Único de Trámites'),
-(22, 7, 'Unidad Operativa de Alumbrado Público'),
-(23, 7, 'Unidad de Programas y Proyectos de Alumbrado Público'),
-(24, 8, 'Unidad de Tesorería'),
-(25, 8, 'Unidad de Presupuesto'),
-(26, 8, 'Unidad de Contabilidad'),
-(27, 8, 'Unidad de Crédito Público y Gestión de Financiamiento'),
-(28, 9, 'Unidad de Registro'),
-(29, 9, 'Unidad de Asesoría Legal DTH'),
-(30, 9, 'Unidad de Planillas y Control'),
-(31, 9, 'Unidad de Selección y Contratación'),
-(32, 9, 'Unidad de Capacitación y Evaluación'),
-(33, 10, 'Unidad de Ingresos y Control Tributario'),
-(34, 10, 'Unidad de Asesoría Jurídica y Cobranza Coactiva'),
-(35, 10, 'Unidad de Fiscalización y Recaudaciones'),
-(36, 11, 'Unidad de Adquisiciones y Contrataciones Menores'),
-(37, 11, 'Unidad de Licitaciones'),
-(38, 11, 'Unidad Jurídica de Contrataciones'),
-(39, 12, 'Unidad de Activos Fijos'),
-(40, 12, 'Unidad de Servicios Generales y Mantenimiento'),
-(41, 12, 'Unidad de Almacenes'),
-(42, 12, 'Unidad de Administración de Sistemas de Información'),
-(43, 13, 'Unidad de Planificación de la Movilidad Urbana Sostenible'),
-(44, 13, 'Unidad de Señalización y Semaforización'),
-(45, 13, 'Unidad de Regulación del Transporte'),
-(46, 13, 'Unidad Guardia Municipal de Transporte'),
-(47, 14, 'Unidad de Fomento a Iniciativas Artísticas y Culturales'),
-(48, 14, 'Escuela Municipal de Artes'),
-(49, 14, 'Unidad de Administración de Espacios Culturales'),
-(50, 14, 'Unidad de Turismo'),
-(51, 15, 'Unidad de Programas Educativos'),
-(52, 15, 'Unidad de la Juventud'),
-(53, 16, 'Unidad de Mejora de la Infraestructura y Equipamiento Educativo'),
-(54, 16, 'Unidad de Regularización de Bienes Inmuebles Sector de Educación'),
-(55, 17, 'Unidad de la Infancia, Niñez y Adolescencia'),
-(56, 17, 'Unidad de la Mujer'),
-(57, 17, 'Unidad de Atención Integral a la Familia'),
-(58, 17, 'Unidad de Poblaciones Diversas'),
-(59, 18, 'Unidad de Adultos Mayores'),
-(60, 18, 'Unidad de Atención a Personas con Discapacidad'),
-(61, 19, 'Unidad de Infraestructura Deportiva'),
-(62, 19, 'Unidad de Fortalecimiento Deportivo'),
-(63, 20, 'Intendencia, Guardia y Banda Municipal'),
-(64, 20, 'Unidad del Observatorio Municipal'),
-(65, 20, 'Unidad de Programas de Seguridad Ciudadana y Soluciones Tecnológicas'),
-(66, 21, 'Unidad de Ferias'),
-(67, 21, 'Unidad de Mercados'),
-(68, 22, 'Unidad de Planificación Municipal en Salud'),
-(69, 22, 'Unidad Técnica de Administración del S.U.S.'),
-(70, 22, 'Unidad de Programas y Proyectos'),
-(71, 22, 'Unidad de Promoción y Prevención'),
-(72, 22, 'Unidad de Epidemiología'),
-(73, 23, 'Red de Salud Municipal Corea'),
-(74, 23, 'Red de Salud Municipal Los Andes'),
-(75, 23, 'Red de Salud Municipal Holandés'),
-(76, 23, 'Red de Salud Municipal Lotes y Servicios'),
-(77, 23, 'Red de Salud Municipal Senkata'),
-(78, 24, 'Hospital Municipal Boliviano Holandés'),
-(79, 24, 'Hospital Municipal Los Andes'),
-(80, 24, 'Hospital Municipal Modelo Corea'),
-(81, 24, 'Hospital Municipal Qullañ Uta'),
-(82, 24, 'Hospital Municipal Modelo Boliviano Japonés'),
-(83, 25, 'Unidad de Proyectos Municipales'),
-(84, 25, 'Unidad de Proyectos Estratégicos'),
-(85, 26, 'Unidad de Fiscalización de Proyectos Estratégicos'),
-(86, 26, 'Unidad de Fiscalización de Proyectos Municipales'),
-(87, 27, 'Unidad de Supervisión de Obras Estratégicas'),
-(88, 27, 'Unidad de Supervisión de Obras Municipales'),
-(89, 27, 'Unidad de Cierre de Proyectos'),
-(90, 28, 'Unidad de Infraestructura Municipal'),
-(91, 28, 'Unidad de Infraestructura Vial'),
-(92, 28, 'Unidad de Pavimentos'),
-(93, 28, 'Unidad de Mantenimiento y Bacheo'),
-(94, 28, 'Unidad de Administración de Maquinarias'),
-(95, 29, 'Unidad de Catastro Municipal y Cartografía'),
-(96, 29, 'Unidad de Administración Territorial'),
-(97, 29, 'Unidad de Vialidad'),
-(98, 29, 'Unidad Jurídica de Administración Territorial'),
-(99, 30, 'Unidad de Recursos Hídricos y Drenaje Pluvial'),
-(100, 30, 'Unidad de Saneamiento Básico'),
-(101, 30, 'Unidad de Control y Monitoreo Ambiental'),
-(102, 30, 'Unidad de Prevención y Calidad Ambiental'),
-(103, 31, 'Unidad de Gestión de Residuos'),
-(104, 31, 'Unidad de Seguimiento y Control'),
-(105, 32, 'Unidad de Prevención de Riesgos'),
-(106, 32, 'Centro de Operaciones de Emergencia (COE)'),
-(107, 33, 'Unidad de Áreas Verdes, Protegidas y Bofedales'),
-(108, 33, 'Unidad de Forestación'),
-(109, 34, 'Unidad de Competitividad y Productividad'),
-(110, 34, 'Unidad de Innovación y Emprendimiento'),
-(111, 35, 'Unidad de Promoción Artesanal'),
-(112, 35, 'Unidad de Desarrollo Productivo Artesanal'),
-(113, 36, 'Unidad de Fortalecimiento Agropecuario'),
-(114, 36, 'Unidad de Gestión de Proyectos Agropecuarios'),
-(115, 37, 'Unidad de Administración de Servicios Municipales'),
-(116, 37, 'Unidad de Iniciativas Económicas'),
-(117, 38, 'Unidad de Operaciones'),
-(118, 38, 'Unidad de Mantenimiento'),
-(119, 38, 'Unidad de Administración y Recaudo'),
-(120, 39, 'Unidad de Infraestructura Pública'),
-(121, 39, 'Unidad de Desarrollo Humano'),
-(122, 39, 'Asesoría Jurídica'),
-(123, 39, 'Unidad de Finanzas y Administración'),
-(124, 40, 'Unidad de Infraestructura Pública'),
-(125, 40, 'Unidad de Desarrollo Humano'),
-(126, 40, 'Asesoría Jurídica'),
-(127, 40, 'Unidad de Finanzas y Administración'),
-(128, 41, 'Unidad de Infraestructura Pública'),
-(129, 41, 'Unidad de Desarrollo Humano'),
-(130, 41, 'Asesoría Jurídica'),
-(131, 41, 'Unidad de Finanzas y Administración'),
-(132, 42, 'Unidad de Infraestructura Pública'),
-(133, 42, 'Unidad de Desarrollo Humano'),
-(134, 42, 'Asesoría Jurídica'),
-(135, 42, 'Unidad de Finanzas y Administración'),
-(136, 43, 'Unidad de Infraestructura Pública'),
-(137, 43, 'Unidad de Desarrollo Humano'),
-(138, 43, 'Asesoría Jurídica'),
-(139, 43, 'Unidad de Finanzas y Administración'),
-(140, 44, 'Unidad de Infraestructura Pública'),
-(141, 44, 'Unidad de Desarrollo Humano'),
-(142, 44, 'Asesoría Jurídica'),
-(143, 44, 'Unidad de Finanzas y Administración'),
-(144, 45, 'Unidad de Infraestructura Pública'),
-(145, 45, 'Unidad de Desarrollo Humano'),
-(146, 45, 'Asesoría Jurídica'),
-(147, 45, 'Unidad de Finanzas y Administración'),
-(148, 46, 'Unidad de Infraestructura Pública'),
-(149, 46, 'Unidad de Desarrollo Humano'),
-(150, 46, 'Asesoría Jurídica'),
-(151, 46, 'Unidad de Finanzas y Administración'),
-(152, 47, 'Unidad de Infraestructura Pública'),
-(153, 47, 'Unidad de Desarrollo Humano'),
-(154, 47, 'Asesoría Jurídica'),
-(155, 47, 'Unidad de Finanzas y Administración'),
-(156, 48, 'Unidad de Infraestructura Pública'),
-(157, 48, 'Unidad de Desarrollo Humano'),
-(158, 48, 'Asesoría Jurídica'),
-(159, 48, 'Unidad de Finanzas y Administración'),
-(160, 49, 'Unidad de Infraestructura Pública'),
-(161, 49, 'Unidad de Desarrollo Humano'),
-(162, 49, 'Asesoría Jurídica'),
-(163, 49, 'Unidad de Finanzas y Administración'),
-(164, 50, 'Unidad de Infraestructura Pública'),
-(165, 50, 'Unidad de Desarrollo Humano'),
-(166, 50, 'Asesoría Jurídica'),
-(167, 50, 'Unidad de Finanzas y Administración'),
-(168, 51, 'Unidad de Infraestructura Pública'),
-(169, 51, 'Unidad de Desarrollo Humano'),
-(170, 51, 'Asesoría Jurídica'),
-(171, 51, 'Unidad de Finanzas y Administración'),
-(172, 52, 'Unidad de Infraestructura Pública'),
-(173, 52, 'Unidad de Desarrollo Humano'),
-(174, 52, 'Asesoría Jurídica'),
-(175, 52, 'Unidad de Finanzas y Administración'),
-(176, 53, 'Unidad de Administración y Operaciones'),
-(177, 54, 'Unidad de Producción y Calidad');
-SELECT setval('comunica.unidades_id_seq', (SELECT MAX(id) FROM comunica.unidades));
 
--- Usuario SUPERADMIN Institucional Oficial
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DGAL' LIMIT 1),
+  'Unidad de Asuntos Jurisdiccionales',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DGAL' LIMIT 1),
+  'Unidad de Normas Municipales y Asuntos Administrativos',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DGAL' LIMIT 1),
+  'Unidad de Defensa y Regularización de Bienes de Dominio Municipal',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIPLAN' LIMIT 1),
+  'Unidad de Programación de Operaciones',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIPLAN' LIMIT 1),
+  'Unidad de Inversión Pública y Seguimiento',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIPLAN' LIMIT 1),
+  'Unidad de Desarrollo Organizacional',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIPLAN' LIMIT 1),
+  'Unidad de Planificación Estratégica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIPLAN' LIMIT 1),
+  'Unidad de Ordenamiento Territorial',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'UNID-DESPACHO' LIMIT 1),
+  'Unidad de Transparencia y Lucha Contra la Corrupción',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'UNID-DESPACHO' LIMIT 1),
+  'Unidad Sumariante',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'UNID-DESPACHO' LIMIT 1),
+  'Unidad de Auditoría Interna',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'UNID-DESPACHO' LIMIT 1),
+  'Unidad de Límites',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'UNID-DESPACHO' LIMIT 1),
+  'Unidad de Relaciones Públicas y Protocolo',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'UNID-DESPACHO' LIMIT 1),
+  'Unidad de Gestión Social',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DICOM' LIMIT 1),
+  'Unidad de Prensa',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DICOM' LIMIT 1),
+  'Unidad de Imagen Corporativa',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DICOM' LIMIT 1),
+  'Unidad de Comunicación Digital',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DAC' LIMIT 1),
+  'Unidad de Coordinación con Subalcaldías',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DAC' LIMIT 1),
+  'Unidad de Archivo Central',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DAC' LIMIT 1),
+  'Unidad de Prevención de Conflictos',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DAC' LIMIT 1),
+  'Unidad de Sistema Único de Trámites',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DAP' LIMIT 1),
+  'Unidad Operativa de Alumbrado Público',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DAP' LIMIT 1),
+  'Unidad de Programas y Proyectos de Alumbrado Público',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TES' LIMIT 1),
+  'Unidad de Tesorería',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TES' LIMIT 1),
+  'Unidad de Presupuesto',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TES' LIMIT 1),
+  'Unidad de Contabilidad',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TES' LIMIT 1),
+  'Unidad de Crédito Público y Gestión de Financiamiento',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TH' LIMIT 1),
+  'Unidad de Registro',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TH' LIMIT 1),
+  'Unidad de Asesoría Legal DTH',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TH' LIMIT 1),
+  'Unidad de Planillas y Control',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TH' LIMIT 1),
+  'Unidad de Selección y Contratación',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TH' LIMIT 1),
+  'Unidad de Capacitación y Evaluación',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATM' LIMIT 1),
+  'Unidad de Ingresos y Control Tributario',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATM' LIMIT 1),
+  'Unidad de Asesoría Jurídica y Cobranza Coactiva',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATM' LIMIT 1),
+  'Unidad de Fiscalización y Recaudaciones',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CONT' LIMIT 1),
+  'Unidad de Adquisiciones y Contrataciones Menores',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CONT' LIMIT 1),
+  'Unidad de Licitaciones',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CONT' LIMIT 1),
+  'Unidad Jurídica de Contrataciones',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ADM' LIMIT 1),
+  'Unidad de Activos Fijos',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ADM' LIMIT 1),
+  'Unidad de Servicios Generales y Mantenimiento',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ADM' LIMIT 1),
+  'Unidad de Almacenes',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ADM' LIMIT 1),
+  'Unidad de Administración de Sistemas de Información',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-RMU' LIMIT 1),
+  'Unidad de Planificación de la Movilidad Urbana Sostenible',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-RMU' LIMIT 1),
+  'Unidad de Señalización y Semaforización',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-RMU' LIMIT 1),
+  'Unidad de Regulación del Transporte',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-RMU' LIMIT 1),
+  'Unidad Guardia Municipal de Transporte',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CULT' LIMIT 1),
+  'Unidad de Fomento a Iniciativas Artísticas y Culturales',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CULT' LIMIT 1),
+  'Escuela Municipal de Artes',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CULT' LIMIT 1),
+  'Unidad de Administración de Espacios Culturales',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CULT' LIMIT 1),
+  'Unidad de Turismo',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ASE' LIMIT 1),
+  'Unidad de Programas Educativos',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ASE' LIMIT 1),
+  'Unidad de la Juventud',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-AMIE' LIMIT 1),
+  'Unidad de Mejora de la Infraestructura y Equipamiento Educativo',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-AMIE' LIMIT 1),
+  'Unidad de Regularización de Bienes Inmuebles Sector de Educación',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-NGAS' LIMIT 1),
+  'Unidad de la Infancia, Niñez y Adolescencia',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-NGAS' LIMIT 1),
+  'Unidad de la Mujer',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-NGAS' LIMIT 1),
+  'Unidad de Atención Integral a la Familia',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-NGAS' LIMIT 1),
+  'Unidad de Poblaciones Diversas',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DI' LIMIT 1),
+  'Unidad de Adultos Mayores',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DI' LIMIT 1),
+  'Unidad de Atención a Personas con Discapacidad',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DEP' LIMIT 1),
+  'Unidad de Infraestructura Deportiva',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DEP' LIMIT 1),
+  'Unidad de Fortalecimiento Deportivo',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SPPST' LIMIT 1),
+  'Intendencia, Guardia y Banda Municipal',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SPPST' LIMIT 1),
+  'Unidad del Observatorio Municipal',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SPPST' LIMIT 1),
+  'Unidad de Programas de Seguridad Ciudadana y Soluciones Tecnológicas',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-FM' LIMIT 1),
+  'Unidad de Ferias',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-FM' LIMIT 1),
+  'Unidad de Mercados',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GS' LIMIT 1),
+  'Unidad de Planificación Municipal en Salud',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GS' LIMIT 1),
+  'Unidad Técnica de Administración del S.U.S.',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GS' LIMIT 1),
+  'Unidad de Programas y Proyectos',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GS' LIMIT 1),
+  'Unidad de Promoción y Prevención',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GS' LIMIT 1),
+  'Unidad de Epidemiología',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ESPN' LIMIT 1),
+  'Red de Salud Municipal Corea',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ESPN' LIMIT 1),
+  'Red de Salud Municipal Los Andes',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ESPN' LIMIT 1),
+  'Red de Salud Municipal Holandés',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ESPN' LIMIT 1),
+  'Red de Salud Municipal Lotes y Servicios',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ESPN' LIMIT 1),
+  'Red de Salud Municipal Senkata',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GSSND' LIMIT 1),
+  'Hospital Municipal Boliviano Holandés',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GSSND' LIMIT 1),
+  'Hospital Municipal Los Andes',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GSSND' LIMIT 1),
+  'Hospital Municipal Modelo Corea',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GSSND' LIMIT 1),
+  'Hospital Municipal Qullañ Uta',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GSSND' LIMIT 1),
+  'Hospital Municipal Modelo Boliviano Japonés',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-PM' LIMIT 1),
+  'Unidad de Proyectos Municipales',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-PM' LIMIT 1),
+  'Unidad de Proyectos Estratégicos',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-FO' LIMIT 1),
+  'Unidad de Fiscalización de Proyectos Estratégicos',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-FO' LIMIT 1),
+  'Unidad de Fiscalización de Proyectos Municipales',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SO' LIMIT 1),
+  'Unidad de Supervisión de Obras Estratégicas',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SO' LIMIT 1),
+  'Unidad de Supervisión de Obras Municipales',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SO' LIMIT 1),
+  'Unidad de Cierre de Proyectos',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-OM' LIMIT 1),
+  'Unidad de Infraestructura Municipal',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-OM' LIMIT 1),
+  'Unidad de Infraestructura Vial',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-OM' LIMIT 1),
+  'Unidad de Pavimentos',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-OM' LIMIT 1),
+  'Unidad de Mantenimiento y Bacheo',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-OM' LIMIT 1),
+  'Unidad de Administración de Maquinarias',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATC' LIMIT 1),
+  'Unidad de Catastro Municipal y Cartografía',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATC' LIMIT 1),
+  'Unidad de Administración Territorial',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATC' LIMIT 1),
+  'Unidad de Vialidad',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATC' LIMIT 1),
+  'Unidad Jurídica de Administración Territorial',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SBRHCA' LIMIT 1),
+  'Unidad de Recursos Hídricos y Drenaje Pluvial',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SBRHCA' LIMIT 1),
+  'Unidad de Saneamiento Básico',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SBRHCA' LIMIT 1),
+  'Unidad de Control y Monitoreo Ambiental',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SBRHCA' LIMIT 1),
+  'Unidad de Prevención y Calidad Ambiental',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GIR' LIMIT 1),
+  'Unidad de Gestión de Residuos',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GIR' LIMIT 1),
+  'Unidad de Seguimiento y Control',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GR' LIMIT 1),
+  'Unidad de Prevención de Riesgos',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GR' LIMIT 1),
+  'Centro de Operaciones de Emergencia (COE)',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-FAP' LIMIT 1),
+  'Unidad de Áreas Verdes, Protegidas y Bofedales',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-FAP' LIMIT 1),
+  'Unidad de Forestación',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DPPYMES' LIMIT 1),
+  'Unidad de Competitividad y Productividad',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DPPYMES' LIMIT 1),
+  'Unidad de Innovación y Emprendimiento',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DPA' LIMIT 1),
+  'Unidad de Promoción Artesanal',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DPA' LIMIT 1),
+  'Unidad de Desarrollo Productivo Artesanal',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ASA' LIMIT 1),
+  'Unidad de Fortalecimiento Agropecuario',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ASA' LIMIT 1),
+  'Unidad de Gestión de Proyectos Agropecuarios',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SMEI' LIMIT 1),
+  'Unidad de Administración de Servicios Municipales',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SMEI' LIMIT 1),
+  'Unidad de Iniciativas Económicas',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-BUS' LIMIT 1),
+  'Unidad de Operaciones',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-BUS' LIMIT 1),
+  'Unidad de Mantenimiento',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-BUS' LIMIT 1),
+  'Unidad de Administración y Recaudo',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D1' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D1' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D1' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D1' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D2' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D2' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D2' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D2' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D3' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D3' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D3' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D3' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D4' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D4' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D4' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D4' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D5' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D5' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D5' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D5' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D6' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D6' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D6' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D6' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D7' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D7' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D7' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D7' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D8' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D8' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D8' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D8' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D9' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D9' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D9' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D9' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D10' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D10' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D10' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D10' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D11' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D11' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D11' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D11' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D12' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D12' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D12' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D12' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D13' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D13' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D13' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D13' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D14' LIMIT 1),
+  'Unidad de Infraestructura Pública',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D14' LIMIT 1),
+  'Unidad de Desarrollo Humano',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D14' LIMIT 1),
+  'Asesoría Jurídica',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D14' LIMIT 1),
+  'Unidad de Finanzas y Administración',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'TMEA' LIMIT 1),
+  'Unidad de Administración y Operaciones',
+  TRUE
+);
+
+INSERT INTO comunica.unidades (direccion_id, nombre, activo)
+VALUES (
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'LIOM-GAMEA' LIMIT 1),
+  'Unidad de Producción y Calidad',
+  TRUE
+);
+
+-- 6. Super Administrador Municipal Supremo
 INSERT INTO comunica.usuarios (id, rol_id, secretaria_id, direccion_id, unidad_id, nombres, apellidos, cargo, email, telefono_contacto, password_hash)
 VALUES (
   'c0000001-0000-0000-0000-000000000001',
   (SELECT id FROM comunica.roles WHERE codigo = 'SUPERADMIN' LIMIT 1),
-  1, 1, NULL,
+  (SELECT id FROM comunica.secretarias WHERE codigo = 'DESPACHO' LIMIT 1),
+  (SELECT id FROM comunica.direcciones WHERE codigo = 'DGAL' LIMIT 1),
+  NULL,
   'Ing. Wilfredo', 'Abad Mancilla',
   'Super Administrador del Sistema Municipal',
   'superadmin@elalto.gob.bo',
