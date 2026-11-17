@@ -22,7 +22,7 @@ VALUES ('SUPERADMIN', 'Super Administrador Municipal', 'Control supremo: gestió
 ON CONFLICT (codigo) DO UPDATE 
 SET nombre = EXCLUDED.nombre, descripcion = EXCLUDED.descripcion;
 
--- 3. Upsert Secretarías por 'codigo' para evitar choque de ID previo
+-- 3. Upsert Secretarías por 'codigo'
 
 INSERT INTO comunica.secretarias (codigo, nombre, sigla, activo)
 VALUES ('DESPACHO', 'Despacho del Alcalde', 'DESPACHO', TRUE)
@@ -89,7 +89,7 @@ VALUES ('DESCENTRALIZADO', 'Nivel Descentralizado y Empresas Municipales', 'DESC
 ON CONFLICT (codigo) DO UPDATE
 SET nombre = EXCLUDED.nombre, sigla = EXCLUDED.sigla, activo = TRUE;
 
--- 4. Upsert Direcciones por 'codigo'
+-- 4. Upsert Direcciones por '(secretaria_id, codigo)'
 
 INSERT INTO comunica.direcciones (secretaria_id, codigo, nombre, sigla, activo)
 VALUES (
@@ -99,9 +99,8 @@ VALUES (
   'DGAL',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -113,9 +112,8 @@ VALUES (
   'DIPLAN',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -127,9 +125,8 @@ VALUES (
   'DRI',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -141,9 +138,8 @@ VALUES (
   'U-DESPACHO',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -155,9 +151,8 @@ VALUES (
   'DICOM',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -169,9 +164,8 @@ VALUES (
   'DAC',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -183,9 +177,8 @@ VALUES (
   'DAP',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -197,9 +190,8 @@ VALUES (
   'DTM',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -211,9 +203,8 @@ VALUES (
   'DTH',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -225,9 +216,8 @@ VALUES (
   'DATM',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -239,9 +229,8 @@ VALUES (
   'DCONT',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -253,9 +242,8 @@ VALUES (
   'DADM',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -267,9 +255,8 @@ VALUES (
   'DRMU',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -281,9 +268,8 @@ VALUES (
   'DCULT',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -295,9 +281,8 @@ VALUES (
   'DASE',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -309,9 +294,8 @@ VALUES (
   'DAMIEE',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -323,9 +307,8 @@ VALUES (
   'DNGAS',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -337,9 +320,8 @@ VALUES (
   'DDI',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -351,9 +333,8 @@ VALUES (
   'DDEP',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -365,9 +346,8 @@ VALUES (
   'DSPPST',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -379,9 +359,8 @@ VALUES (
   'DFM',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -393,9 +372,8 @@ VALUES (
   'DGS',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -407,9 +385,8 @@ VALUES (
   'DESPN',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -421,9 +398,8 @@ VALUES (
   'DGSSND',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -435,9 +411,8 @@ VALUES (
   'DPM',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -449,9 +424,8 @@ VALUES (
   'DFO',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -463,9 +437,8 @@ VALUES (
   'DSO',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -477,9 +450,8 @@ VALUES (
   'DOM',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -491,9 +463,8 @@ VALUES (
   'DATC',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -505,9 +476,8 @@ VALUES (
   'DSBRHCA',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -519,9 +489,8 @@ VALUES (
   'DGIR',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -533,9 +502,8 @@ VALUES (
   'DGR',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -547,9 +515,8 @@ VALUES (
   'DFAP',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -561,9 +528,8 @@ VALUES (
   'DDP-PYMES',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -575,9 +541,8 @@ VALUES (
   'DDPA',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -589,9 +554,8 @@ VALUES (
   'DASA',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -603,9 +567,8 @@ VALUES (
   'DSMEI',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -617,9 +580,8 @@ VALUES (
   'DMTP-BUS',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -631,9 +593,8 @@ VALUES (
   'SDM-1',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -645,9 +606,8 @@ VALUES (
   'SDM-2',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -659,9 +619,8 @@ VALUES (
   'SDM-3',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -673,9 +632,8 @@ VALUES (
   'SDM-4',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -687,9 +645,8 @@ VALUES (
   'SDM-5',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -701,9 +658,8 @@ VALUES (
   'SDM-6',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -715,9 +671,8 @@ VALUES (
   'SDM-7',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -729,9 +684,8 @@ VALUES (
   'SDM-8',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -743,9 +697,8 @@ VALUES (
   'SDM-9',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -757,9 +710,8 @@ VALUES (
   'SDM-10',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -771,9 +723,8 @@ VALUES (
   'SDM-11',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -785,9 +736,8 @@ VALUES (
   'SDM-12',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -799,9 +749,8 @@ VALUES (
   'SDM-13',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -813,9 +762,8 @@ VALUES (
   'SDM-14',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -827,9 +775,8 @@ VALUES (
   'TMEA',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -841,9 +788,8 @@ VALUES (
   'LIOM-GAMEA',
   TRUE
 )
-ON CONFLICT (codigo) DO UPDATE
-SET secretaria_id = EXCLUDED.secretaria_id,
-    nombre = EXCLUDED.nombre,
+ON CONFLICT (secretaria_id, codigo) DO UPDATE
+SET nombre = EXCLUDED.nombre,
     sigla = EXCLUDED.sigla,
     activo = TRUE;
 
@@ -852,1239 +798,1239 @@ DELETE FROM comunica.unidades;
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DGAL' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'DGAL' LIMIT 1),
   'Unidad de Asuntos Jurisdiccionales',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DGAL' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'DGAL' LIMIT 1),
   'Unidad de Normas Municipales y Asuntos Administrativos',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DGAL' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'DGAL' LIMIT 1),
   'Unidad de Defensa y Regularización de Bienes de Dominio Municipal',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIPLAN' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'DIPLAN' LIMIT 1),
   'Unidad de Programación de Operaciones',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIPLAN' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'DIPLAN' LIMIT 1),
   'Unidad de Inversión Pública y Seguimiento',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIPLAN' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'DIPLAN' LIMIT 1),
   'Unidad de Desarrollo Organizacional',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIPLAN' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'DIPLAN' LIMIT 1),
   'Unidad de Planificación Estratégica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIPLAN' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'DIPLAN' LIMIT 1),
   'Unidad de Ordenamiento Territorial',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'UNID-DESPACHO' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'UNID-DESPACHO' LIMIT 1),
   'Unidad de Transparencia y Lucha Contra la Corrupción',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'UNID-DESPACHO' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'UNID-DESPACHO' LIMIT 1),
   'Unidad Sumariante',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'UNID-DESPACHO' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'UNID-DESPACHO' LIMIT 1),
   'Unidad de Auditoría Interna',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'UNID-DESPACHO' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'UNID-DESPACHO' LIMIT 1),
   'Unidad de Límites',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'UNID-DESPACHO' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'UNID-DESPACHO' LIMIT 1),
   'Unidad de Relaciones Públicas y Protocolo',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'UNID-DESPACHO' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESPACHO' AND d.codigo = 'UNID-DESPACHO' LIMIT 1),
   'Unidad de Gestión Social',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DICOM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMGI' AND d.codigo = 'DICOM' LIMIT 1),
   'Unidad de Prensa',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DICOM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMGI' AND d.codigo = 'DICOM' LIMIT 1),
   'Unidad de Imagen Corporativa',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DICOM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMGI' AND d.codigo = 'DICOM' LIMIT 1),
   'Unidad de Comunicación Digital',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DAC' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMGI' AND d.codigo = 'DAC' LIMIT 1),
   'Unidad de Coordinación con Subalcaldías',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DAC' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMGI' AND d.codigo = 'DAC' LIMIT 1),
   'Unidad de Archivo Central',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DAC' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMGI' AND d.codigo = 'DAC' LIMIT 1),
   'Unidad de Prevención de Conflictos',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DAC' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMGI' AND d.codigo = 'DAC' LIMIT 1),
   'Unidad de Sistema Único de Trámites',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DAP' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMGI' AND d.codigo = 'DAP' LIMIT 1),
   'Unidad Operativa de Alumbrado Público',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DAP' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMGI' AND d.codigo = 'DAP' LIMIT 1),
   'Unidad de Programas y Proyectos de Alumbrado Público',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TES' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-TES' LIMIT 1),
   'Unidad de Tesorería',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TES' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-TES' LIMIT 1),
   'Unidad de Presupuesto',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TES' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-TES' LIMIT 1),
   'Unidad de Contabilidad',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TES' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-TES' LIMIT 1),
   'Unidad de Crédito Público y Gestión de Financiamiento',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TH' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-TH' LIMIT 1),
   'Unidad de Registro',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TH' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-TH' LIMIT 1),
   'Unidad de Asesoría Legal DTH',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TH' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-TH' LIMIT 1),
   'Unidad de Planillas y Control',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TH' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-TH' LIMIT 1),
   'Unidad de Selección y Contratación',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-TH' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-TH' LIMIT 1),
   'Unidad de Capacitación y Evaluación',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-ATM' LIMIT 1),
   'Unidad de Ingresos y Control Tributario',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-ATM' LIMIT 1),
   'Unidad de Asesoría Jurídica y Cobranza Coactiva',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-ATM' LIMIT 1),
   'Unidad de Fiscalización y Recaudaciones',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CONT' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-CONT' LIMIT 1),
   'Unidad de Adquisiciones y Contrataciones Menores',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CONT' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-CONT' LIMIT 1),
   'Unidad de Licitaciones',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CONT' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-CONT' LIMIT 1),
   'Unidad Jurídica de Contrataciones',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ADM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-ADM' LIMIT 1),
   'Unidad de Activos Fijos',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ADM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-ADM' LIMIT 1),
   'Unidad de Servicios Generales y Mantenimiento',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ADM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-ADM' LIMIT 1),
   'Unidad de Almacenes',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ADM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMAF' AND d.codigo = 'DIR-ADM' LIMIT 1),
   'Unidad de Administración de Sistemas de Información',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-RMU' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMMU' AND d.codigo = 'DIR-RMU' LIMIT 1),
   'Unidad de Planificación de la Movilidad Urbana Sostenible',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-RMU' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMMU' AND d.codigo = 'DIR-RMU' LIMIT 1),
   'Unidad de Señalización y Semaforización',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-RMU' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMMU' AND d.codigo = 'DIR-RMU' LIMIT 1),
   'Unidad de Regulación del Transporte',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-RMU' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMMU' AND d.codigo = 'DIR-RMU' LIMIT 1),
   'Unidad Guardia Municipal de Transporte',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CULT' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMEC' AND d.codigo = 'DIR-CULT' LIMIT 1),
   'Unidad de Fomento a Iniciativas Artísticas y Culturales',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CULT' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMEC' AND d.codigo = 'DIR-CULT' LIMIT 1),
   'Escuela Municipal de Artes',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CULT' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMEC' AND d.codigo = 'DIR-CULT' LIMIT 1),
   'Unidad de Administración de Espacios Culturales',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-CULT' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMEC' AND d.codigo = 'DIR-CULT' LIMIT 1),
   'Unidad de Turismo',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ASE' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMEC' AND d.codigo = 'DIR-ASE' LIMIT 1),
   'Unidad de Programas Educativos',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ASE' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMEC' AND d.codigo = 'DIR-ASE' LIMIT 1),
   'Unidad de la Juventud',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-AMIE' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMEC' AND d.codigo = 'DIR-AMIE' LIMIT 1),
   'Unidad de Mejora de la Infraestructura y Equipamiento Educativo',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-AMIE' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMEC' AND d.codigo = 'DIR-AMIE' LIMIT 1),
   'Unidad de Regularización de Bienes Inmuebles Sector de Educación',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-NGAS' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDHSI' AND d.codigo = 'DIR-NGAS' LIMIT 1),
   'Unidad de la Infancia, Niñez y Adolescencia',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-NGAS' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDHSI' AND d.codigo = 'DIR-NGAS' LIMIT 1),
   'Unidad de la Mujer',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-NGAS' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDHSI' AND d.codigo = 'DIR-NGAS' LIMIT 1),
   'Unidad de Atención Integral a la Familia',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-NGAS' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDHSI' AND d.codigo = 'DIR-NGAS' LIMIT 1),
   'Unidad de Poblaciones Diversas',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DI' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDHSI' AND d.codigo = 'DIR-DI' LIMIT 1),
   'Unidad de Adultos Mayores',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DI' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDHSI' AND d.codigo = 'DIR-DI' LIMIT 1),
   'Unidad de Atención a Personas con Discapacidad',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DEP' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDHSI' AND d.codigo = 'DIR-DEP' LIMIT 1),
   'Unidad de Infraestructura Deportiva',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DEP' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDHSI' AND d.codigo = 'DIR-DEP' LIMIT 1),
   'Unidad de Fortalecimiento Deportivo',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SPPST' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMSC' AND d.codigo = 'DIR-SPPST' LIMIT 1),
   'Intendencia, Guardia y Banda Municipal',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SPPST' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMSC' AND d.codigo = 'DIR-SPPST' LIMIT 1),
   'Unidad del Observatorio Municipal',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SPPST' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMSC' AND d.codigo = 'DIR-SPPST' LIMIT 1),
   'Unidad de Programas de Seguridad Ciudadana y Soluciones Tecnológicas',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-FM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMSC' AND d.codigo = 'DIR-FM' LIMIT 1),
   'Unidad de Ferias',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-FM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMSC' AND d.codigo = 'DIR-FM' LIMIT 1),
   'Unidad de Mercados',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GS' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-GS' LIMIT 1),
   'Unidad de Planificación Municipal en Salud',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GS' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-GS' LIMIT 1),
   'Unidad Técnica de Administración del S.U.S.',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GS' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-GS' LIMIT 1),
   'Unidad de Programas y Proyectos',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GS' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-GS' LIMIT 1),
   'Unidad de Promoción y Prevención',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GS' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-GS' LIMIT 1),
   'Unidad de Epidemiología',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ESPN' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-ESPN' LIMIT 1),
   'Red de Salud Municipal Corea',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ESPN' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-ESPN' LIMIT 1),
   'Red de Salud Municipal Los Andes',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ESPN' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-ESPN' LIMIT 1),
   'Red de Salud Municipal Holandés',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ESPN' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-ESPN' LIMIT 1),
   'Red de Salud Municipal Lotes y Servicios',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ESPN' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-ESPN' LIMIT 1),
   'Red de Salud Municipal Senkata',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GSSND' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-GSSND' LIMIT 1),
   'Hospital Municipal Boliviano Holandés',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GSSND' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-GSSND' LIMIT 1),
   'Hospital Municipal Los Andes',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GSSND' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-GSSND' LIMIT 1),
   'Hospital Municipal Modelo Corea',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GSSND' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-GSSND' LIMIT 1),
   'Hospital Municipal Qullañ Uta',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GSSND' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMS' AND d.codigo = 'DIR-GSSND' LIMIT 1),
   'Hospital Municipal Modelo Boliviano Japonés',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-PM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-PM' LIMIT 1),
   'Unidad de Proyectos Municipales',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-PM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-PM' LIMIT 1),
   'Unidad de Proyectos Estratégicos',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-FO' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-FO' LIMIT 1),
   'Unidad de Fiscalización de Proyectos Estratégicos',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-FO' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-FO' LIMIT 1),
   'Unidad de Fiscalización de Proyectos Municipales',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SO' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-SO' LIMIT 1),
   'Unidad de Supervisión de Obras Estratégicas',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SO' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-SO' LIMIT 1),
   'Unidad de Supervisión de Obras Municipales',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SO' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-SO' LIMIT 1),
   'Unidad de Cierre de Proyectos',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-OM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-OM' LIMIT 1),
   'Unidad de Infraestructura Municipal',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-OM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-OM' LIMIT 1),
   'Unidad de Infraestructura Vial',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-OM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-OM' LIMIT 1),
   'Unidad de Pavimentos',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-OM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-OM' LIMIT 1),
   'Unidad de Mantenimiento y Bacheo',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-OM' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-OM' LIMIT 1),
   'Unidad de Administración de Maquinarias',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATC' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-ATC' LIMIT 1),
   'Unidad de Catastro Municipal y Cartografía',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATC' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-ATC' LIMIT 1),
   'Unidad de Administración Territorial',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATC' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-ATC' LIMIT 1),
   'Unidad de Vialidad',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ATC' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMIP' AND d.codigo = 'DIR-ATC' LIMIT 1),
   'Unidad Jurídica de Administración Territorial',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SBRHCA' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMASGAR' AND d.codigo = 'DIR-SBRHCA' LIMIT 1),
   'Unidad de Recursos Hídricos y Drenaje Pluvial',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SBRHCA' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMASGAR' AND d.codigo = 'DIR-SBRHCA' LIMIT 1),
   'Unidad de Saneamiento Básico',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SBRHCA' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMASGAR' AND d.codigo = 'DIR-SBRHCA' LIMIT 1),
   'Unidad de Control y Monitoreo Ambiental',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SBRHCA' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMASGAR' AND d.codigo = 'DIR-SBRHCA' LIMIT 1),
   'Unidad de Prevención y Calidad Ambiental',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GIR' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMASGAR' AND d.codigo = 'DIR-GIR' LIMIT 1),
   'Unidad de Gestión de Residuos',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GIR' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMASGAR' AND d.codigo = 'DIR-GIR' LIMIT 1),
   'Unidad de Seguimiento y Control',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GR' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMASGAR' AND d.codigo = 'DIR-GR' LIMIT 1),
   'Unidad de Prevención de Riesgos',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-GR' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMASGAR' AND d.codigo = 'DIR-GR' LIMIT 1),
   'Centro de Operaciones de Emergencia (COE)',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-FAP' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMASGAR' AND d.codigo = 'DIR-FAP' LIMIT 1),
   'Unidad de Áreas Verdes, Protegidas y Bofedales',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-FAP' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMASGAR' AND d.codigo = 'DIR-FAP' LIMIT 1),
   'Unidad de Forestación',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DPPYMES' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDE' AND d.codigo = 'DIR-DPPYMES' LIMIT 1),
   'Unidad de Competitividad y Productividad',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DPPYMES' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDE' AND d.codigo = 'DIR-DPPYMES' LIMIT 1),
   'Unidad de Innovación y Emprendimiento',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DPA' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDE' AND d.codigo = 'DIR-DPA' LIMIT 1),
   'Unidad de Promoción Artesanal',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-DPA' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDE' AND d.codigo = 'DIR-DPA' LIMIT 1),
   'Unidad de Desarrollo Productivo Artesanal',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ASA' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDE' AND d.codigo = 'DIR-ASA' LIMIT 1),
   'Unidad de Fortalecimiento Agropecuario',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-ASA' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDE' AND d.codigo = 'DIR-ASA' LIMIT 1),
   'Unidad de Gestión de Proyectos Agropecuarios',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SMEI' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDE' AND d.codigo = 'DIR-SMEI' LIMIT 1),
   'Unidad de Administración de Servicios Municipales',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-SMEI' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDE' AND d.codigo = 'DIR-SMEI' LIMIT 1),
   'Unidad de Iniciativas Económicas',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-BUS' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDE' AND d.codigo = 'DIR-BUS' LIMIT 1),
   'Unidad de Operaciones',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-BUS' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDE' AND d.codigo = 'DIR-BUS' LIMIT 1),
   'Unidad de Mantenimiento',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'DIR-BUS' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SMDE' AND d.codigo = 'DIR-BUS' LIMIT 1),
   'Unidad de Administración y Recaudo',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D1' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D1' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D1' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D1' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D1' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D1' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D1' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D1' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D2' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D2' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D2' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D2' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D2' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D2' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D2' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D2' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D3' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D3' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D3' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D3' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D3' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D3' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D3' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D3' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D4' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D4' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D4' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D4' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D4' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D4' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D4' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D4' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D5' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D5' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D5' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D5' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D5' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D5' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D5' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D5' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D6' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D6' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D6' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D6' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D6' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D6' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D6' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D6' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D7' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D7' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D7' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D7' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D7' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D7' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D7' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D7' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D8' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D8' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D8' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D8' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D8' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D8' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D8' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D8' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D9' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D9' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D9' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D9' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D9' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D9' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D9' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D9' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D10' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D10' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D10' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D10' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D10' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D10' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D10' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D10' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D11' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D11' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D11' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D11' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D11' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D11' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D11' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D11' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D12' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D12' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D12' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D12' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D12' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D12' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D12' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D12' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D13' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D13' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D13' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D13' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D13' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D13' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D13' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D13' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D14' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D14' LIMIT 1),
   'Unidad de Infraestructura Pública',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D14' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D14' LIMIT 1),
   'Unidad de Desarrollo Humano',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D14' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D14' LIMIT 1),
   'Asesoría Jurídica',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'SUB-D14' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'SUBALCALDIAS' AND d.codigo = 'SUB-D14' LIMIT 1),
   'Unidad de Finanzas y Administración',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'TMEA' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESCENTRALIZADO' AND d.codigo = 'TMEA' LIMIT 1),
   'Unidad de Administración y Operaciones',
   TRUE
 );
 
 INSERT INTO comunica.unidades (direccion_id, nombre, activo)
 VALUES (
-  (SELECT id FROM comunica.direcciones WHERE codigo = 'LIOM-GAMEA' LIMIT 1),
+  (SELECT d.id FROM comunica.direcciones d JOIN comunica.secretarias s ON d.secretaria_id = s.id WHERE s.codigo = 'DESCENTRALIZADO' AND d.codigo = 'LIOM-GAMEA' LIMIT 1),
   'Unidad de Producción y Calidad',
   TRUE
 );
